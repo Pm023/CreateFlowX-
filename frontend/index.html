@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CreateFlowX - Create. Collaborate. Flow.</title>
+  
+  <!-- Remix Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet"/>
+  
+  <!-- CSS Styling Files -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css?v=2">
+  <link rel="stylesheet" href="css/layouts.css">
+  
+  <style>
+    /* Premium Marketing Page Specifics */
+    .hero-section {
+      text-align: center;
+      padding: var(--space-3xl) var(--space-md) var(--space-md) var(--space-md);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+      background-color: rgba(79, 70, 229, 0.08);
+      color: var(--accent-color);
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-full);
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: var(--space-md);
+      border: 1px solid rgba(79, 70, 229, 0.15);
+    }
+
+    .hero-title {
+      font-size: 4rem;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: var(--space-md);
+      color: var(--text-primary);
+      max-width: 900px;
+      letter-spacing: -0.03em;
+    }
+
+    .hero-title span.highlight-purple {
+      color: #4f46e5;
+    }
+
+    .hero-tagline {
+      font-size: 1.15rem;
+      color: var(--text-secondary);
+      max-width: 700px;
+      margin-bottom: var(--space-lg);
+      line-height: 1.6;
+    }
+
+    .hero-ctas {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      margin-bottom: var(--space-md);
+    }
+
+    .hero-trial-info {
+      display: flex;
+      gap: var(--space-lg);
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-bottom: var(--space-2xl);
+    }
+
+    .hero-trial-info span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .hero-trial-info i {
+      color: #10b981;
+    }
+
+    /* Mockup Dashboard Container */
+    .dashboard-preview {
+      width: 100%;
+      max-width: 960px;
+      border-radius: var(--radius-lg);
+      box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.12);
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+      margin-bottom: var(--space-3xl);
+      background-color: var(--bg-secondary);
+      transition: transform var(--transition-normal);
+    }
+
+    .dashboard-preview:hover {
+      transform: scale(1.01);
+    }
+
+    .dashboard-preview img {
+      width: 100%;
+      display: block;
+    }
+
+    /* Trusted By Section */
+    .trusted-section {
+      width: 100%;
+      text-align: center;
+      margin-bottom: var(--space-3xl);
+    }
+
+    .trusted-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+      margin-bottom: var(--space-lg);
+    }
+
+    .trusted-logos {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--space-2xl);
+      padding: 0 var(--space-md);
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #475569;
+    }
+
+    .brand-logo i {
+      font-size: 1.3rem;
+    }
+
+    /* Features Grid Redesign */
+    .features-section {
+      padding: var(--space-2xl) var(--space-xl);
+      max-width: 1200px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .features-badge {
+      display: inline-block;
+      color: var(--accent-color);
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: var(--space-xs);
+    }
+
+    .features-title {
+      font-size: 2.25rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: var(--space-2xl);
+    }
+
+    .features-title span {
+      color: #4f46e5;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-lg);
+    }
+
+    .feature-card {
+      text-align: left;
+      padding: var(--space-lg);
+      border-radius: var(--radius-md);
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+    }
+
+    .feature-icon-box {
+      width: 42px;
+      height: 42px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      margin-bottom: var(--space-md);
+    }
+
+    .feature-icon-box.purple { background-color: rgba(124, 58, 237, 0.08); color: #7c3aed; }
+    .feature-icon-box.blue { background-color: rgba(59, 130, 246, 0.08); color: #3b82f6; }
+    .feature-icon-box.cyan { background-color: rgba(6, 182, 212, 0.08); color: #0891b2; }
+
+    /* Steps Section (Dark Footer block matching mockup bottom left) */
+    .steps-section {
+      background: var(--grad-dark-footer);
+      color: #ffffff;
+      padding: var(--space-3xl) var(--space-xl);
+      text-align: center;
+      position: relative;
+    }
+
+    .steps-title {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: var(--space-2xl);
+      color: #ffffff;
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      max-width: 1100px;
+      margin: 0 auto;
+      gap: var(--space-md);
+      position: relative;
+    }
+
+    .step-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 5;
+    }
+
+    .step-icon-circle {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.75rem;
+      color: #ffffff;
+      margin-bottom: var(--space-md);
+      transition: background-color var(--transition-fast);
+    }
+
+    .step-item:hover .step-icon-circle {
+      background-color: rgba(79, 70, 229, 0.2);
+      border-color: #4f46e5;
+    }
+
+    .step-number {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: #94a3b8;
+      margin-bottom: var(--space-2xs);
+    }
+
+    .step-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: #ffffff;
+    }
+
+    .step-desc {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      max-width: 200px;
+    }
+
+    /* Connecting lines between steps on Desktop */
+    .steps-connector-line {
+      position: absolute;
+      top: 32px;
+      left: 12.5%;
+      width: 75%;
+      height: 1px;
+      background-color: rgba(255, 255, 255, 0.1);
+      z-index: 1;
+    }
+
+    @media (max-width: 992px) {
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+      .steps-grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-xl); }
+      .steps-connector-line { display: none; }
+    }
+
+    @media (max-width: 768px) {
+      .hero-title { font-size: 2.75rem; }
+      .features-grid { grid-template-columns: 1fr; }
+      .steps-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header Navigation -->
+  <header class="navbar">
+    <div class="navbar-brand">
+      <!-- Inline SVG Logo -->
+      <svg width="28" height="28" viewBox="0 0 200 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M70 15 C35 15, 15 35, 15 50 C15 65, 35 85, 70 85 L90 85 L90 73 L70 73 C45 73, 30 63, 30 50 C30 37, 45 27, 70 27 L90 27 L90 15 Z" fill="url(#logoBlueGrad)" />
+        <path d="M85 35 L120 35 L120 47 L97 47 L97 55 L115 55 L115 65 L97 65 L97 85 L85 85 Z" fill="url(#logoBlueGrad)" />
+        <path d="M125 15 L140 15 L168 52 L195 15 L210 15 L175 62 L175 85 L162 85 L162 62 Z" fill="url(#logoPurpleGrad)" />
+        <defs>
+          <linearGradient id="logoBlueGrad" x1="15" y1="15" x2="120" y2="85" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#00f2fe" />
+            <stop offset="100%" stop-color="#0082ff" />
+          </linearGradient>
+          <linearGradient id="logoPurpleGrad" x1="125" y1="15" x2="210" y2="85" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#7b2cbf" />
+            <stop offset="100%" stop-color="#c77dff" />
+          </linearGradient>
+        </defs>
+      </svg>
+      <span>Create<span class="text-gradient-blue">Flow</span><span class="text-gradient-purple">X</span></span>
+    </div>
+    
+    <div class="navbar-links" style="gap: var(--space-xl);">
+      <a href="#features" class="navbar-link">Features</a>
+      <a href="#how-it-works" class="navbar-link">How It Works</a>
+      <a href="#pricing" class="navbar-link">Pricing</a>
+      <a href="#about" class="navbar-link">About Us</a>
+      <a href="#contact" class="navbar-link">Contact</a>
+    </div>
+
+    <div class="navbar-links" id="auth-nav-links">
+      <a href="login.html" class="navbar-link" style="font-weight: 600;">Log In</a>
+      <a href="register.html" class="btn btn-primary" style="padding: 0.5rem 1.25rem;">Get Started</a>
+    </div>
+  </header>
+
+  <!-- Hero Block -->
+  <main class="hero-section">
+    <div class="hero-badge">
+      <i class="ri-sparkling-fill"></i>
+      <span>All-in-One Workflow Management</span>
+    </div>
+    <h1 class="hero-title">
+      Work Smarter. <span class="highlight-purple">Deliver Better.</span>
+    </h1>
+    <p class="hero-tagline">
+      CreateFlowX helps freelancers and agencies manage clients, projects, tasks, deadlines, files, and invoices — all in one powerful workspace.
+    </p>
+    
+    <div class="hero-ctas">
+      <a href="register.html" class="btn btn-primary" style="padding: 0.8rem 1.75rem; font-size: 0.95rem;">Get Started Free</a>
+      <a href="login.html" class="btn btn-outline" style="padding: 0.8rem 1.75rem; font-size: 0.95rem;">
+        <i class="ri-play-circle-line"></i> Watch Demo
+      </a>
+    </div>
+
+    <div class="hero-trial-info">
+      <span><i class="ri-checkbox-circle-fill"></i> 14-Day Free Trial</span>
+      <span><i class="ri-checkbox-circle-fill"></i> No Credit Card</span>
+      <span><i class="ri-checkbox-circle-fill"></i> Cancel Anytime</span>
+    </div>
+
+    <!-- Mockup dashboard preview matching the screen shot -->
+    <div class="dashboard-preview card">
+      <!-- Create a CSS representation of the dashboard inside to look gorgeous, or a placeholder preview -->
+      <div style="background-color: var(--bg-primary); padding: var(--space-sm); display: flex; border-bottom: 1px solid var(--border-color); align-items: center; justify-content: space-between;">
+        <div style="display: flex; gap: 6px;">
+          <span style="width: 10px; height: 10px; border-radius: 50%; background-color: #ef4444;"></span>
+          <span style="width: 10px; height: 10px; border-radius: 50%; background-color: #f59e0b;"></span>
+          <span style="width: 10px; height: 10px; border-radius: 50%; background-color: #10b981;"></span>
+        </div>
+        <div style="background-color: var(--bg-secondary); padding: 2px 12px; font-size: 0.7rem; border-radius: 4px; color: var(--text-muted); width: 200px; text-align: center;">cfx-app.com/dashboard</div>
+        <div></div>
+      </div>
+      <!-- Miniature layout preview -->
+      <div style="display: flex; height: 380px; background-color: #f8f9fd;">
+        <div style="width: 70px; background-color: #ffffff; border-right: 1px solid #e2e8f0; padding: var(--space-sm); display: flex; flex-direction: column; gap: var(--space-sm);">
+          <div style="width: 20px; height: 20px; border-radius: 4px; background: var(--grad-primary); margin-bottom: 10px;"></div>
+          <div style="width: 100%; height: 8px; background-color: #e2e8f0; border-radius: 2px;"></div>
+          <div style="width: 70%; height: 8px; background-color: #e2e8f0; border-radius: 2px;"></div>
+          <div style="width: 80%; height: 8px; background-color: #e2e8f0; border-radius: 2px;"></div>
+          <div style="width: 60%; height: 8px; background-color: #e2e8f0; border-radius: 2px;"></div>
+        </div>
+        <div style="flex: 1; padding: var(--space-md); display: flex; flex-direction: column; gap: var(--space-md); overflow: hidden;">
+          <div style="display: flex; justify-content: space-between;">
+            <div style="width: 120px; height: 12px; background-color: #cbd5e1; border-radius: 2px;"></div>
+            <div style="width: 60px; height: 12px; background-color: #cbd5e1; border-radius: 2px;"></div>
+          </div>
+          <div style="display: flex; gap: var(--space-md);">
+            <div style="flex: 1; height: 60px; background-color: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px;">
+              <div style="width: 50px; height: 8px; background-color: #cbd5e1; border-radius: 2px; margin-bottom: 8px;"></div>
+              <div style="width: 30px; height: 16px; background-color: #0f172a; border-radius: 2px;"></div>
+            </div>
+            <div style="flex: 1; height: 60px; background-color: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px;">
+              <div style="width: 50px; height: 8px; background-color: #cbd5e1; border-radius: 2px; margin-bottom: 8px;"></div>
+              <div style="width: 30px; height: 16px; background-color: #0f172a; border-radius: 2px;"></div>
+            </div>
+            <div style="flex: 1; height: 60px; background-color: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px;">
+              <div style="width: 50px; height: 8px; background-color: #cbd5e1; border-radius: 2px; margin-bottom: 8px;"></div>
+              <div style="width: 30px; height: 16px; background-color: #0f172a; border-radius: 2px;"></div>
+            </div>
+          </div>
+          <div style="display: flex; gap: var(--space-md); flex: 1;">
+            <div style="flex: 2; background-color: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px;">
+              <div style="width: 80px; height: 10px; background-color: #cbd5e1; border-radius: 2px; margin-bottom: 15px;"></div>
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                <div style="width: 100%; height: 8px; background-color: #f1f5f9; border-radius: 2px;"></div>
+                <div style="width: 90%; height: 8px; background-color: #f1f5f9; border-radius: 2px;"></div>
+                <div style="width: 95%; height: 8px; background-color: #f1f5f9; border-radius: 2px;"></div>
+              </div>
+            </div>
+            <div style="flex: 1; background-color: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px;">
+              <div style="width: 60px; height: 10px; background-color: #cbd5e1; border-radius: 2px; margin-bottom: 15px;"></div>
+              <div style="width: 70px; height: 70px; border-radius: 50%; border: 8px solid #f1f5f9; border-top-color: #4f46e5; margin: 0 auto;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Trusted Logos -->
+  <section class="trusted-section">
+    <p class="trusted-title">Trusted by Freelancers & Agencies</p>
+    <div class="trusted-logos">
+      <div class="brand-logo"><i class="ri-sparkling-fill" style="color: #6366f1;"></i> Framer</div>
+      <div class="brand-logo"><i class="ri-global-line" style="color: #2563eb;"></i> Webflow</div>
+      <div class="brand-logo"><i class="ri-shape-line" style="color: #ec4899;"></i> Figma</div>
+      <div class="brand-logo"><i class="ri-slack-line" style="color: #e11d48;"></i> Slack</div>
+      <div class="brand-logo"><i class="ri-bookmark-fill" style="color: #0f172a;"></i> Notion</div>
+    </div>
+  </section>
+
+  <!-- Features Block -->
+  <section id="features" class="features-section">
+    <span class="features-badge">Features</span>
+    <h2 class="features-title">Everything you need to manage your work in <span>one place</span></h2>
+    
+    <div class="features-grid">
+      <!-- Feature 1 -->
+      <div class="feature-card card-hover">
+        <div class="feature-icon-box purple">
+          <i class="ri-folders-line"></i>
+        </div>
+        <h3 style="font-size: 1.1rem; margin-bottom: var(--space-sm); font-weight: 700;">Project Management</h3>
+        <p style="font-size: 0.85rem;">Organize client projects, assign priorities, outline parameters, and track progress visual indicators.</p>
+      </div>
+
+      <!-- Feature 2 -->
+      <div class="feature-card card-hover">
+        <div class="feature-icon-box blue">
+          <i class="ri-task-line"></i>
+        </div>
+        <h3 style="font-size: 1.1rem; margin-bottom: var(--space-sm); font-weight: 700;">Task Management</h3>
+        <p style="font-size: 0.85rem;">Create specific checklists, set task priorities, specify parameters, and check off columns easily.</p>
+      </div>
+
+      <!-- Feature 3 -->
+      <div class="feature-card card-hover">
+        <div class="feature-icon-box cyan">
+          <i class="ri-notification-badge-line"></i>
+        </div>
+        <h3 style="font-size: 1.1rem; margin-bottom: var(--space-sm); font-weight: 700;">Deadline Reminders</h3>
+        <p style="font-size: 0.85rem;">Never miss a milestone deadline with visual alerts, overdue warnings, and integrated timelines.</p>
+      </div>
+
+      <!-- Feature 4 -->
+      <div class="feature-card card-hover">
+        <div class="feature-icon-box blue">
+          <i class="ri-attachment-line"></i>
+        </div>
+        <h3 style="font-size: 1.1rem; margin-bottom: var(--space-sm); font-weight: 700;">File Management</h3>
+        <p style="font-size: 0.85rem;">Upload files, coordinate documents, connect attachments to tasks, and fetch workspace links easily.</p>
+      </div>
+
+      <!-- Feature 5 -->
+      <div class="feature-card card-hover">
+        <div class="feature-icon-box purple">
+          <i class="ri-bill-line"></i>
+        </div>
+        <h3 style="font-size: 1.1rem; margin-bottom: var(--space-sm); font-weight: 700;">Invoice Tracking</h3>
+        <p style="font-size: 0.85rem;">Generate invoices, assign billing clients, record tax, updates paid statuses, and review histories.</p>
+      </div>
+
+      <!-- Feature 6 -->
+      <div class="feature-card card-hover">
+        <div class="feature-icon-box cyan">
+          <i class="ri-bar-chart-box-line"></i>
+        </div>
+        <h3 style="font-size: 1.1rem; margin-bottom: var(--space-sm); font-weight: 700;">Analytics Dashboard</h3>
+        <p style="font-size: 0.85rem;">View active timelines, aggregate billing volumes, task statistics, and review productivity charts.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section (Navy Dark block matching mockup bottom-left) -->
+  <section id="how-it-works" class="steps-section">
+    <div class="steps-connector-line"></div>
+    <h2 class="steps-title">Simple Steps to Get Started</h2>
+    
+    <div class="steps-grid">
+      <!-- Step 1 -->
+      <div class="step-item">
+        <div class="step-icon-circle">
+          <i class="ri-user-add-line"></i>
+        </div>
+        <h3 class="step-title" style="font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; color: #ffffff;">01. Sign Up</h3>
+        <p class="step-desc">Create your account in seconds.</p>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="step-item">
+        <div class="step-icon-circle">
+          <i class="ri-contacts-line"></i>
+        </div>
+        <h3 class="step-title" style="font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; color: #ffffff;">02. Add Clients</h3>
+        <p class="step-desc">Add your clients and their details.</p>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="step-item">
+        <div class="step-icon-circle">
+          <i class="ri-folder-add-line"></i>
+        </div>
+        <h3 class="step-title" style="font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; color: #ffffff;">03. Create Projects</h3>
+        <p class="step-desc">Create projects and assign tasks.</p>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="step-item">
+        <div class="step-icon-circle">
+          <i class="ri-trophy-line"></i>
+        </div>
+        <h3 class="step-title" style="font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; color: #ffffff;">04. Track & Deliver</h3>
+        <p class="step-desc">Track progress and deliver on time.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Script Imports -->
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    // Modify navbar controls based on login state
+    window.addEventListener("DOMContentLoaded", () => {
+      const authLinks = document.getElementById("auth-nav-links");
+      if (auth.isAuthenticated()) {
+        const user = auth.getCurrentUser();
+        const userName = user ? user.full_name.split(" ")[0] : "Account";
+        authLinks.innerHTML = `
+          <a href="dashboard.html" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+            <i class="ri-layout-grid-line"></i> Dashboard (${userName})
+          </a>
+          <button onclick="auth.logout()" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+            Logout
+          </button>
+        `;
+      }
+    });
+  </script>
+</body>
+</html>

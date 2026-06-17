@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Overview - CreateFlowX</title>
+  
+  <!-- Remix Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet"/>
+  
+  <!-- CSS Styling Files -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css?v=2">
+  <link rel="stylesheet" href="css/layouts.css">
+  
+  <style>
+    /* Dashboard Mockup Specific Adjustments */
+    .chart-legend {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+    }
+
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .deadline-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+
+    .deadline-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+    }
+
+    .deadline-title {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .deadline-days {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .activity-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+
+    .activity-item {
+      display: flex;
+      gap: var(--space-sm);
+      align-items: flex-start;
+      font-size: 0.82rem;
+    }
+
+    .activity-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--bg-tertiary);
+      font-size: 0.8rem;
+      flex-shrink: 0;
+    }
+
+    .due-today-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+
+    .project-mini-card {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+      padding: var(--space-sm);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      background-color: var(--bg-primary);
+    }
+
+    /* Mini side-by-side widget stack */
+    .analytics-stack {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Route Guards -->
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/notifications.js"></script>
+  <script>
+    // Enforce dashboard route protection
+    auth.guardRoute();
+  </script>
+
+  <div class="dashboard-layout">
+    <!-- Left Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <!-- SVG Logo -->
+        <svg width="24" height="24" viewBox="0 0 200 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M70 15 C35 15, 15 35, 15 50 C15 65, 35 85, 70 85 L90 85 L90 73 L70 73 C45 73, 30 63, 30 50 C30 37, 45 27, 70 27 L90 27 L90 15 Z" fill="url(#dbLogoBlue)" />
+          <path d="M85 35 L120 35 L120 47 L97 47 L97 55 L115 55 L115 65 L97 65 L97 85 L85 85 Z" fill="url(#dbLogoBlue)" />
+          <path d="M125 15 L140 15 L168 52 L195 15 L210 15 L175 62 L175 85 L162 85 L162 62 Z" fill="url(#dbLogoPurple)" />
+          <defs>
+            <linearGradient id="dbLogoBlue" x1="15" y1="15" x2="120" y2="85" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#00f2fe" />
+              <stop offset="100%" stop-color="#0082ff" />
+            </linearGradient>
+            <linearGradient id="dbLogoPurple" x1="125" y1="15" x2="210" y2="85" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#7b2cbf" />
+              <stop offset="100%" stop-color="#c77dff" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <span style="font-weight: 800;">Create<span class="text-gradient-blue">Flow</span><span class="text-gradient-purple">X</span></span>
+      </div>
+
+      <nav class="sidebar-menu">
+        <a href="dashboard.html" class="sidebar-link active"><i class="ri-layout-grid-line"></i> <span>Dashboard</span></a>
+        <a href="clients.html" class="sidebar-link"><i class="ri-user-star-line"></i> <span>Clients</span></a>
+        <a href="projects.html" class="sidebar-link"><i class="ri-folders-line"></i> <span>Projects</span></a>
+        <a href="tasks.html" class="sidebar-link"><i class="ri-task-line"></i> <span>Tasks</span></a>
+        <a href="calendar.html" class="sidebar-link"><i class="ri-calendar-event-line"></i> <span>Calendar</span></a>
+        <a href="notifications.html" class="sidebar-link"><i class="ri-notification-3-line"></i> <span>Notifications</span></a>
+        <a class="sidebar-link"><i class="ri-attachment-line"></i> <span>Files</span></a>
+        <a class="sidebar-link"><i class="ri-bill-line"></i> <span>Invoices</span></a>
+        <a class="sidebar-link"><i class="ri-bar-chart-box-line"></i> <span>Analytics</span></a>
+        <a class="sidebar-link"><i class="ri-time-line"></i> <span>Activity</span></a>
+        <a class="sidebar-link"><i class="ri-settings-4-line"></i> <span>Settings</span></a>
+      </nav>
+
+      <!-- Sidebar User Footer -->
+      <div class="sidebar-footer">
+        <a onclick="auth.logout()" class="sidebar-link" style="color: var(--text-muted); margin-bottom: var(--space-sm);">
+          <i class="ri-logout-box-r-line"></i> <span>Log out</span>
+        </a>
+        <div class="user-profile-widget">
+          <div class="user-avatar" id="avatar-char">P</div>
+          <div class="user-info">
+            <div class="user-name" id="user-display-name">Pooja Sharma</div>
+            <div class="user-role" id="user-display-role">Freelancer</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Dashboard Top Header Bar -->
+      <header class="dashboard-header">
+        <div class="dashboard-top-nav">
+          <!-- Search input matching layout -->
+          <div class="search-wrapper">
+            <i class="ri-search-line"></i>
+            <input type="text" class="form-control" placeholder="Search anything...          Ctrl + /">
+          </div>
+        </div>
+        
+        <div style="display: flex; align-items: center; gap: var(--space-md);">
+          <button class="theme-toggle" onclick="auth.toggleTheme()" aria-label="Toggle theme">
+            <i class="ri-sun-line"></i>
+          </button>
+          
+          <!-- Notifications Bell & Dropdown Wrapper -->
+          <div class="notifications-wrapper" id="notifications-topbar-wrapper">
+            <button class="notifications-bell-btn" id="notifications-bell-btn" aria-label="Notifications">
+              <i class="ri-notification-2-line"></i>
+              <span class="notifications-badge" id="notifications-unread-count" style="display: none;">0</span>
+            </button>
+            <div class="notifications-dropdown" id="notifications-dropdown">
+              <div class="notifications-dropdown-header">
+                <h4>Notifications</h4>
+                <a href="#" id="mark-all-read-btn" onclick="notificationsManager.markAllRead(event)">Mark all as read</a>
+              </div>
+              <ul class="notifications-dropdown-list" id="notifications-dropdown-list">
+                <!-- Dynamically populated -->
+              </ul>
+              <div class="notifications-dropdown-footer">
+                <a href="notifications.html">View all notifications</a>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Right Header Avatar Widget -->
+          <div class="user-profile-header">
+            <div class="user-avatar" id="header-avatar-char" style="width: 32px; height: 32px; font-size: 0.85rem; flex-shrink: 0;">P</div>
+            <div style="text-align: left;">
+              <div style="font-size: 0.85rem; font-weight: 600;" id="header-user-name">Pooja Sharma</div>
+              <div style="font-size: 0.7rem; color: var(--text-muted);" id="header-user-role">Freelancer</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Dashboard Contents -->
+      <div class="dashboard-body">
+        <!-- Welcome Greeting -->
+        <div>
+          <h1 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 2px;">Good Morning, <span id="welcome-name">Pooja</span>! 👋</h1>
+          <p style="font-size: 0.85rem; color: var(--text-secondary);">Here's what's happening with your projects today.</p>
+        </div>
+
+        <!-- Row 1: Metrics Cards (Grid of Six) -->
+        <div class="grid-six">
+          <div class="card">
+            <span class="text-muted" style="font-size: 0.78rem; font-weight: 600;">Total Projects</span>
+            <div class="metric-value" id="dashboard-total-projects">0</div>
+            <div class="metric-change positive" style="font-size: 0.75rem; font-weight: 600; margin-top: 4px;">
+              <span style="background-color: rgba(16, 185, 129, 0.1); padding: 2px 6px; border-radius: 4px;">Live Projects count</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <span class="text-muted" style="font-size: 0.78rem; font-weight: 600;">Active Projects</span>
+            <div class="metric-value" id="dashboard-active-projects">0</div>
+            <div class="metric-change positive" style="font-size: 0.75rem; font-weight: 600; margin-top: 4px;">
+              <span style="background-color: rgba(16, 185, 129, 0.1); padding: 2px 6px; border-radius: 4px;">In Progress status</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <span class="text-muted" style="font-size: 0.78rem; font-weight: 600;">Pending Tasks</span>
+            <div class="metric-value" id="dashboard-pending-tasks">0</div>
+            <div class="metric-change negative" style="font-size: 0.75rem; font-weight: 600; margin-top: 4px;">
+              <span style="background-color: rgba(79, 70, 229, 0.08); padding: 2px 6px; border-radius: 4px; color: var(--accent-color);">Total: <span id="dashboard-total-tasks">0</span></span>
+            </div>
+          </div>
+
+          <div class="card">
+            <span class="text-muted" style="font-size: 0.78rem; font-weight: 600;">Completed Tasks</span>
+            <div class="metric-value" id="dashboard-completed-tasks">0</div>
+            <div class="metric-change positive" style="font-size: 0.75rem; font-weight: 600; margin-top: 4px;">
+              <span style="background-color: rgba(239, 68, 68, 0.08); padding: 2px 6px; border-radius: 4px; color: #ef4444;">Overdue: <span id="dashboard-overdue-tasks">0</span></span>
+            </div>
+          </div>
+
+          <div class="card">
+            <span class="text-muted" style="font-size: 0.78rem; font-weight: 600;">Upcoming Deadlines</span>
+            <div class="metric-value" id="dashboard-upcoming-deadlines-count">0</div>
+            <div class="text-secondary" style="font-size: 0.75rem; margin-top: 6px;">Next milestones</div>
+          </div>
+
+          <div class="card" style="border-color: rgba(79, 70, 229, 0.15); background-color: rgba(79, 70, 229, 0.01);">
+            <span class="text-muted" style="font-size: 0.78rem; font-weight: 600;">Revenue</span>
+            <div class="metric-value" style="color: #4f46e5;">₹1,25,000</div>
+            <div class="text-secondary" style="font-size: 0.75rem; margin-top: 6px;">Across 5 invoices</div>
+          </div>
+        </div>
+
+        <!-- Row 2: Overviews (Projects donut, Tasks bar, Deadlines list) -->
+        <div class="grid-three">
+          <!-- Projects Overview (Doughnut Chart) -->
+          <div class="card">
+            <h2 class="section-title" style="margin-bottom: var(--space-md);">Projects Overview</h2>
+            <div style="display: flex; align-items: center; gap: var(--space-md); justify-content: center; height: 140px;">
+              <!-- Pure CSS/SVG Doughnut Chart -->
+              <div style="position: relative; width: 100px; height: 100px; flex-shrink: 0;">
+                <svg width="100%" height="100%" viewBox="0 0 42 42" class="donut">
+                  <circle class="donut-ring" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="var(--border-color)" stroke-width="4"></circle>
+                  <!-- Active: 10/24 (41.6%) -->
+                  <circle class="donut-segment" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#3b82f6" stroke-width="5" stroke-dasharray="41.6 58.4" stroke-dashoffset="25"></circle>
+                  <!-- Completed: 8/24 (33.3%) -->
+                  <circle class="donut-segment" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#10b981" stroke-width="5" stroke-dasharray="33.3 66.7" stroke-dashoffset="83.4"></circle>
+                  <!-- On Hold: 4/24 (16.6%) -->
+                  <circle class="donut-segment" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#f59e0b" stroke-width="5" stroke-dasharray="16.6 83.4" stroke-dashoffset="50.1"></circle>
+                  <!-- Not Started: 2/24 (8.3%) -->
+                  <circle class="donut-segment" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#94a3b8" stroke-width="5" stroke-dasharray="8.3 91.7" stroke-dashoffset="33.5"></circle>
+                </svg>
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+                  <div style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary);">24</div>
+                  <div style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600;">Total</div>
+                </div>
+              </div>
+              
+              <div class="chart-legend">
+                <div class="legend-item"><span class="legend-dot" style="background-color: #3b82f6;"></span> <span>10 Active</span></div>
+                <div class="legend-item"><span class="legend-dot" style="background-color: #10b981;"></span> <span>8 Completed</span></div>
+                <div class="legend-item"><span class="legend-dot" style="background-color: #f59e0b;"></span> <span>4 On Hold</span></div>
+                <div class="legend-item"><span class="legend-dot" style="background-color: #94a3b8;"></span> <span>2 Not Started</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tasks Overview (Bar Graph) -->
+          <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md);">
+              <h2 class="section-title">Tasks Overview</h2>
+              <span style="font-size: 0.75rem; color: var(--text-secondary); background-color: var(--bg-tertiary); padding: 2px 8px; border-radius: 4px;">This Week <i class="ri-arrow-down-s-line"></i></span>
+            </div>
+            <!-- SVG Bar Graph -->
+            <div style="height: 140px; display: flex; align-items: flex-end; justify-content: space-between; padding-top: var(--space-sm);">
+              <!-- Mon -->
+              <div style="display: flex; flex-direction: column; align-items: center; flex: 1; gap: 4px;">
+                <div style="width: 8px; height: 70px; background-color: #4f46e5; border-radius: 4px 4px 0 0;"></div>
+                <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600;">Mon</span>
+              </div>
+              <!-- Tue -->
+              <div style="display: flex; flex-direction: column; align-items: center; flex: 1; gap: 4px;">
+                <div style="width: 8px; height: 95px; background-color: #4f46e5; border-radius: 4px 4px 0 0;"></div>
+                <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600;">Tue</span>
+              </div>
+              <!-- Wed -->
+              <div style="display: flex; flex-direction: column; align-items: center; flex: 1; gap: 4px;">
+                <div style="width: 8px; height: 40px; background-color: #4f46e5; border-radius: 4px 4px 0 0;"></div>
+                <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600;">Wed</span>
+              </div>
+              <!-- Thu -->
+              <div style="display: flex; flex-direction: column; align-items: center; flex: 1; gap: 4px;">
+                <div style="width: 8px; height: 80px; background-color: #4f46e5; border-radius: 4px 4px 0 0;"></div>
+                <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600;">Thu</span>
+              </div>
+              <!-- Fri -->
+              <div style="display: flex; flex-direction: column; align-items: center; flex: 1; gap: 4px;">
+                <div style="width: 8px; height: 110px; background-color: #4f46e5; border-radius: 4px 4px 0 0;"></div>
+                <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600;">Fri</span>
+              </div>
+              <!-- Sat -->
+              <div style="display: flex; flex-direction: column; align-items: center; flex: 1; gap: 4px;">
+                <div style="width: 8px; height: 60px; background-color: #4f46e5; border-radius: 4px 4px 0 0;"></div>
+                <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600;">Sat</span>
+              </div>
+              <!-- Sun -->
+              <div style="display: flex; flex-direction: column; align-items: center; flex: 1; gap: 4px;">
+                <div style="width: 8px; height: 90px; background-color: #4f46e5; border-radius: 4px 4px 0 0;"></div>
+                <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600;">Sun</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Upcoming Deadlines -->
+          <div class="card">
+            <h2 class="section-title" style="margin-bottom: var(--space-md);">Upcoming Deadlines</h2>
+            <div class="deadline-list" id="dashboard-deadline-list">
+              <!-- Rendered dynamically -->
+            </div>
+            <a href="projects.html" style="display: block; font-size: 0.78rem; text-align: center; margin-top: var(--space-sm); font-weight: 600;">View Projects</a>
+          </div>
+        </div>
+
+        <!-- Row 3: Activities, Checklists, Progress Cards -->
+        <div class="grid-three">
+          <!-- Recent Activity -->
+          <div class="card">
+            <h2 class="section-title" style="margin-bottom: var(--space-md);">Recent Activity</h2>
+            <div class="activity-list">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+
+          <!-- Due Today (Interactive Checkbox List) -->
+          <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md);">
+              <h2 class="section-title">Due Today</h2>
+              <button class="btn btn-outline" style="padding: 2px 8px; font-size: 0.7rem;">View All</button>
+            </div>
+            
+            <div class="due-today-list" id="dashboard-due-today-list">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+
+          <!-- Projects Completion Widgets -->
+          <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md);">
+              <h2 class="section-title">Projects</h2>
+              <button class="btn btn-primary" style="padding: 4px 10px; font-size: 0.7rem;" onclick="location.href='projects.html'"><i class="ri-add-line"></i> Create Project</button>
+            </div>
+            
+            <div id="dashboard-projects-list" style="display: flex; flex-direction: column; gap: var(--space-sm);">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 4: Tasks Table + Calendar -->
+        <div class="grid-split-2-1">
+          <!-- Tasks Table Panel -->
+          <div class="card" style="padding: var(--space-lg);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md);">
+              <h2 class="section-title">Tasks</h2>
+              <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.78rem;"><i class="ri-add-line"></i> Add Task</button>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs" id="dashboard-tasks-tabs">
+              <button class="tab-btn active" onclick="switchDashboardTasksTab('', this)">All Tasks</button>
+              <button class="tab-btn" onclick="switchDashboardTasksTab('To Do', this)">To Do</button>
+              <button class="tab-btn" onclick="switchDashboardTasksTab('In Progress', this)">In Progress</button>
+              <button class="tab-btn" onclick="switchDashboardTasksTab('Completed', this)">Completed</button>
+            </div>
+
+            <!-- Table -->
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Task</th>
+                    <th>Project</th>
+                    <th>Due Date</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="dashboard-tasks-table-body">
+                  <!-- Rendered dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Calendar Widget -->
+          <div class="card" style="padding: var(--space-md);">
+            <div class="calendar-widget">
+              <div class="calendar-header">
+                <h3 style="font-size: 0.9rem; font-weight: 700;" id="dash-mini-cal-title">June 2026</h3>
+                <div style="display: flex; gap: 4px; align-items: center;">
+                  <button class="btn btn-outline" style="padding: 2px 6px; font-size: 0.7rem;" onclick="navigateMiniCal(-1)"><i class="ri-arrow-left-s-line"></i></button>
+                  <button class="btn btn-outline" style="padding: 2px 6px; font-size: 0.7rem;" onclick="navigateMiniCal(1)"><i class="ri-arrow-right-s-line"></i></button>
+                </div>
+              </div>
+              
+              <!-- Month Week Grid -->
+              <div class="calendar-grid" id="dash-mini-calendar-grid">
+                <!-- Rendered dynamically -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 5: Invoices Table + Analytics Stack -->
+        <div class="grid-split-2-1">
+          <!-- Invoices Table Card -->
+          <div class="card" style="padding: var(--space-lg);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md);">
+              <h2 class="section-title">Invoices</h2>
+              <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.78rem;"><i class="ri-add-line"></i> New Invoice</button>
+            </div>
+
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Invoice ID</th>
+                    <th>Client</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Due Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>INV-001</strong></td>
+                    <td class="text-secondary">ABC Cafe</td>
+                    <td><strong>₹12,000</strong></td>
+                    <td><span class="badge badge-done">Paid</span></td>
+                    <td class="text-secondary">10 Jun 2026</td>
+                  </tr>
+                  <tr>
+                    <td><strong>INV-002</strong></td>
+                    <td class="text-secondary">XYZ Startup</td>
+                    <td><strong>₹8,000</strong></td>
+                    <td><span class="badge badge-priority-medium">Pending</span></td>
+                    <td class="text-secondary">25 Jun 2026</td>
+                  </tr>
+                  <tr>
+                    <td><strong>INV-003</strong></td>
+                    <td class="text-secondary">FitLife Studio</td>
+                    <td><strong>₹15,000</strong></td>
+                    <td><span class="badge badge-priority-high">Overdue</span></td>
+                    <td class="text-secondary">15 Jun 2026</td>
+                  </tr>
+                  <tr>
+                    <td><strong>INV-004</strong></td>
+                    <td class="text-secondary">Pooja Beauty</td>
+                    <td><strong>₹10,000</strong></td>
+                    <td><span class="badge badge-priority-medium">Pending</span></td>
+                    <td class="text-secondary">01 Jul 2026</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Analytics Stack -->
+          <div class="analytics-stack">
+            <!-- Mini Analytics Graph Card -->
+            <div class="card">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md);">
+                <h2 class="section-title">Analytics</h2>
+                <span style="font-size: 0.75rem; color: var(--text-secondary); background-color: var(--bg-tertiary); padding: 2px 8px; border-radius: 4px;">This Month <i class="ri-arrow-down-s-line"></i></span>
+              </div>
+              
+              <!-- Mini Stats Grid -->
+              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-sm); text-align: center; margin-bottom: var(--space-md);">
+                <div>
+                  <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">Tasks</div>
+                  <strong style="font-size: 1rem;">68</strong>
+                </div>
+                <div>
+                  <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">Completed</div>
+                  <strong style="font-size: 1rem; color: #10b981;">32</strong>
+                </div>
+                <div>
+                  <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">Overdue</div>
+                  <strong style="font-size: 1rem; color: #ef4444;">6</strong>
+                </div>
+              </div>
+
+              <!-- Line Graph Revenue Overview (SVG path matching visual) -->
+              <div style="height: 100px; width: 100%; position: relative; margin-top: var(--space-md);">
+                <div style="position: absolute; top: 0; left: 0; font-size: 0.7rem; color: var(--text-muted); font-weight: 600;">Revenue Overview</div>
+                <div style="position: absolute; top: 0; right: 0; font-size: 0.78rem; font-weight: 700; color: #4f46e5;">₹1,25,000</div>
+                <svg viewBox="0 0 100 30" width="100%" height="80%" preserveAspectRatio="none" style="margin-top: 15px;">
+                  <defs>
+                    <linearGradient id="lineGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="rgba(79, 70, 229, 0.2)" />
+                      <stop offset="100%" stop-color="rgba(79, 70, 229, 0.0)" />
+                    </linearGradient>
+                  </defs>
+                  <!-- Filled Area -->
+                  <path d="M0,25 Q15,22 30,18 T60,10 T85,5 T100,2 L100,30 L0,30 Z" fill="url(#lineGrad)" />
+                  <!-- Trending Line -->
+                  <path d="M0,25 Q15,22 30,18 T60,10 T85,5 T100,2" fill="none" stroke="#4f46e5" stroke-width="1.5" />
+                  <!-- Dots -->
+                  <circle cx="30" cy="18" r="1.2" fill="#4f46e5" />
+                  <circle cx="60" cy="10" r="1.2" fill="#4f46e5" />
+                  <circle cx="85" cy="5" r="1.2" fill="#4f46e5" />
+                  <circle cx="100" cy="2" r="1.2" fill="#4f46e5" />
+                </svg>
+                <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--text-muted); margin-top: 2px;">
+                  <span>Week 1</span>
+                  <span>Week 2</span>
+                  <span>Week 3</span>
+                  <span>Week 4</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Activity Timeline Widget -->
+            <div class="card">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md);">
+                <h2 class="section-title">Activity Timeline</h2>
+                <a href="#" style="font-size: 0.75rem; font-weight: 600;">View All</a>
+              </div>
+              
+              <div class="activity-list" style="gap: var(--space-sm);">
+                <div class="activity-item">
+                  <span style="font-size: 0.7rem; color: var(--text-muted); width: 60px; font-weight: 600;">10:30 AM</span>
+                  <div style="flex: 1;">
+                    <strong style="color: var(--text-primary);">Task 'Homepage Design' completed</strong>
+                    <div style="font-size: 0.7rem; color: var(--text-muted);">Website Redesign</div>
+                  </div>
+                </div>
+                <div class="activity-item">
+                  <span style="font-size: 0.7rem; color: var(--text-muted); width: 60px; font-weight: 600;">11:15 AM</span>
+                  <div style="flex: 1;">
+                    <strong style="color: var(--text-primary);">Invoice INV-001 marked as paid</strong>
+                    <div style="font-size: 0.7rem; color: var(--text-muted);">ABC Cafe</div>
+                  </div>
+                </div>
+                <div class="activity-item">
+                  <span style="font-size: 0.7rem; color: var(--text-muted); width: 60px; font-weight: 600;">12:00 PM</span>
+                  <div style="flex: 1;">
+                    <strong style="color: var(--text-primary);">New file 'logo.png' uploaded</strong>
+                    <div style="font-size: 0.7rem; color: var(--text-muted);">Logo Design</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Load dynamic creator data from Session cache
+    window.addEventListener("DOMContentLoaded", () => {
+      const user = auth.getCurrentUser();
+      if (user) {
+        const fallbackName = user.full_name || "Pooja Sharma";
+        const roleStr = user.role === "admin" ? "Platform Admin" : "Freelancer";
+        
+        // Update name strings
+        document.getElementById("user-display-name").textContent = fallbackName;
+        document.getElementById("header-user-name").textContent = fallbackName;
+        document.getElementById("welcome-name").textContent = fallbackName.split(" ")[0];
+        
+        // Update roles
+        document.getElementById("user-display-role").textContent = roleStr;
+        document.getElementById("header-user-role").textContent = roleStr;
+
+        // Avatar letter
+        const firstLetter = fallbackName.charAt(0).toUpperCase();
+        document.getElementById("avatar-char").textContent = firstLetter;
+        document.getElementById("header-avatar-char").textContent = firstLetter;
+      }
+      
+      loadDashboardProjectsData();
+      loadDashboardTasks();
+      loadMiniCalEvents();
+      loadRecentActivity();
+    });
+
+    /**
+     * Load recent activities dynamically from notifications API
+     */
+    async function loadRecentActivity() {
+      const activityList = document.querySelector(".activity-list");
+      if (!activityList) return;
+
+      try {
+        activityList.innerHTML = `
+          <div class="flex-center" style="padding: var(--space-md);">
+            <div class="spinner" style="border-top-color: var(--accent-color); width: 1.5rem; height: 1.5rem;"></div>
+          </div>
+        `;
+        const data = await api.get("/notifications/?notification_type=activity_logs&limit=5");
+        activityList.innerHTML = "";
+
+        if (data.length === 0) {
+          activityList.innerHTML = `
+            <div style="font-size: 0.8rem; color: var(--text-muted); text-align: center; padding: var(--space-md);">
+              No recent activity.
+            </div>
+          `;
+          return;
+        }
+
+        data.forEach(act => {
+          let icon = "ri-notification-line";
+          let color = "var(--text-muted)";
+          if (act.notification_type === "client_added") {
+            icon = "ri-user-add-line";
+            color = "#10b981";
+          } else if (act.notification_type === "project_created") {
+            icon = "ri-folders-line";
+            color = "#3b82f6";
+          } else if (act.notification_type === "project_completed") {
+            icon = "ri-checkbox-circle-line";
+            color = "#10b981";
+          } else if (act.notification_type === "task_created") {
+            icon = "ri-task-line";
+            color = "#8b5cf6";
+          } else if (act.notification_type === "task_completed") {
+            icon = "ri-checkbox-circle-line";
+            color = "#10b981";
+          }
+
+          // Relative time using the formatTime helper from notificationsManager
+          const time = notificationsManager.formatTime(act.created_at);
+
+          activityList.innerHTML += `
+            <div class="activity-item">
+              <div class="activity-icon" style="color: ${color};"><i class="${icon}"></i></div>
+              <div style="flex: 1;">
+                <strong style="color: var(--text-primary); font-size: 0.8rem;">${escapeHTML(act.title)}</strong>
+                <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 2px;">${escapeHTML(act.message)}</div>
+                <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 1px;">${time}</div>
+              </div>
+            </div>
+          `;
+        });
+      } catch (err) {
+        console.error("Failed to load dashboard activities:", err);
+        activityList.innerHTML = `
+          <div style="font-size: 0.8rem; color: var(--text-muted); text-align: center; padding: var(--space-md);">
+            Failed to load activity feed.
+          </div>
+        `;
+      }
+    }
+
+    // Global dashboard tasks state
+    let dashboardTasksList = [];
+    let miniCalDate = new Date();
+    let miniCalEvents = [];
+
+    /**
+     * Load dashboard statistics and projects dynamically from API
+     */
+    async function loadDashboardProjectsData() {
+      try {
+        // 1. Fetch project, task, and calendar stats
+        const stats = await api.get("/projects/stats");
+        const taskStats = await api.get("/tasks/stats");
+        const calDash = await api.get("/calendar/dashboard");
+        
+        // Populate metric counts
+        const totalProj = document.getElementById("dashboard-total-projects");
+        if (totalProj) totalProj.textContent = stats.total_projects;
+
+        const activeProj = document.getElementById("dashboard-active-projects");
+        if (activeProj) activeProj.textContent = stats.active_projects;
+
+        const pendingTasks = document.getElementById("dashboard-pending-tasks");
+        if (pendingTasks) pendingTasks.textContent = taskStats.pending_tasks;
+
+        const completedTasks = document.getElementById("dashboard-completed-tasks");
+        if (completedTasks) completedTasks.textContent = taskStats.completed_tasks;
+
+        const totalTasks = document.getElementById("dashboard-total-tasks");
+        if (totalTasks) totalTasks.textContent = taskStats.total_tasks;
+
+        const overdueTasks = document.getElementById("dashboard-overdue-tasks");
+        if (overdueTasks) overdueTasks.textContent = taskStats.overdue_tasks;
+
+        const countDeadlines = document.getElementById("dashboard-upcoming-deadlines-count");
+        if (countDeadlines) countDeadlines.textContent = calDash.upcoming_deadlines.length;
+
+        // Populate upcoming deadlines panels (Project & Task Milestones combined)
+        const deadlineList = document.getElementById("dashboard-deadline-list");
+        if (deadlineList) {
+          deadlineList.innerHTML = "";
+          if (calDash.upcoming_deadlines.length === 0) {
+            deadlineList.innerHTML = `
+              <div style="font-size: 0.8rem; color: var(--text-secondary); text-align: center; padding: var(--space-sm);">
+                No upcoming deadlines.
+              </div>
+            `;
+          } else {
+            calDash.upcoming_deadlines.forEach(t => {
+              const dlDate = new Date(t.deadline);
+              const formatted = dlDate.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+              
+              const today = new Date();
+              today.setHours(0,0,0,0);
+              const diffTime = dlDate - today;
+              const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+              
+              let daysLabel = "";
+              let badgeColor = "#3b82f6";
+              let badgeBg = "#eff6ff";
+              
+              if (diffDays < 0) {
+                daysLabel = "Overdue";
+                badgeColor = "#ef4444";
+                badgeBg = "#fef2f2";
+              } else if (diffDays === 0) {
+                daysLabel = "Today";
+                badgeColor = "#ef4444";
+                badgeBg = "#fef2f2";
+              } else if (diffDays === 1) {
+                daysLabel = "Tomorrow";
+                badgeColor = "#d97706";
+                badgeBg = "#fffbeb";
+              } else {
+                daysLabel = `${diffDays} days left`;
+                badgeColor = "#d97706";
+                badgeBg = "#fffbeb";
+              }
+
+              deadlineList.innerHTML += `
+                <div class="deadline-item" style="cursor: pointer;" onclick="location.href='tasks.html'">
+                  <span class="deadline-title" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 170px;" title="${escapeHTML(t.task_name)}">
+                    <i class="ri-checkbox-blank-circle-fill" style="font-size: 6px; color: ${badgeColor}; margin-right: 6px;"></i> ${escapeHTML(t.task_name)}
+                  </span>
+                  <span class="deadline-days" style="background-color: ${badgeBg}; color: ${badgeColor}; flex-shrink:0;">${daysLabel}</span>
+                </div>
+              `;
+            });
+          }
+        }
+
+        // 2. Fetch Projects list
+        const projects = await api.get("/projects/");
+        const projectsList = document.getElementById("dashboard-projects-list");
+        if (projectsList) {
+          projectsList.innerHTML = "";
+          if (projects.length === 0) {
+            projectsList.innerHTML = `
+              <div style="font-size: 0.8rem; color: var(--text-secondary); text-align: center; padding: var(--space-sm);">
+                No projects active.
+              </div>
+            `;
+          } else {
+            // Slice up to 3 projects
+            projects.slice(0, 3).forEach(p => {
+              let badgeClass = "badge-todo";
+              if (p.status === "In Progress") badgeClass = "badge-progress";
+              else if (p.status === "Completed") badgeClass = "badge-done";
+              else if (p.status === "On Hold") badgeClass = "badge-onhold";
+
+              let progressColor = "#ef4444";
+              if (p.progress >= 75) {
+                progressColor = "#10b981";
+              } else if (p.progress >= 35) {
+                progressColor = "#f59e0b";
+              }
+
+              projectsList.innerHTML += `
+                <div class="project-mini-card card-hover" style="cursor: pointer; margin-bottom: 2px;" onclick="location.href='projects.html'">
+                  <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+                    <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 180px;">
+                      <strong style="font-size: 0.85rem; color: var(--text-primary); display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHTML(p.project_name)}">${escapeHTML(p.project_name)}</strong>
+                      <div style="font-size: 0.7rem; color: var(--text-muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                        <i class="ri-user-star-line" style="font-size:0.65rem;"></i> ${p.client_name ? escapeHTML(p.client_name) : "Independent Client"}
+                      </div>
+                    </div>
+                    <span class="badge ${badgeClass}" style="font-size: 0.65rem; padding: 2px 6px; flex-shrink: 0;">${p.status}</span>
+                  </div>
+                  <div class="progress-container">
+                    <div class="progress-bar" style="height: 5px;">
+                      <div class="progress-fill" style="width: ${p.progress}%; background-color: ${progressColor};"></div>
+                    </div>
+                    <span class="progress-text" style="font-size: 0.7rem; font-weight:700;">${p.progress}%</span>
+                  </div>
+                </div>
+              `;
+            });
+          }
+        }
+
+        // 3. Populate Due Today Tasks List
+        const dueTodayContainer = document.getElementById("dashboard-due-today-list");
+        if (dueTodayContainer) {
+          dueTodayContainer.innerHTML = "";
+          if (calDash.today_tasks.length === 0) {
+            dueTodayContainer.innerHTML = `
+              <div style="font-size: 0.8rem; color: var(--text-muted); text-align: center; padding: var(--space-sm);">
+                No tasks due today.
+              </div>
+            `;
+          } else {
+            calDash.today_tasks.forEach(t => {
+              dueTodayContainer.innerHTML += `
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label class="checkbox-round-label" style="cursor: pointer;" onclick="toggleDashboardTaskCompleted(${t.original_id}, '${escapeQuote(t.title)}', ${t.project_id || 0})">
+                    <input type="checkbox" class="checkbox-round-input">
+                    <span class="checkbox-round"><i class="ri-check-line"></i></span>
+                    <div>
+                      <span class="checkbox-text" style="font-size: 0.85rem; font-weight: 600;">${escapeHTML(t.title)}</span>
+                      <div style="font-size: 0.7rem; color: var(--text-muted);">${escapeHTML(t.project_name)}</div>
+                    </div>
+                  </label>
+                </div>
+              `;
+            });
+          }
+        }
+
+      } catch (err) {
+        console.error("Dashboard data load failed:", err);
+      }
+    }
+
+    /**
+     * Toggles a dashboard task as completed
+     */
+    async function toggleDashboardTaskCompleted(taskId, title, projectId) {
+      try {
+        await api.put(`/tasks/${taskId}`, {
+          task_name: title,
+          project_id: projectId,
+          status: "Completed"
+        });
+        // Reload dashboard widgets
+        loadDashboardProjectsData();
+        loadDashboardTasks();
+        loadMiniCalEvents();
+      } catch (err) {
+        alert("Failed to complete task: " + err.message);
+      }
+    }
+
+    /**
+     * Load tasks table dynamic listing
+     */
+    async function loadDashboardTasks() {
+      try {
+        dashboardTasksList = await api.get("/tasks/");
+        renderDashboardTasksTable("");
+      } catch (err) {
+        console.error("Failed to load dashboard tasks table:", err);
+      }
+    }
+
+    function renderDashboardTasksTable(filterStatus) {
+      const tbody = document.getElementById("dashboard-tasks-table-body");
+      if (!tbody) return;
+      tbody.innerHTML = "";
+      
+      let filtered = dashboardTasksList;
+      if (filterStatus) {
+        filtered = dashboardTasksList.filter(t => t.status === filterStatus);
+      }
+      
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted); font-size:0.8rem; padding:var(--space-md);">No tasks found in this tab.</td></tr>`;
+        return;
+      }
+      
+      filtered.slice(0, 5).forEach(t => {
+        let priorityClass = "badge-priority-low";
+        if (t.priority === "High") priorityClass = "badge-priority-high";
+        else if (t.priority === "Medium") priorityClass = "badge-priority-medium";
+        
+        let statusClass = "badge-todo";
+        if (t.status === "In Progress") statusClass = "badge-progress";
+        else if (t.status === "Completed") statusClass = "badge-done";
+        else if (t.status === "On Hold") statusClass = "badge-onhold";
+        
+        let dueHTML = "No deadline";
+        if (t.deadline) {
+          const dl = new Date(t.deadline);
+          dueHTML = dl.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+          const today = new Date();
+          today.setHours(0,0,0,0);
+          if (dl < today && t.status !== "Completed") {
+            dueHTML = `<span style="color:#ef4444; font-weight:700;">Overdue</span>`;
+          }
+        }
+        
+        tbody.innerHTML += `
+          <tr style="cursor:pointer;" onclick="location.href='tasks.html'">
+            <td><strong>${escapeHTML(t.task_name)}</strong></td>
+            <td class="text-secondary">${escapeHTML(t.project_name)}</td>
+            <td class="text-secondary">${dueHTML}</td>
+            <td><span class="badge ${priorityClass}">${t.priority}</span></td>
+            <td><span class="badge ${statusClass}">${t.status}</span></td>
+          </tr>
+        `;
+      });
+    }
+
+    function switchDashboardTasksTab(status, btn) {
+      const btns = document.querySelectorAll("#dashboard-tasks-tabs .tab-btn");
+      btns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      renderDashboardTasksTable(status);
+    }
+
+    /**
+     * Load Mini Calendar Widget dynamic events
+     */
+    async function loadMiniCalEvents() {
+      try {
+        miniCalEvents = await api.get("/calendar/events");
+        renderMiniCalendar();
+      } catch (err) {
+        console.error("Failed to load mini calendar events:", err);
+      }
+    }
+
+    function renderMiniCalendar() {
+      const grid = document.getElementById("dash-mini-calendar-grid");
+      if (!grid) return;
+      grid.innerHTML = "";
+      
+      const headers = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      headers.forEach(h => {
+        const div = document.createElement("div");
+        div.className = "calendar-day-header";
+        div.textContent = h;
+        grid.appendChild(div);
+      });
+      
+      const year = miniCalDate.getFullYear();
+      const month = miniCalDate.getMonth();
+      
+      const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      document.getElementById("dash-mini-cal-title").textContent = `${monthNames[month]} ${year}`;
+      
+      const firstDay = new Date(year, month, 1);
+      let startDayIndex = firstDay.getDay() - 1;
+      if (startDayIndex === -1) startDayIndex = 6;
+      
+      const totalDays = new Date(year, month + 1, 0).getDate();
+      const prevTotalDays = new Date(year, month, 0).getDate();
+      
+      const today = new Date();
+      today.setHours(0,0,0,0);
+      
+      for (let i = startDayIndex - 1; i >= 0; i--) {
+        const day = prevTotalDays - i;
+        const div = document.createElement("div");
+        div.className = "calendar-cell filler";
+        div.style.opacity = "0.4";
+        div.innerHTML = `<span class="calendar-day-number">${day}</span>`;
+        grid.appendChild(div);
+      }
+      
+      for (let day = 1; day <= totalDays; day++) {
+        const cellDate = new Date(year, month, day);
+        cellDate.setHours(0,0,0,0);
+        
+        const isToday = cellDate.getTime() === today.getTime();
+        
+        const div = document.createElement("div");
+        div.className = "calendar-cell";
+        if (isToday) {
+          div.style.backgroundColor = "rgba(79, 70, 229, 0.04)";
+          div.innerHTML = `<span class="calendar-day-number" style="background-color: var(--accent-color); color: white; display: inline-flex; width:16px; height:16px; border-radius:50%; align-items:center; justify-content:center; font-size:0.65rem; font-weight:700;">${day}</span>`;
+        } else {
+          div.innerHTML = `<span class="calendar-day-number">${day}</span>`;
+        }
+        
+        const dateStr = getISOStringDateOnly(cellDate);
+        const eventsOnDay = miniCalEvents.filter(ev => ev.deadline === dateStr);
+        
+        if (eventsOnDay.length > 0) {
+          const dotsContainer = document.createElement("div");
+          dotsContainer.style.display = "flex";
+          dotsContainer.style.gap = "2px";
+          dotsContainer.style.justifyContent = "center";
+          dotsContainer.style.marginTop = "2px";
+          
+          eventsOnDay.forEach(ev => {
+            const dot = document.createElement("span");
+            dot.style.width = "4px";
+            dot.style.height = "4px";
+            dot.style.borderRadius = "50%";
+            
+            let dotColor = "#3b82f6";
+            if (ev.event_type === "task") {
+              dotColor = "#9333ea";
+            }
+            
+            const isCompleted = ev.status === "Completed";
+            const isOverdue = !isCompleted && new Date(ev.deadline) < new Date().setHours(0,0,0,0);
+            
+            if (isCompleted) {
+              dotColor = "#10b981";
+            } else if (isOverdue) {
+              dotColor = "#ef4444";
+            }
+            
+            dot.style.backgroundColor = dotColor;
+            dot.title = ev.title;
+            dotsContainer.appendChild(dot);
+          });
+          
+          div.appendChild(dotsContainer);
+        }
+        
+        div.style.cursor = "pointer";
+        div.onclick = () => {
+          location.href = "calendar.html";
+        };
+        
+        grid.appendChild(div);
+      }
+      
+      const totalCells = startDayIndex + totalDays;
+      const nextFiller = 35 - totalCells > 0 ? 35 - totalCells : 42 - totalCells;
+      for (let day = 1; day <= nextFiller; day++) {
+        const div = document.createElement("div");
+        div.className = "calendar-cell filler";
+        div.style.opacity = "0.4";
+        div.innerHTML = `<span class="calendar-day-number">${day}</span>`;
+        grid.appendChild(div);
+      }
+    }
+
+    function navigateMiniCal(offset) {
+      miniCalDate.setMonth(miniCalDate.getMonth() + offset);
+      renderMiniCalendar();
+    }
+
+    function getISOStringDateOnly(d) {
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    function escapeQuote(str) {
+      return str.replace(/'/g, "\\'");
+    }
+
+    /**
+     * Escape special HTML chars to prevent script insertions
+     */
+    function escapeHTML(str) {
+      return str.replace(/[&<>'"]/g, 
+        tag => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          "'": '&#39;',
+          '"': '&quot;'
+        }[tag] || tag)
+      );
+    }
+  </script>
+</body>
+</html>

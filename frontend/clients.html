@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Client Management - CreateFlowX</title>
+  
+  <!-- Remix Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet"/>
+  
+  <!-- CSS Styling Files -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css?v=2">
+  <link rel="stylesheet" href="css/layouts.css">
+  
+  <style>
+    /* Client View Specific Adjustments */
+    .clients-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: var(--space-lg);
+    }
+
+    .client-card {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      min-height: 200px;
+    }
+
+    .client-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: var(--space-md);
+    }
+
+    .client-card-body {
+      flex: 1;
+      margin-bottom: var(--space-md);
+    }
+
+    .client-card-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--space-sm);
+      border-top: 1px solid var(--border-color);
+      padding-top: var(--space-sm);
+    }
+
+    /* Modal dialog styling overrides */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(15, 23, 42, 0.4);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--transition-normal);
+    }
+
+    .modal-backdrop.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-content {
+      width: 100%;
+      max-width: 500px;
+      transform: translateY(20px);
+      transition: transform var(--transition-normal);
+    }
+
+    .modal-backdrop.active .modal-content {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-lg);
+    }
+
+    .modal-close-btn {
+      background: none;
+      border: none;
+      font-size: 1.25rem;
+      cursor: pointer;
+      color: var(--text-secondary);
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--space-sm);
+      margin-top: var(--space-lg);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Route Guard -->
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/notifications.js"></script>
+  <script>
+    // Enforce dashboard route protection
+    auth.guardRoute();
+  </script>
+
+  <div class="dashboard-layout">
+    <!-- Left Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <!-- SVG Logo -->
+        <svg width="24" height="24" viewBox="0 0 200 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M70 15 C35 15, 15 35, 15 50 C15 65, 35 85, 70 85 L90 85 L90 73 L70 73 C45 73, 30 63, 30 50 C30 37, 45 27, 70 27 L90 27 L90 15 Z" fill="url(#dbLogoBlue)" />
+          <path d="M85 35 L120 35 L120 47 L97 47 L97 55 L115 55 L115 65 L97 65 L97 85 L85 85 Z" fill="url(#dbLogoBlue)" />
+          <path d="M125 15 L140 15 L168 52 L195 15 L210 15 L175 62 L175 85 L162 85 L162 62 Z" fill="url(#dbLogoPurple)" />
+          <defs>
+            <linearGradient id="dbLogoBlue" x1="15" y1="15" x2="120" y2="85" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#00f2fe" />
+              <stop offset="100%" stop-color="#0082ff" />
+            </linearGradient>
+            <linearGradient id="dbLogoPurple" x1="125" y1="15" x2="210" y2="85" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#7b2cbf" />
+              <stop offset="100%" stop-color="#c77dff" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <span style="font-weight: 800;">Create<span class="text-gradient-blue">Flow</span><span class="text-gradient-purple">X</span></span>
+      </div>
+
+      <nav class="sidebar-menu">
+        <a href="dashboard.html" class="sidebar-link"><i class="ri-layout-grid-line"></i> <span>Dashboard</span></a>
+        <a href="clients.html" class="sidebar-link active"><i class="ri-user-star-line"></i> <span>Clients</span></a>
+        <a href="projects.html" class="sidebar-link"><i class="ri-folders-line"></i> <span>Projects</span></a>
+        <a href="tasks.html" class="sidebar-link"><i class="ri-task-line"></i> <span>Tasks</span></a>
+        <a href="calendar.html" class="sidebar-link"><i class="ri-calendar-event-line"></i> <span>Calendar</span></a>
+        <a href="notifications.html" class="sidebar-link"><i class="ri-notification-3-line"></i> <span>Notifications</span></a>
+        <a class="sidebar-link"><i class="ri-attachment-line"></i> <span>Files</span></a>
+        <a class="sidebar-link"><i class="ri-bill-line"></i> <span>Invoices</span></a>
+        <a class="sidebar-link"><i class="ri-bar-chart-box-line"></i> <span>Analytics</span></a>
+        <a class="sidebar-link"><i class="ri-time-line"></i> <span>Activity</span></a>
+        <a class="sidebar-link"><i class="ri-settings-4-line"></i> <span>Settings</span></a>
+      </nav>
+
+      <!-- Sidebar User Footer -->
+      <div class="sidebar-footer">
+        <a onclick="auth.logout()" class="sidebar-link" style="color: var(--text-muted); margin-bottom: var(--space-sm);">
+          <i class="ri-logout-box-r-line"></i> <span>Log out</span>
+        </a>
+        <div class="user-profile-widget">
+          <div class="user-avatar" id="avatar-char">U</div>
+          <div class="user-info">
+            <div class="user-name" id="user-display-name">Loading User...</div>
+            <div class="user-role" id="user-display-role">Freelancer</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Top Header Bar -->
+      <header class="dashboard-header">
+        <div class="dashboard-top-nav">
+          <div class="search-wrapper">
+            <i class="ri-search-line"></i>
+            <input type="text" class="form-control" id="sidebar-search" placeholder="Search anything...          Ctrl + /">
+          </div>
+        </div>
+        
+        <div style="display: flex; align-items: center; gap: var(--space-md);">
+          <button class="theme-toggle" onclick="auth.toggleTheme()" aria-label="Toggle theme">
+            <i class="ri-sun-line"></i>
+          </button>
+          
+          <!-- Notifications Bell & Dropdown Wrapper -->
+          <div class="notifications-wrapper" id="notifications-topbar-wrapper">
+            <button class="notifications-bell-btn" id="notifications-bell-btn" aria-label="Notifications">
+              <i class="ri-notification-2-line"></i>
+              <span class="notifications-badge" id="notifications-unread-count" style="display: none;">0</span>
+            </button>
+            <div class="notifications-dropdown" id="notifications-dropdown">
+              <div class="notifications-dropdown-header">
+                <h4>Notifications</h4>
+                <a href="#" id="mark-all-read-btn" onclick="notificationsManager.markAllRead(event)">Mark all as read</a>
+              </div>
+              <ul class="notifications-dropdown-list" id="notifications-dropdown-list">
+                <!-- Dynamically populated -->
+              </ul>
+              <div class="notifications-dropdown-footer">
+                <a href="notifications.html">View all notifications</a>
+              </div>
+            </div>
+          </div>
+          
+          <div class="user-profile-header">
+            <div class="user-avatar" id="header-avatar-char" style="width: 32px; height: 32px; font-size: 0.85rem; flex-shrink: 0;">U</div>
+            <div style="text-align: left;">
+              <div style="font-size: 0.85rem; font-weight: 600;" id="header-user-name">Loading...</div>
+              <div style="font-size: 0.7rem; color: var(--text-muted);" id="header-user-role">Creator</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Dashboard Contents -->
+      <div class="dashboard-body">
+        
+        <!-- Welcome Greetings -->
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h1 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 2px;">Client Directory</h1>
+            <p style="font-size: 0.85rem; color: var(--text-secondary);">Manage and lookup contact details for your clients.</p>
+          </div>
+          <button class="btn btn-primary" onclick="openAddModal()"><i class="ri-user-add-line"></i> Add Client</button>
+        </div>
+
+        <!-- Filter / Search Section -->
+        <div class="card" style="padding: var(--space-sm) var(--space-md); display: flex; justify-content: space-between; align-items: center; gap: var(--space-md); flex-wrap: wrap;">
+          <div style="display: flex; align-items: center; gap: var(--space-sm); color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">
+            <i class="ri-group-line" style="color: var(--accent-color);"></i>
+            <span>Clients Total: <span id="clients-count" style="color: var(--text-primary);">0</span></span>
+          </div>
+
+          <!-- Dynamic search inside cards -->
+          <div class="search-wrapper" style="max-width: 280px; width: 100%;">
+            <i class="ri-search-line"></i>
+            <input type="text" class="form-control" id="clients-search-input" placeholder="Search by name or company..." oninput="handleSearch()">
+          </div>
+        </div>
+
+        <!-- Alerts -->
+        <div id="clients-alert" class="alert alert-danger hidden">
+          <i class="ri-error-warning-line"></i>
+          <span id="clients-alert-msg"></span>
+        </div>
+
+        <!-- Loader Spinner -->
+        <div id="clients-loader" class="flex-center" style="padding: var(--space-2xl);">
+          <div class="spinner" style="border-top-color: var(--accent-color); width: 2.5rem; height: 2.5rem;"></div>
+        </div>
+
+        <!-- Grid of Client Cards -->
+        <div class="clients-grid hidden" id="clients-grid-container">
+          <!-- Populated dynamically via JS -->
+        </div>
+
+        <!-- Empty State View -->
+        <div class="card glass-panel flex-center hidden" id="clients-empty-view" style="flex-direction: column; padding: var(--space-3xl); text-align: center;">
+          <div class="feature-icon-box purple" style="width: 56px; height: 56px; font-size: 1.75rem; margin-bottom: var(--space-md);">
+            <i class="ri-user-shared-line"></i>
+          </div>
+          <h2 style="font-size: 1.25rem; margin-bottom: var(--space-xs);">No clients found</h2>
+          <p class="text-muted" style="max-width: 400px; margin-bottom: var(--space-md);">Get started by adding your first client contact to your workflow directory.</p>
+          <button class="btn btn-primary" onclick="openAddModal()"><i class="ri-user-add-line"></i> Add Client</button>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Add / Edit Client Modal Overlay -->
+  <div class="modal-backdrop" id="client-modal">
+    <div class="card modal-content" style="padding: var(--space-lg);">
+      <div class="modal-header">
+        <h3 id="modal-title" style="font-size: 1.15rem; font-weight: 700;">Add Client</h3>
+        <button class="modal-close-btn" onclick="closeModal()"><i class="ri-close-line"></i></button>
+      </div>
+      
+      <form id="client-form" onsubmit="handleFormSubmit(event)">
+        <input type="hidden" id="modal-client-id">
+        
+        <div class="form-group">
+          <label class="form-label" for="client_name">Client Name *</label>
+          <input type="text" id="client_name" class="form-control" placeholder="Jane Doe" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="company_name">Company Name</label>
+          <input type="text" id="company_name" class="form-control" placeholder="Acme Corporation">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="notes">Notes / Contact Details</label>
+          <textarea id="notes" class="form-control" rows="4" placeholder="Email: jane@acme.com, Phone: +1 555-1234. Requiring monthly project updates." style="resize: vertical; font-family: var(--font-body);"></textarea>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeModal()">Cancel</button>
+          <button type="submit" id="modal-save-btn" class="btn btn-primary">
+            <span>Save Client</span>
+            <div id="modal-spinner" class="spinner hidden"></div>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Client Details Modal Overlay -->
+  <div class="modal-backdrop" id="details-modal">
+    <div class="card modal-content" style="padding: var(--space-lg); max-width: 550px;">
+      <div class="modal-header" style="margin-bottom: var(--space-md);">
+        <h3 style="font-size: 1.15rem; font-weight: 700;">Client Details</h3>
+        <button class="modal-close-btn" onclick="closeDetailsModal()"><i class="ri-close-line"></i></button>
+      </div>
+
+      <div style="display: flex; gap: var(--space-md); align-items: center; margin-bottom: var(--space-lg); padding-bottom: var(--space-md); border-bottom: 1px solid var(--border-color);">
+        <div class="user-avatar" style="width: 48px; height: 48px; font-size: 1.25rem;" id="details-avatar">C</div>
+        <div>
+          <h2 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 2px;" id="details-name">Name</h2>
+          <span style="font-size: 0.85rem; color: var(--accent-color); font-weight: 600;" id="details-company">Company</span>
+        </div>
+      </div>
+
+      <div style="margin-bottom: var(--space-lg);">
+        <h4 style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); margin-bottom: var(--space-xs);">Notes & Workspace Parameters</h4>
+        <div id="details-notes" style="background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: var(--space-md); font-size: 0.9rem; min-height: 80px; white-space: pre-wrap; color: var(--text-primary);">No notes recorded.</div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--text-muted); border-top: 1px solid var(--border-color); padding-top: var(--space-md);">
+        <span>Date Added: <span id="details-created">June 16, 2026</span></span>
+        <span>Last Updated: <span id="details-updated">June 16, 2026</span></span>
+      </div>
+
+      <div class="modal-footer" style="margin-top: var(--space-lg);">
+        <button class="btn btn-secondary" onclick="closeDetailsModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Script Files -->
+  <script>
+    // Initialize user profile widget
+    window.addEventListener("DOMContentLoaded", () => {
+      const user = auth.getCurrentUser();
+      if (user) {
+        const fallbackName = user.full_name || "Creator Workspace";
+        const roleStr = user.role === "admin" ? "Platform Admin" : "Freelancer";
+        
+        const userDispName = document.getElementById("user-display-name");
+        if (userDispName) userDispName.textContent = fallbackName;
+        
+        const headerDispName = document.getElementById("header-user-name");
+        if (headerDispName) headerDispName.textContent = fallbackName;
+        
+        const welcomeDispName = document.getElementById("welcome-name");
+        if (welcomeDispName) welcomeDispName.textContent = fallbackName.split(" ")[0];
+        
+        const userDispRole = document.getElementById("user-display-role");
+        if (userDispRole) userDispRole.textContent = roleStr;
+        
+        const headerDispRole = document.getElementById("header-user-role");
+        if (headerDispRole) headerDispRole.textContent = roleStr;
+
+        const firstLetter = fallbackName.charAt(0).toUpperCase();
+        
+        const avatarChar = document.getElementById("avatar-char");
+        if (avatarChar) avatarChar.textContent = firstLetter;
+        
+        const headerAvatarChar = document.getElementById("header-avatar-char");
+        if (headerAvatarChar) headerAvatarChar.textContent = firstLetter;
+      }
+      
+      // Fetch clients on page load
+      loadClients();
+    });
+
+    let clients = [];
+    let searchTimeout = null;
+
+    /**
+     * Fetch client list from FastAPI server
+     */
+    async function loadClients(searchQuery = "") {
+      const grid = document.getElementById("clients-grid-container");
+      const emptyView = document.getElementById("clients-empty-view");
+      const loader = document.getElementById("clients-loader");
+      const alertBox = document.getElementById("clients-alert");
+      
+      loader.classList.remove("hidden");
+      grid.classList.add("hidden");
+      emptyView.classList.add("hidden");
+      alertBox.classList.add("hidden");
+
+      try {
+        let endpoint = "/clients";
+        if (searchQuery) {
+          endpoint += `?search=${encodeURIComponent(searchQuery)}`;
+        }
+        
+        clients = await api.get(endpoint);
+        
+        // Populate counts
+        document.getElementById("clients-count").textContent = clients.length;
+        
+        if (clients.length === 0) {
+          emptyView.classList.remove("hidden");
+        } else {
+          renderClientCards(clients);
+          grid.classList.remove("hidden");
+        }
+      } catch (err) {
+        document.getElementById("clients-alert-msg").textContent = err.message || "Failed to load clients.";
+        alertBox.classList.remove("hidden");
+      } finally {
+        loader.classList.add("hidden");
+      }
+    }
+
+    /**
+     * Map client items array into HTML Grid Card structures
+     */
+    function renderClientCards(clientList) {
+      const grid = document.getElementById("clients-grid-container");
+      grid.innerHTML = "";
+      
+      clientList.forEach(c => {
+        const firstLetter = c.client_name.charAt(0).toUpperCase();
+        const cleanNotes = c.notes ? c.notes : "No custom notes recorded.";
+        
+        const card = document.createElement("div");
+        card.className = "card client-card card-hover";
+        card.innerHTML = `
+          <div class="client-card-header">
+            <div style="display: flex; gap: var(--space-sm); align-items: center;">
+              <div class="user-avatar" style="width: 38px; height: 38px; font-size: 1rem; flex-shrink:0;">${firstLetter}</div>
+              <div>
+                <strong style="font-size: 0.95rem; color: var(--text-primary); display:block;">${escapeHTML(c.client_name)}</strong>
+                <span style="font-size: 0.78rem; color: var(--accent-color); font-weight:600;">${c.company_name ? escapeHTML(c.company_name) : "Independent Client"}</span>
+              </div>
+            </div>
+          </div>
+          <div class="client-card-body">
+            <p style="font-size: 0.8rem; line-height: 1.4; color: var(--text-secondary); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; margin:0;">
+              ${escapeHTML(cleanNotes)}
+            </p>
+          </div>
+          <div class="client-card-footer">
+            <button class="btn btn-outline" style="padding: 4px 10px; font-size: 0.75rem;" onclick="viewClientDetails(${c.id})" title="Details">
+              <i class="ri-eye-line"></i> View
+            </button>
+            <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.75rem;" onclick="openEditModal(${c.id})" title="Edit">
+              <i class="ri-edit-line"></i> Edit
+            </button>
+            <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.75rem; color: #ef4444; border-color: rgba(239, 68, 68, 0.1);" onclick="deleteClient(${c.id})" title="Delete">
+              <i class="ri-delete-bin-line"></i> Delete
+            </button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    /**
+     * Trigger search actions dynamically with timeout debounce
+     */
+    function handleSearch() {
+      clearTimeout(searchTimeout);
+      const val = document.getElementById("clients-search-input").value;
+      searchTimeout = setTimeout(() => {
+        loadClients(val);
+      }, 300);
+    }
+
+    // Modal triggers
+    function openAddModal() {
+      document.getElementById("client-form").reset();
+      document.getElementById("modal-client-id").value = "";
+      document.getElementById("modal-title").textContent = "Add Client";
+      document.getElementById("client-modal").classList.add("active");
+    }
+
+    function openEditModal(clientId) {
+      const client = clients.find(c => c.id === clientId);
+      if (!client) return;
+      
+      document.getElementById("modal-client-id").value = client.id;
+      document.getElementById("client_name").value = client.client_name;
+      document.getElementById("company_name").value = client.company_name || "";
+      document.getElementById("notes").value = client.notes || "";
+      
+      document.getElementById("modal-title").textContent = "Edit Client";
+      document.getElementById("client-modal").classList.add("active");
+    }
+
+    function closeModal() {
+      document.getElementById("client-modal").classList.remove("active");
+    }
+
+    /**
+     * Handles Form submissions (CRUD Save / Edit updates)
+     */
+    async function handleFormSubmit(event) {
+      event.preventDefault();
+      
+      const clientId = document.getElementById("modal-client-id").value;
+      const clientName = document.getElementById("client_name").value;
+      const companyName = document.getElementById("company_name").value;
+      const notes = document.getElementById("notes").value;
+      
+      const modalBtn = document.getElementById("modal-save-btn");
+      const spinner = document.getElementById("modal-spinner");
+      
+      modalBtn.disabled = true;
+      spinner.classList.remove("hidden");
+      
+      const clientPayload = {
+        client_name: clientName,
+        company_name: companyName ? companyName : null,
+        notes: notes ? notes : null
+      };
+
+      try {
+        if (clientId) {
+          // Edit operation
+          await api.put(`/clients/${clientId}`, clientPayload);
+        } else {
+          // Create operation
+          await api.post("/clients/", clientPayload);
+        }
+        
+        closeModal();
+        loadClients(document.getElementById("clients-search-input").value);
+      } catch (err) {
+        alert("Operation failed: " + err.message);
+      } finally {
+        modalBtn.disabled = false;
+        spinner.classList.add("hidden");
+      }
+    }
+
+    /**
+     * Displays a client's details modal
+     */
+    async function viewClientDetails(clientId) {
+      try {
+        const client = await api.get(`/clients/${clientId}`);
+        
+        document.getElementById("details-name").textContent = client.client_name;
+        document.getElementById("details-company").textContent = client.company_name ? client.company_name : "Independent Client";
+        document.getElementById("details-notes").textContent = client.notes ? client.notes : "No custom notes recorded.";
+        document.getElementById("details-avatar").textContent = client.client_name.charAt(0).toUpperCase();
+        
+        // Parse dates
+        const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+        const createdDate = new Date(client.created_at).toLocaleDateString(undefined, options);
+        const updatedDate = new Date(client.updated_at).toLocaleDateString(undefined, options);
+        
+        document.getElementById("details-created").textContent = createdDate;
+        document.getElementById("details-updated").textContent = updatedDate;
+        
+        document.getElementById("details-modal").classList.add("active");
+      } catch (err) {
+        alert("Failed to load details: " + err.message);
+      }
+    }
+
+    function closeDetailsModal() {
+      document.getElementById("details-modal").classList.remove("active");
+    }
+
+    /**
+     * Delete Client check
+     */
+    async function deleteClient(clientId) {
+      const client = clients.find(c => c.id === clientId);
+      if (!client) return;
+      
+      const confirmDelete = confirm(`Are you sure you want to delete client "${client.client_name}"? This will permanently remove them from your workflow.`);
+      if (!confirmDelete) return;
+
+      try {
+        await api.delete(`/clients/${clientId}`);
+        loadClients(document.getElementById("clients-search-input").value);
+      } catch (err) {
+        alert("Failed to delete client: " + err.message);
+      }
+    }
+
+    /**
+     * Simple HTML tag escaping to prevent rendering XSS inputs
+     */
+    function escapeHTML(str) {
+      return str.replace(/[&<>'"]/g, 
+        tag => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          "'": '&#39;',
+          '"': '&quot;'
+        }[tag] || tag)
+      );
+    }
+  </script>
+</body>
+</html>

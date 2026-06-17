@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notifications Hub - CreateFlowX</title>
+  
+  <!-- Remix Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet"/>
+  
+  <!-- CSS Styling Files -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css?v=2">
+  <link rel="stylesheet" href="css/layouts.css">
+  
+  <style>
+    /* Notifications Hub Specific Styles */
+    .notif-container {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+
+    .notif-card {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      display: flex;
+      gap: var(--space-md);
+      transition: all var(--transition-fast);
+      align-items: flex-start;
+      position: relative;
+    }
+
+    .notif-card.unread {
+      border-left: 4px solid var(--accent-color);
+      background-color: rgba(79, 70, 229, 0.01);
+    }
+
+    [data-theme="dark"] .notif-card.unread {
+      background-color: rgba(99, 102, 241, 0.02);
+    }
+
+    .notif-card:hover {
+      border-color: var(--border-hover);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .notif-icon-box {
+      width: 42px;
+      height: 42px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    .notif-content {
+      flex: 1;
+    }
+
+    .notif-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: var(--space-md);
+      margin-bottom: var(--space-xs);
+    }
+
+    .notif-title {
+      font-weight: 700;
+      color: var(--text-primary);
+      font-size: 0.95rem;
+      margin: 0;
+    }
+
+    .notif-time {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .notif-desc {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      line-height: 1.5;
+      margin-bottom: var(--space-sm);
+    }
+
+    .notif-actions {
+      display: flex;
+      gap: var(--space-sm);
+    }
+
+    .notif-btn-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-tertiary);
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .notif-btn-circle:hover {
+      background-color: var(--border-hover);
+      color: var(--text-primary);
+      border-color: var(--text-secondary);
+    }
+
+    .notif-btn-circle.btn-delete:hover {
+      background-color: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border-color: rgba(239, 68, 68, 0.2);
+    }
+
+    .notif-badge-type {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+      display: inline-block;
+      margin-top: 4px;
+    }
+
+    .badge-client { background-color: rgba(16, 185, 129, 0.1); color: #10b981; }
+    .badge-project { background-color: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+    .badge-task { background-color: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
+    .badge-alert { background-color: rgba(239, 68, 68, 0.1); color: #ef4444; }
+  </style>
+</head>
+<body>
+
+  <!-- Route Guard -->
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/notifications.js"></script>
+  <script>
+    // Enforce dashboard route protection
+    auth.guardRoute();
+  </script>
+
+  <div class="dashboard-layout">
+    <!-- Left Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <!-- SVG Logo -->
+        <svg width="24" height="24" viewBox="0 0 200 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M70 15 C35 15, 15 35, 15 50 C15 65, 35 85, 70 85 L90 85 L90 73 L70 73 C45 73, 30 63, 30 50 C30 37, 45 27, 70 27 L90 27 L90 15 Z" fill="url(#dbLogoBlue)" />
+          <path d="M85 35 L120 35 L120 47 L97 47 L97 55 L115 55 L115 65 L97 65 L97 85 L85 85 Z" fill="url(#dbLogoBlue)" />
+          <path d="M125 15 L140 15 L168 52 L195 15 L210 15 L175 62 L175 85 L162 85 L162 62 Z" fill="url(#dbLogoPurple)" />
+          <defs>
+            <linearGradient id="dbLogoBlue" x1="15" y1="15" x2="120" y2="85" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#00f2fe" />
+              <stop offset="100%" stop-color="#0082ff" />
+            </linearGradient>
+            <linearGradient id="dbLogoPurple" x1="125" y1="15" x2="210" y2="85" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#7b2cbf" />
+              <stop offset="100%" stop-color="#c77dff" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <span style="font-weight: 800;">Create<span class="text-gradient-blue">Flow</span><span class="text-gradient-purple">X</span></span>
+      </div>
+
+      <nav class="sidebar-menu">
+        <a href="dashboard.html" class="sidebar-link"><i class="ri-layout-grid-line"></i> <span>Dashboard</span></a>
+        <a href="clients.html" class="sidebar-link"><i class="ri-user-star-line"></i> <span>Clients</span></a>
+        <a href="projects.html" class="sidebar-link"><i class="ri-folders-line"></i> <span>Projects</span></a>
+        <a href="tasks.html" class="sidebar-link"><i class="ri-task-line"></i> <span>Tasks</span></a>
+        <a href="calendar.html" class="sidebar-link"><i class="ri-calendar-event-line"></i> <span>Calendar</span></a>
+        <a href="notifications.html" class="sidebar-link active"><i class="ri-notification-3-line"></i> <span>Notifications</span></a>
+        <a class="sidebar-link"><i class="ri-attachment-line"></i> <span>Files</span></a>
+        <a class="sidebar-link"><i class="ri-bill-line"></i> <span>Invoices</span></a>
+        <a class="sidebar-link"><i class="ri-bar-chart-box-line"></i> <span>Analytics</span></a>
+        <a class="sidebar-link"><i class="ri-time-line"></i> <span>Activity</span></a>
+        <a class="sidebar-link"><i class="ri-settings-4-line"></i> <span>Settings</span></a>
+      </nav>
+
+      <!-- Sidebar User Footer -->
+      <div class="sidebar-footer">
+        <a onclick="auth.logout()" class="sidebar-link" style="color: var(--text-muted); margin-bottom: var(--space-sm);">
+          <i class="ri-logout-box-r-line"></i> <span>Log out</span>
+        </a>
+        <div class="user-profile-widget">
+          <div class="user-avatar" id="avatar-char">U</div>
+          <div class="user-info">
+            <div class="user-name" id="user-display-name">Loading User...</div>
+            <div class="user-role" id="user-display-role">Freelancer</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Top Header Bar -->
+      <header class="dashboard-header">
+        <div class="dashboard-top-nav">
+          <div class="search-wrapper">
+            <i class="ri-search-line"></i>
+            <input type="text" class="form-control" id="sidebar-search" placeholder="Search anything...          Ctrl + /">
+          </div>
+        </div>
+        
+        <div style="display: flex; align-items: center; gap: var(--space-md);">
+          <button class="theme-toggle" onclick="auth.toggleTheme()" aria-label="Toggle theme">
+            <i class="ri-sun-line"></i>
+          </button>
+          
+          <!-- Notifications Bell & Dropdown Wrapper -->
+          <div class="notifications-wrapper" id="notifications-topbar-wrapper">
+            <button class="notifications-bell-btn" id="notifications-bell-btn" aria-label="Notifications">
+              <i class="ri-notification-2-line"></i>
+              <span class="notifications-badge" id="notifications-unread-count" style="display: none;">0</span>
+            </button>
+            <div class="notifications-dropdown" id="notifications-dropdown">
+              <div class="notifications-dropdown-header">
+                <h4>Notifications</h4>
+                <a href="#" id="mark-all-read-btn" onclick="notificationsManager.markAllRead(event)">Mark all as read</a>
+              </div>
+              <ul class="notifications-dropdown-list" id="notifications-dropdown-list">
+                <!-- Dynamically populated -->
+              </ul>
+              <div class="notifications-dropdown-footer">
+                <a href="notifications.html">View all notifications</a>
+              </div>
+            </div>
+          </div>
+          
+          <div class="user-profile-header">
+            <div class="user-avatar" id="header-avatar-char" style="width: 32px; height: 32px; font-size: 0.85rem; flex-shrink: 0;">U</div>
+            <div style="text-align: left;">
+              <div style="font-size: 0.85rem; font-weight: 600;" id="header-user-name">Loading...</div>
+              <div style="font-size: 0.7rem; color: var(--text-muted);" id="header-user-role">Creator</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Dashboard Contents -->
+      <div class="dashboard-body">
+        
+        <!-- Welcome Greetings -->
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h1 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 2px;">Notifications Center</h1>
+            <p style="font-size: 0.85rem; color: var(--text-secondary);">Track status alerts, system activities, and deadlines rules.</p>
+          </div>
+          <button class="btn btn-outline" onclick="markAllNotificationsAsRead()"><i class="ri-checkbox-double-line"></i> Mark All as Read</button>
+        </div>
+
+        <!-- Filter / Search Section -->
+        <div class="card" style="padding: var(--space-sm) var(--space-md); display: flex; justify-content: space-between; align-items: center; gap: var(--space-md); flex-wrap: wrap;">
+          <!-- Tabs Filters -->
+          <div class="tabs" id="notif-filters-tabs" style="margin-bottom: 0; border-bottom: none;">
+            <button class="tab-btn active" onclick="switchTab('all', this)">All</button>
+            <button class="tab-btn" onclick="switchTab('alerts', this)">Alerts</button>
+            <button class="tab-btn" onclick="switchTab('activities', this)">Activities</button>
+            <button class="tab-btn" onclick="switchTab('unread', this)">Unread</button>
+          </div>
+
+          <!-- Dynamic search inside notifications -->
+          <div class="search-wrapper" style="max-width: 280px; width: 100%;">
+            <i class="ri-search-line"></i>
+            <input type="text" class="form-control" id="notif-search-input" placeholder="Search notification details..." oninput="handleSearch()">
+          </div>
+        </div>
+
+        <!-- Alerts -->
+        <div id="notif-alert" class="alert alert-danger hidden">
+          <i class="ri-error-warning-line"></i>
+          <span id="notif-alert-msg"></span>
+        </div>
+
+        <!-- Loader Spinner -->
+        <div id="notif-loader" class="flex-center" style="padding: var(--space-2xl);">
+          <div class="spinner" style="border-top-color: var(--accent-color); width: 2.5rem; height: 2.5rem;"></div>
+        </div>
+
+        <!-- List of Notification Cards -->
+        <div class="notif-container hidden" id="notif-container">
+          <!-- Populated dynamically via JS -->
+        </div>
+
+        <!-- Empty State View -->
+        <div class="card glass-panel flex-center hidden" id="notif-empty-view" style="flex-direction: column; padding: var(--space-3xl); text-align: center;">
+          <div class="feature-icon-box purple" style="width: 56px; height: 56px; font-size: 1.75rem; margin-bottom: var(--space-md);">
+            <i class="ri-notification-line"></i>
+          </div>
+          <h2 style="font-size: 1.25rem; margin-bottom: var(--space-xs);">All caught up!</h2>
+          <p class="text-muted" style="max-width: 400px; margin-bottom: var(--space-md);">You have no notifications in this category.</p>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Client-side Page controller script -->
+  <script>
+    let activeFilter = "all"; // 'all', 'alerts', 'activities', 'unread'
+    let searchQuery = "";
+    let searchTimeout = null;
+
+    window.addEventListener("DOMContentLoaded", () => {
+      // Set Header User Profile widgets
+      const user = auth.getCurrentUser();
+      if (user) {
+        const fallbackName = user.full_name || "Workspace Creator";
+        const roleStr = user.role === "admin" ? "Platform Admin" : "Freelancer";
+        
+        document.getElementById("user-display-name").textContent = fallbackName;
+        document.getElementById("header-user-name").textContent = fallbackName;
+        document.getElementById("user-display-role").textContent = roleStr;
+        
+        const letter = fallbackName.charAt(0).toUpperCase();
+        document.getElementById("avatar-char").textContent = letter;
+        document.getElementById("header-avatar-char").textContent = letter;
+      }
+
+      loadNotifications();
+    });
+
+    /**
+     * Handles dynamic Tab selection transitions
+     */
+    function switchTab(filter, element) {
+      activeFilter = filter;
+      
+      const tabBtns = document.querySelectorAll("#notif-filters-tabs .tab-btn");
+      tabBtns.forEach(btn => btn.classList.remove("active"));
+      element.classList.add("active");
+
+      loadNotifications();
+    }
+
+    /**
+     * Debounces search triggers
+     */
+    function handleSearch() {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        searchQuery = document.getElementById("notif-search-input").value;
+        loadNotifications();
+      }, 250);
+    }
+
+    /**
+     * Fetch and render notifications list matching current filters
+     */
+    async function loadNotifications() {
+      const loader = document.getElementById("notif-loader");
+      const container = document.getElementById("notif-container");
+      const emptyView = document.getElementById("notif-empty-view");
+      const alertBox = document.getElementById("notif-alert");
+
+      loader.classList.remove("hidden");
+      container.classList.add("hidden");
+      emptyView.classList.add("hidden");
+      alertBox.classList.add("hidden");
+
+      try {
+        let endpoint = "/notifications/?";
+        const params = [];
+        
+        if (activeFilter === "unread") {
+          params.push("is_read=false");
+        } else if (activeFilter === "alerts") {
+          params.push("notification_type=alerts");
+        } else if (activeFilter === "activities") {
+          params.push("notification_type=activity_logs");
+        }
+
+        if (searchQuery.trim()) {
+          params.push(`search=${encodeURIComponent(searchQuery.trim())}`);
+        }
+
+        endpoint += params.join("&");
+        
+        const data = await api.get(endpoint);
+        container.innerHTML = "";
+
+        if (data.length === 0) {
+          emptyView.classList.remove("hidden");
+          return;
+        }
+
+        data.forEach(notif => {
+          const card = document.createElement("div");
+          card.className = `notif-card ${!notif.is_read ? 'unread' : ''}`;
+          
+          let icon = "ri-notification-line";
+          let iconBg = "icon-alert";
+          let badgeLabel = "Alert";
+          let badgeClass = "badge-alert";
+
+          const type = notif.notification_type;
+          if (type.includes("client")) {
+            icon = "ri-user-star-line";
+            iconBg = "icon-client";
+            badgeLabel = "Client";
+            badgeClass = "badge-client";
+          } else if (type.includes("project")) {
+            icon = "ri-folders-line";
+            iconBg = "icon-project";
+            badgeLabel = "Project";
+            badgeClass = "badge-project";
+          } else if (type.includes("task")) {
+            icon = "ri-task-line";
+            iconBg = "icon-task";
+            badgeLabel = "Task";
+            badgeClass = "badge-task";
+          }
+
+          const timeAgo = notificationsManager.formatTime(notif.created_at);
+
+          card.innerHTML = `
+            <div class="notif-icon-box ${iconBg}"><i class="${icon}"></i></div>
+            <div class="notif-content">
+              <div class="notif-header-row">
+                <div>
+                  <h3 class="notif-title">${escapeHTML(notif.title)}</h3>
+                  <span class="notif-badge-type ${badgeClass}">${badgeLabel}</span>
+                </div>
+                <div class="notif-time">${timeAgo}</div>
+              </div>
+              <p class="notif-desc">${escapeHTML(notif.message)}</p>
+              
+              <div class="notif-actions">
+                ${!notif.is_read ? `
+                  <button class="notif-btn-circle" title="Mark as read" onclick="toggleRead(${notif.id}, event)">
+                    <i class="ri-check-line"></i>
+                  </button>
+                ` : ''}
+                <button class="notif-btn-circle btn-delete" title="Delete notification" onclick="deleteNotification(${notif.id}, event)">
+                  <i class="ri-delete-bin-line"></i>
+                </button>
+              </div>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+
+        container.classList.remove("hidden");
+      } catch (err) {
+        alertBox.classList.remove("hidden");
+        document.getElementById("notif-alert-msg").textContent = "Failed to load notifications: " + err.message;
+      } finally {
+        loader.classList.add("hidden");
+      }
+    }
+
+    /**
+     * Mark single notification as read
+     */
+    async function toggleRead(id, event) {
+      if (event) event.stopPropagation();
+      try {
+        await api.put(`/notifications/${id}/read`);
+        
+        // Decrement unread counts and update badge globally
+        if (notificationsManager) {
+          notificationsManager.unreadCount = Math.max(0, notificationsManager.unreadCount - 1);
+          notificationsManager.updateBadge();
+        }
+        
+        loadNotifications();
+      } catch (err) {
+        alert("Failed to mark as read: " + err.message);
+      }
+    }
+
+    /**
+     * Bulk mark all as read
+     */
+    async function markAllNotificationsAsRead() {
+      try {
+        await api.put("/notifications/read-all");
+        
+        // Reset unread count globally
+        if (notificationsManager) {
+          notificationsManager.unreadCount = 0;
+          notificationsManager.updateBadge();
+        }
+        
+        loadNotifications();
+      } catch (err) {
+        alert("Failed to mark all notifications as read: " + err.message);
+      }
+    }
+
+    /**
+     * Delete notification
+     */
+    async function deleteNotification(id, event) {
+      if (event) event.stopPropagation();
+      try {
+        await api.delete(`/notifications/${id}`);
+        loadNotifications();
+        
+        // Refresh global unread count
+        if (notificationsManager) {
+          notificationsManager.fetchAndUpdate();
+        }
+      } catch (err) {
+        alert("Failed to delete notification: " + err.message);
+      }
+    }
+
+    /**
+     * Escapes HTML inputs
+     */
+    function escapeHTML(str) {
+      return str.replace(/[&<>'"]/g, 
+        tag => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          "'": '&#39;',
+          '"': '&quot;'
+        }[tag] || tag)
+      );
+    }
+  </script>
+</body>
+</html>

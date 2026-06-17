@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calendar Workspace - CreateFlowX</title>
+  
+  <!-- Remix Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet"/>
+  
+  <!-- CSS Styling Files -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css?v=2">
+  <link rel="stylesheet" href="css/layouts.css">
+  
+  <style>
+    /* Calendar Module Specific Styles */
+    .calendar-container {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+    }
+
+    .calendar-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--space-md);
+    }
+
+    .calendar-nav-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+    }
+
+    .calendar-view-toggle {
+      display: flex;
+      background-color: var(--bg-tertiary);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+    }
+
+    .view-btn {
+      background: none;
+      border: none;
+      padding: var(--space-xs) var(--space-md);
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      transition: all var(--transition-fast);
+    }
+
+    .view-btn.active {
+      background-color: var(--bg-secondary);
+      color: var(--accent-color);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Month View Grid */
+    .month-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      border-top: 1px solid var(--border-color);
+      border-left: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      background-color: var(--bg-secondary);
+    }
+
+    .grid-day-header {
+      background-color: var(--bg-tertiary);
+      text-align: center;
+      padding: var(--space-sm) var(--space-xs);
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-right: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .month-cell {
+      min-height: 120px;
+      padding: var(--space-xs);
+      border-right: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      position: relative;
+      background-color: var(--bg-secondary);
+      transition: background var(--transition-fast);
+    }
+
+    .month-cell:hover {
+      background-color: rgba(79, 70, 229, 0.01);
+    }
+
+    .month-cell.filler {
+      background-color: var(--bg-tertiary);
+      opacity: 0.55;
+    }
+
+    .month-cell.today {
+      background-color: rgba(79, 70, 229, 0.03);
+    }
+
+    .month-cell.today .day-number {
+      background-color: var(--accent-color);
+      color: white;
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      font-weight: 700;
+    }
+
+    .day-number {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: var(--space-xs);
+      align-self: flex-start;
+    }
+
+    /* Week View Layout */
+    .week-columns {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: var(--space-md);
+      min-height: 450px;
+    }
+
+    .week-column {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: var(--space-sm);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+      min-height: 100%;
+    }
+
+    .week-column.today {
+      border-color: var(--accent-color);
+      background-color: rgba(79, 70, 229, 0.01);
+    }
+
+    .week-column-header {
+      text-align: center;
+      padding-bottom: var(--space-xs);
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: var(--space-xs);
+    }
+
+    .week-day-name {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+    }
+
+    .week-day-date {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-top: 2px;
+    }
+
+    .week-column.today .week-day-date {
+      color: var(--accent-color);
+    }
+
+    /* Event Card Styles */
+    .cal-event-card {
+      padding: 6px 8px;
+      border-radius: 4px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      cursor: pointer;
+      line-height: 1.3;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      position: relative;
+      border-left: 3px solid transparent;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    .cal-event-card:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-sm);
+      z-index: 10;
+    }
+
+    /* Event Color Coding Rules */
+    .event-project {
+      background-color: rgba(59, 130, 246, 0.08);
+      color: #1d4ed8;
+      border-left-color: #3b82f6;
+    }
+    [data-theme="dark"] .event-project {
+      background-color: rgba(59, 130, 246, 0.15);
+      color: #93c5fd;
+    }
+
+    .event-task {
+      background-color: rgba(147, 51, 234, 0.08);
+      color: #7e22ce;
+      border-left-color: #9333ea;
+    }
+    [data-theme="dark"] .event-task {
+      background-color: rgba(147, 51, 234, 0.15);
+      color: #d8b4fe;
+    }
+
+    .event-completed {
+      background-color: rgba(16, 185, 129, 0.08);
+      color: #047857;
+      border-left-color: #10b981;
+      text-decoration: line-through;
+      opacity: 0.8;
+    }
+    [data-theme="dark"] .event-completed {
+      background-color: rgba(16, 185, 129, 0.15);
+      color: #6ee7b7;
+    }
+
+    .event-overdue {
+      background-color: rgba(239, 68, 68, 0.08);
+      color: #b91c1c;
+      border-left-color: #ef4444;
+      font-weight: 700;
+      animation: pulse-border 2s infinite;
+    }
+    [data-theme="dark"] .event-overdue {
+      background-color: rgba(239, 68, 68, 0.15);
+      color: #fca5a5;
+    }
+
+    @keyframes pulse-border {
+      0% { border-left-color: #ef4444; }
+      50% { border-left-color: rgba(239, 68, 68, 0.4); }
+      100% { border-left-color: #ef4444; }
+    }
+
+    /* Modal Backdrop Override */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(15, 23, 42, 0.4);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--transition-normal);
+    }
+
+    .modal-backdrop.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-content {
+      width: 100%;
+      max-width: 500px;
+      transform: translateY(20px);
+      transition: transform var(--transition-normal);
+    }
+
+    .modal-backdrop.active .modal-content {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-md);
+    }
+
+    .modal-close-btn {
+      background: none;
+      border: none;
+      font-size: 1.25rem;
+      cursor: pointer;
+      color: var(--text-secondary);
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--space-sm);
+      margin-top: var(--space-lg);
+    }
+
+    /* Tooltip styling */
+    .cal-tooltip {
+      position: absolute;
+      background-color: rgba(15, 23, 42, 0.95);
+      color: white;
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--radius-md);
+      font-size: 0.78rem;
+      z-index: 300;
+      pointer-events: none;
+      max-width: 240px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(8px);
+    }
+
+    .cal-tooltip-header {
+      font-weight: 700;
+      font-size: 0.82rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      padding-bottom: 4px;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .cal-tooltip-meta {
+      font-size: 0.72rem;
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    .cal-tooltip-meta strong {
+      color: white;
+    }
+
+    /* Responsive Grid fixes */
+    @media (max-width: 1024px) {
+      .week-columns {
+        grid-template-columns: 1fr;
+        gap: var(--space-md);
+      }
+      .week-column {
+        min-height: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Route Guard -->
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/notifications.js"></script>
+  <script>
+    auth.guardRoute();
+  </script>
+
+  <div class="dashboard-layout">
+    <!-- Left Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <!-- SVG Logo -->
+        <svg width="24" height="24" viewBox="0 0 200 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M70 15 C35 15, 15 35, 15 50 C15 65, 35 85, 70 85 L90 85 L90 73 L70 73 C45 73, 30 63, 30 50 C30 37, 45 27, 70 27 L90 27 L90 15 Z" fill="url(#dbLogoBlue)" />
+          <path d="M85 35 L120 35 L120 47 L97 47 L97 55 L115 55 L115 65 L97 65 L97 85 L85 85 Z" fill="url(#dbLogoBlue)" />
+          <path d="M125 15 L140 15 L168 52 L195 15 L210 15 L175 62 L175 85 L162 85 L162 62 Z" fill="url(#dbLogoPurple)" />
+          <defs>
+            <linearGradient id="dbLogoBlue" x1="15" y1="15" x2="120" y2="85" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#00f2fe" />
+              <stop offset="100%" stop-color="#0082ff" />
+            </linearGradient>
+            <linearGradient id="dbLogoPurple" x1="125" y1="15" x2="210" y2="85" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#7b2cbf" />
+              <stop offset="100%" stop-color="#c77dff" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <span style="font-weight: 800;">Create<span class="text-gradient-blue">Flow</span><span class="text-gradient-purple">X</span></span>
+      </div>
+
+      <nav class="sidebar-menu">
+        <a href="dashboard.html" class="sidebar-link"><i class="ri-layout-grid-line"></i> <span>Dashboard</span></a>
+        <a href="clients.html" class="sidebar-link"><i class="ri-user-star-line"></i> <span>Clients</span></a>
+        <a href="projects.html" class="sidebar-link"><i class="ri-folders-line"></i> <span>Projects</span></a>
+        <a href="tasks.html" class="sidebar-link"><i class="ri-task-line"></i> <span>Tasks</span></a>
+        <a href="calendar.html" class="sidebar-link active"><i class="ri-calendar-event-line"></i> <span>Calendar</span></a>
+        <a href="notifications.html" class="sidebar-link"><i class="ri-notification-3-line"></i> <span>Notifications</span></a>
+        <a class="sidebar-link"><i class="ri-attachment-line"></i> <span>Files</span></a>
+        <a class="sidebar-link"><i class="ri-bill-line"></i> <span>Invoices</span></a>
+        <a class="sidebar-link"><i class="ri-bar-chart-box-line"></i> <span>Analytics</span></a>
+        <a class="sidebar-link"><i class="ri-time-line"></i> <span>Activity</span></a>
+        <a class="sidebar-link"><i class="ri-settings-4-line"></i> <span>Settings</span></a>
+      </nav>
+
+      <!-- Sidebar User Footer -->
+      <div class="sidebar-footer">
+        <a onclick="auth.logout()" class="sidebar-link" style="color: var(--text-muted); margin-bottom: var(--space-sm);">
+          <i class="ri-logout-box-r-line"></i> <span>Log out</span>
+        </a>
+        <div class="user-profile-widget">
+          <div class="user-avatar" id="avatar-char">U</div>
+          <div class="user-info">
+            <div class="user-name" id="user-display-name">Loading User...</div>
+            <div class="user-role" id="user-display-role">Freelancer</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Top Header Bar -->
+      <header class="dashboard-header">
+        <div class="dashboard-top-nav">
+          <div class="search-wrapper">
+            <i class="ri-search-line"></i>
+            <input type="text" class="form-control" id="sidebar-search" placeholder="Search anything...          Ctrl + /">
+          </div>
+        </div>
+        
+        <div style="display: flex; align-items: center; gap: var(--space-md);">
+          <button class="theme-toggle" onclick="auth.toggleTheme()" aria-label="Toggle theme">
+            <i class="ri-sun-line"></i>
+          </button>
+          
+          <!-- Notifications Bell & Dropdown Wrapper -->
+          <div class="notifications-wrapper" id="notifications-topbar-wrapper">
+            <button class="notifications-bell-btn" id="notifications-bell-btn" aria-label="Notifications">
+              <i class="ri-notification-2-line"></i>
+              <span class="notifications-badge" id="notifications-unread-count" style="display: none;">0</span>
+            </button>
+            <div class="notifications-dropdown" id="notifications-dropdown">
+              <div class="notifications-dropdown-header">
+                <h4>Notifications</h4>
+                <a href="#" id="mark-all-read-btn" onclick="notificationsManager.markAllRead(event)">Mark all as read</a>
+              </div>
+              <ul class="notifications-dropdown-list" id="notifications-dropdown-list">
+                <!-- Dynamically populated -->
+              </ul>
+              <div class="notifications-dropdown-footer">
+                <a href="notifications.html">View all notifications</a>
+              </div>
+            </div>
+          </div>
+          
+          <div class="user-profile-header">
+            <div class="user-avatar" id="header-avatar-char" style="width: 32px; height: 32px; font-size: 0.85rem; flex-shrink: 0;">U</div>
+            <div style="text-align: left;">
+              <div style="font-size: 0.85rem; font-weight: 600;" id="header-user-name">Loading...</div>
+              <div style="font-size: 0.7rem; color: var(--text-muted);" id="header-user-role">Creator</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Dashboard Contents -->
+      <div class="dashboard-body">
+        
+        <!-- Page Title & Navigation -->
+        <div class="calendar-nav-row">
+          <div>
+            <h1 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 2px;">Calendar Workspace</h1>
+            <p style="font-size: 0.85rem; color: var(--text-secondary);">Visualize project deadlines and task milestones in a structured timeline.</p>
+          </div>
+          
+          <div style="display: flex; align-items: center; gap: var(--space-md); flex-wrap: wrap;">
+            <div class="calendar-view-toggle">
+              <button class="view-btn active" id="btn-month-view" onclick="switchView('month')">Month</button>
+              <button class="view-btn" id="btn-week-view" onclick="switchView('week')">Week</button>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: var(--space-xs);">
+              <button class="btn btn-outline" style="padding: var(--space-xs) var(--space-sm);" onclick="navigateCalendar(-1)"><i class="ri-arrow-left-s-line"></i></button>
+              <button class="btn btn-outline" style="padding: var(--space-xs) var(--space-md); font-size: 0.82rem; font-weight: 600;" onclick="navigateToToday()">Today</button>
+              <button class="btn btn-outline" style="padding: var(--space-xs) var(--space-sm);" onclick="navigateCalendar(1)"><i class="ri-arrow-right-s-line"></i></button>
+            </div>
+            
+            <h2 id="calendar-header-title" style="font-size: 1.15rem; font-weight: 800; min-width: 150px; margin: 0; text-align: right;">Loading Date...</h2>
+          </div>
+        </div>
+
+        <!-- Statistics Banner Bar -->
+        <div class="calendar-stats-grid">
+          <!-- Total Events Card -->
+          <div class="card" style="padding: var(--space-md); border-left: 4px solid var(--accent-color);">
+            <div style="font-size: 0.74rem; font-weight:700; text-transform:uppercase; color: var(--text-muted); letter-spacing:0.05em;">Total Events</div>
+            <div style="font-size: 1.5rem; font-weight:800; color: var(--text-primary); margin-top:2px;" id="stat-total-events">0</div>
+          </div>
+          <!-- Upcoming Events Card -->
+          <div class="card" style="padding: var(--space-md); border-left: 4px solid #3b82f6;">
+            <div style="font-size: 0.74rem; font-weight:700; text-transform:uppercase; color: var(--text-muted); letter-spacing:0.05em;">Upcoming</div>
+            <div style="font-size: 1.5rem; font-weight:800; color: #3b82f6; margin-top:2px;" id="stat-upcoming-events">0</div>
+          </div>
+          <!-- Overdue Events Card -->
+          <div class="card" style="padding: var(--space-md); border-left: 4px solid #ef4444;">
+            <div style="font-size: 0.74rem; font-weight:700; text-transform:uppercase; color: var(--text-muted); letter-spacing:0.05em;">Overdue Deadlines</div>
+            <div style="font-size: 1.5rem; font-weight:800; color: #ef4444; margin-top:2px;" id="stat-overdue-events">0</div>
+          </div>
+          <!-- Completed Tasks Card -->
+          <div class="card" style="padding: var(--space-md); border-left: 4px solid #10b981;">
+            <div style="font-size: 0.74rem; font-weight:700; text-transform:uppercase; color: var(--text-muted); letter-spacing:0.05em;">Completed Tasks</div>
+            <div style="font-size: 1.5rem; font-weight:800; color: #10b981; margin-top:2px;" id="stat-completed-events">0</div>
+          </div>
+        </div>
+
+        <!-- Filtering Options -->
+        <div class="card" style="padding: var(--space-sm) var(--space-md); display: flex; justify-content: space-between; align-items: center; gap: var(--space-md); flex-wrap: wrap;">
+          <div style="display: flex; align-items: center; gap: var(--space-sm); color: var(--text-secondary); font-size: 0.82rem; font-weight: 600;">
+            <i class="ri-filter-3-line" style="color: var(--accent-color);"></i>
+            <span>Active Filters</span>
+          </div>
+
+          <div style="display: flex; gap: var(--space-sm); align-items: center; flex-wrap: wrap; flex: 1; justify-content: flex-end;">
+            <!-- Search -->
+            <div class="search-wrapper" style="max-width: 220px; width: 100%; margin-bottom: 0;">
+              <i class="ri-search-line"></i>
+              <input type="text" class="form-control" id="calendar-search" placeholder="Search events..." oninput="triggerFilter()">
+            </div>
+            
+            <!-- Event Type -->
+            <select class="form-control" id="filter-type" style="max-width: 140px;" onchange="triggerFilter()">
+              <option value="">All Events</option>
+              <option value="project">Projects Only</option>
+              <option value="task">Tasks Only</option>
+            </select>
+
+            <!-- Event Status -->
+            <select class="form-control" id="filter-status" style="max-width: 140px;" onchange="triggerFilter()">
+              <option value="">All Statuses</option>
+              <option value="Pending">Pending</option>
+              <option value="Completed">Completed</option>
+              <option value="Overdue">Overdue</option>
+            </select>
+
+            <!-- Event Priority -->
+            <select class="form-control" id="filter-priority" style="max-width: 140px;" onchange="triggerFilter()">
+              <option value="">All Priorities</option>
+              <option value="Low">Low</option>
+              <option value="Medium">Medium</option>
+              <option value="High">High</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Main Loader -->
+        <div id="calendar-loader" class="flex-center" style="padding: var(--space-3xl);">
+          <div class="spinner" style="border-top-color: var(--accent-color); width: 2.5rem; height: 2.5rem;"></div>
+        </div>
+
+        <!-- Month View Grid Container -->
+        <div id="month-view-container" class="calendar-container hidden">
+          <div class="month-grid" id="month-calendar-grid">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+        <!-- Week View Layout Container -->
+        <div id="week-view-container" class="calendar-container hidden">
+          <div class="week-columns" id="week-calendar-grid">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Floating quick Tooltip element -->
+  <div class="cal-tooltip" id="tooltip-element">
+    <div class="cal-tooltip-header" id="tooltip-title">Title</div>
+    <div class="cal-tooltip-meta" id="tooltip-type">Type: Task</div>
+    <div class="cal-tooltip-meta" id="tooltip-project">Project: CFX</div>
+    <div class="cal-tooltip-meta" id="tooltip-client">Client: Pooja</div>
+    <div class="cal-tooltip-meta" id="tooltip-status">Status: Pending</div>
+  </div>
+
+  <!-- Detailed Modal Overlay -->
+  <div class="modal-backdrop" id="details-modal">
+    <div class="card modal-content" style="padding: var(--space-lg); max-width: 520px;">
+      <div class="modal-header" style="margin-bottom: var(--space-md); border-bottom: 1px solid var(--border-color); padding-bottom: var(--space-sm);">
+        <h3 style="font-size: 1.1rem; font-weight: 800; display:flex; align-items:center; gap:6px;">
+          <i id="details-header-icon" class="ri-calendar-line" style="color: var(--accent-color);"></i>
+          <span>Deadline Event Details</span>
+        </h3>
+        <button class="modal-close-btn" onclick="closeDetailsModal()"><i class="ri-close-line"></i></button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+        <div>
+          <span class="badge" id="details-type-badge" style="font-size: 0.65rem; margin-bottom: 6px;">Task</span>
+          <h2 style="font-size: 1.2rem; font-weight: 800; margin: 0; line-height: 1.3; color: var(--text-primary);" id="details-title">Event Name</h2>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md); background-color: var(--bg-tertiary); padding: var(--space-md); border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+          <div>
+            <span style="font-size: 0.7rem; color: var(--text-muted); display: block; text-transform: uppercase; font-weight:700; letter-spacing:0.02em;">Project Name</span>
+            <strong style="font-size: 0.85rem; color: var(--text-primary);" id="details-project">Project Name</strong>
+          </div>
+          <div>
+            <span style="font-size: 0.7rem; color: var(--text-muted); display: block; text-transform: uppercase; font-weight:700; letter-spacing:0.02em;">Client Name</span>
+            <strong style="font-size: 0.85rem; color: var(--text-primary);" id="details-client">Client Name</strong>
+          </div>
+          <div>
+            <span style="font-size: 0.7rem; color: var(--text-muted); display: block; text-transform: uppercase; font-weight:700; letter-spacing:0.02em;">Status</span>
+            <span class="badge" id="details-status-badge" style="font-size: 0.68rem; margin-top:2px;">In Progress</span>
+          </div>
+          <div>
+            <span style="font-size: 0.7rem; color: var(--text-muted); display: block; text-transform: uppercase; font-weight:700; letter-spacing:0.02em;">Priority</span>
+            <span class="badge" id="details-priority-badge" style="font-size: 0.68rem; margin-top:2px;">High</span>
+          </div>
+        </div>
+
+        <div>
+          <span style="font-size: 0.74rem; font-weight:700; text-transform:uppercase; color: var(--text-muted); display:block; margin-bottom:4px;">Description / Guidelines</span>
+          <div id="details-description" style="background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: var(--space-md); font-size: 0.85rem; min-height: 60px; color: var(--text-primary); line-height: 1.5; white-space: pre-wrap;">No details provided.</div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: var(--space-md); flex-wrap: wrap;">
+          <div>
+            <span style="font-size: 0.7rem; color: var(--text-muted); font-weight:700; text-transform:uppercase;">Deadline Date</span>
+            <div style="font-size: 0.95rem; font-weight: 800; color: var(--text-primary); margin-top:2px;">
+              <i class="ri-calendar-line" style="color: var(--accent-color);"></i> <span id="details-deadline">June 25, 2026</span>
+            </div>
+          </div>
+          
+          <div id="details-completed-row" class="hidden">
+            <span style="font-size: 0.7rem; color: var(--text-muted); font-weight:700; text-transform:uppercase;">Completed Timestamp</span>
+            <div style="font-size: 0.95rem; font-weight: 800; color: #10b981; margin-top:2px;">
+              <i class="ri-checkbox-circle-line"></i> <span id="details-completed-date">June 25, 2026</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="margin-top: var(--space-lg); border-top: 1px solid var(--border-color); padding-top: var(--space-md);">
+        <button class="btn btn-primary" onclick="closeDetailsModal()">Close Details</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    // Global States
+    let currentView = 'month'; // 'month' or 'week'
+    let selectedDate = new Date(); // Date state
+    let rawEvents = []; // Aggregated API events list
+    let searchTimeout = null;
+
+    window.addEventListener("DOMContentLoaded", () => {
+      // Set Header User Profile widgets
+      const user = auth.getCurrentUser();
+      if (user) {
+        const fallbackName = user.full_name || "Workspace Creator";
+        const roleStr = user.role === "admin" ? "Platform Admin" : "Freelancer";
+        
+        document.getElementById("user-display-name").textContent = fallbackName;
+        document.getElementById("header-user-name").textContent = fallbackName;
+        document.getElementById("user-display-role").textContent = roleStr;
+        
+        const letter = fallbackName.charAt(0).toUpperCase();
+        document.getElementById("avatar-char").textContent = letter;
+        document.getElementById("header-avatar-char").textContent = letter;
+      }
+
+      loadCalendarStats();
+      loadCalendarEvents();
+    });
+
+    /**
+     * Load Calendar statistics from API
+     */
+    async function loadCalendarStats() {
+      try {
+        const stats = await api.get("/calendar/stats");
+        document.getElementById("stat-total-events").textContent = stats.total_events;
+        document.getElementById("stat-upcoming-events").textContent = stats.upcoming_events;
+        document.getElementById("stat-overdue-events").textContent = stats.overdue_events;
+        document.getElementById("stat-completed-events").textContent = stats.completed_events;
+      } catch (err) {
+        console.error("Failed to load calendar statistics:", err);
+      }
+    }
+
+    /**
+     * Load aggregated calendar events from API and trigger rendering
+     */
+    async function loadCalendarEvents() {
+      const loader = document.getElementById("calendar-loader");
+      loader.classList.remove("hidden");
+      
+      const monthContainer = document.getElementById("month-view-container");
+      const weekContainer = document.getElementById("week-view-container");
+      monthContainer.classList.add("hidden");
+      weekContainer.classList.add("hidden");
+
+      // Build filters endpoints
+      const type = document.getElementById("filter-type").value;
+      const status = document.getElementById("filter-status").value;
+      const priority = document.getElementById("filter-priority").value;
+      const search = document.getElementById("calendar-search").value;
+
+      try {
+        let endpoint = "/calendar/events?";
+        const params = [];
+        if (type) params.push(`event_type=${encodeURIComponent(type)}`);
+        if (status) params.push(`status=${encodeURIComponent(status)}`);
+        if (priority) params.push(`priority=${encodeURIComponent(priority)}`);
+        endpoint += params.join("&");
+
+        rawEvents = await api.get(endpoint);
+        
+        // Filter in memory for quick text search if present
+        if (search) {
+          const s = search.toLowerCase();
+          rawEvents = rawEvents.filter(ev => 
+            ev.title.toLowerCase().includes(s) || 
+            (ev.description && ev.description.toLowerCase().includes(s)) ||
+            ev.project_name.toLowerCase().includes(s) ||
+            ev.client_name.toLowerCase().includes(s)
+          );
+        }
+
+        renderCalendar();
+      } catch (err) {
+        console.error("Failed to fetch calendar events:", err);
+      } finally {
+        loader.classList.add("hidden");
+      }
+    }
+
+    /**
+     * Triggers load events with timeout debouncing on search
+     */
+    function triggerFilter() {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        loadCalendarEvents();
+      }, 250);
+    }
+
+    /**
+     * Switch Month / Week view toggles
+     */
+    function switchView(view) {
+      currentView = view;
+      
+      const monthBtn = document.getElementById("btn-month-view");
+      const weekBtn = document.getElementById("btn-week-view");
+
+      if (view === 'month') {
+        monthBtn.classList.add("active");
+        weekBtn.classList.remove("active");
+      } else {
+        monthBtn.classList.remove("active");
+        weekBtn.classList.add("active");
+      }
+
+      renderCalendar();
+    }
+
+    /**
+     * Navigation: Prev/Next page handlers
+     */
+    function navigateCalendar(offset) {
+      if (currentView === 'month') {
+        selectedDate.setMonth(selectedDate.getMonth() + offset);
+      } else {
+        selectedDate.setDate(selectedDate.getDate() + (offset * 7));
+      }
+      renderCalendar();
+    }
+
+    /**
+     * Navigation: Reset to current date
+     */
+    function navigateToToday() {
+      selectedDate = new Date();
+      renderCalendar();
+    }
+
+    /**
+     * Master render selector
+     */
+    function renderCalendar() {
+      const monthContainer = document.getElementById("month-view-container");
+      const weekContainer = document.getElementById("week-view-container");
+      
+      if (currentView === 'month') {
+        monthContainer.classList.remove("hidden");
+        weekContainer.classList.add("hidden");
+        renderMonthGrid();
+      } else {
+        monthContainer.classList.add("hidden");
+        weekContainer.classList.remove("hidden");
+        renderWeekGrid();
+      }
+    }
+
+    /**
+     * Renders Month view grid cells
+     */
+    function renderMonthGrid() {
+      const grid = document.getElementById("month-calendar-grid");
+      grid.innerHTML = "";
+
+      // Render Day Name Headers
+      const dayHeaders = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      dayHeaders.forEach(day => {
+        const header = document.createElement("div");
+        header.className = "grid-day-header";
+        header.textContent = day;
+        grid.appendChild(header);
+      });
+
+      const year = selectedDate.getFullYear();
+      const month = selectedDate.getMonth();
+
+      // Header Label
+      const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      document.getElementById("calendar-header-title").textContent = `${monthNames[month]} ${year}`;
+
+      // First day index (Mon = 0, Sun = 6)
+      const tempDate = new Date(year, month, 1);
+      let startDayIndex = tempDate.getDay() - 1; 
+      if (startDayIndex === -1) startDayIndex = 6; // Sunday fix
+
+      // Days count in current month
+      const totalDays = new Date(year, month + 1, 0).getDate();
+      
+      // Days count in previous month (for filler cells)
+      const prevTotalDays = new Date(year, month, 0).getDate();
+
+      // Today comparator values
+      const now = new Date();
+      now.setHours(0,0,0,0);
+
+      // Render previous month filler cells
+      for (let i = startDayIndex - 1; i >= 0; i--) {
+        const dayVal = prevTotalDays - i;
+        const cellDate = new Date(year, month - 1, dayVal);
+        const cell = createMonthCell(cellDate, dayVal, true, now);
+        grid.appendChild(cell);
+      }
+
+      // Render current month days
+      for (let day = 1; day <= totalDays; day++) {
+        const cellDate = new Date(year, month, day);
+        const cell = createMonthCell(cellDate, day, false, now);
+        grid.appendChild(cell);
+      }
+
+      // Render next month filler cells to fill standard 42 cell grid
+      const totalCellsFilled = startDayIndex + totalDays;
+      const nextFillerCount = 42 - totalCellsFilled;
+      for (let day = 1; day <= nextFillerCount; day++) {
+        const cellDate = new Date(year, month + 1, day);
+        const cell = createMonthCell(cellDate, day, true, now);
+        grid.appendChild(cell);
+      }
+    }
+
+    /**
+     * Helper to create a single month grid cell
+     */
+    function createMonthCell(cellDate, dayNumber, isFiller, today) {
+      const cell = document.createElement("div");
+      cell.className = `month-cell ${isFiller ? 'filler' : ''}`;
+      
+      const compDate = new Date(cellDate);
+      compDate.setHours(0,0,0,0);
+
+      if (compDate.getTime() === today.getTime() && !isFiller) {
+        cell.classList.add("today");
+      }
+
+      cell.innerHTML = `<span class="day-number">${dayNumber}</span>`;
+
+      // Filter and append events matching deadline date
+      const cellDateStr = getISOStringDateOnly(cellDate);
+      const dayEvents = rawEvents.filter(ev => ev.deadline === cellDateStr);
+
+      dayEvents.forEach(ev => {
+        const evDiv = document.createElement("div");
+        
+        // Dynamic color coding mapper
+        let evClass = "event-project";
+        if (ev.event_type === "task") {
+          evClass = "event-task";
+        }
+        
+        const isCompleted = ev.status === "Completed";
+        const isOverdue = !isCompleted && new Date(ev.deadline) < new Date().setHours(0,0,0,0);
+        
+        if (isCompleted) {
+          evClass = "event-completed";
+        } else if (isOverdue) {
+          evClass = "event-overdue";
+        }
+
+        evDiv.className = `cal-event-card ${evClass}`;
+        evDiv.textContent = ev.title;
+        evDiv.title = ""; // Suppress native tooltip
+
+        // Setup Quick hover Tooltips
+        evDiv.addEventListener("mousemove", (e) => showTooltip(e, ev, isOverdue));
+        evDiv.addEventListener("mouseleave", hideTooltip);
+        evDiv.addEventListener("click", (e) => {
+          e.stopPropagation();
+          openDetailsModal(ev);
+        });
+
+        cell.appendChild(evDiv);
+      });
+
+      return cell;
+    }
+
+    /**
+     * Renders Week view columns (Mon - Sun)
+     */
+    function renderWeekGrid() {
+      const grid = document.getElementById("week-calendar-grid");
+      grid.innerHTML = "";
+
+      const today = new Date();
+      today.setHours(0,0,0,0);
+
+      // Determine Monday of the current selected date week
+      const currentDayIndex = selectedDate.getDay() - 1; // Mon = 0
+      const startOfWeek = new Date(selectedDate);
+      const offsetDays = currentDayIndex === -1 ? 6 : currentDayIndex; // Sunday fix
+      startOfWeek.setDate(selectedDate.getDate() - offsetDays);
+
+      const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      
+      // Update navigation header text for Week View bounds
+      const endOfWeek = new Date(startOfWeek);
+      endOfWeek.setDate(startOfWeek.getDate() + 6);
+      
+      document.getElementById("calendar-header-title").textContent = 
+        `${startOfWeek.getDate()} ${monthNames[startOfWeek.getMonth()]} - ${endOfWeek.getDate()} ${monthNames[endOfWeek.getMonth()]} ${endOfWeek.getFullYear()}`;
+
+      // Render 7 columns representing weekday timelines
+      const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+      
+      for (let i = 0; i < 7; i++) {
+        const colDate = new Date(startOfWeek);
+        colDate.setDate(startOfWeek.getDate() + i);
+        colDate.setHours(0,0,0,0);
+
+        const isToday = colDate.getTime() === today.getTime();
+
+        const col = document.createElement("div");
+        col.className = `week-column ${isToday ? 'today' : ''}`;
+
+        col.innerHTML = `
+          <div class="week-column-header">
+            <div class="week-day-name">${dayNames[i]}</div>
+            <div class="week-day-date">${colDate.getDate()}</div>
+          </div>
+          <div class="week-column-events" id="week-col-events-${i}" style="display:flex; flex-direction:column; gap: var(--space-xs); flex: 1;">
+            <!-- Events nested here -->
+          </div>
+        `;
+
+        grid.appendChild(col);
+
+        // Populate Week Events
+        const colDateStr = getISOStringDateOnly(colDate);
+        const colEvents = rawEvents.filter(ev => ev.deadline === colDateStr);
+        const eventsContainer = col.querySelector(`#week-col-events-${i}`);
+
+        if (colEvents.length === 0) {
+          eventsContainer.innerHTML = `
+            <div style="font-size:0.68rem; color: var(--text-muted); text-align:center; padding: var(--space-sm); border:1px dashed var(--border-color); border-radius:4px; height:100%; display:flex; align-items:center; justify-content:center;">
+              Free
+            </div>
+          `;
+        } else {
+          colEvents.forEach(ev => {
+            const evDiv = document.createElement("div");
+            
+            let evClass = "event-project";
+            if (ev.event_type === "task") evClass = "event-task";
+            
+            const isCompleted = ev.status === "Completed";
+            const isOverdue = !isCompleted && new Date(ev.deadline) < new Date().setHours(0,0,0,0);
+            
+            if (isCompleted) {
+              evClass = "event-completed";
+            } else if (isOverdue) {
+              evClass = "event-overdue";
+            }
+
+            evDiv.className = `cal-event-card ${evClass}`;
+            evDiv.style.whiteSpace = "normal";
+            evDiv.style.padding = "var(--space-xs)";
+            evDiv.style.borderRadius = "var(--radius-sm)";
+            
+            // Build rich week view visual content
+            const typeLabel = ev.event_type === "project" ? "Project" : "Task";
+            evDiv.innerHTML = `
+              <div style="font-weight:700; font-size:0.76rem; overflow:hidden; text-overflow:ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">${escapeHTML(ev.title)}</div>
+              <div style="font-size:0.65rem; opacity:0.85; margin-top:4px; font-weight:600;">
+                <i class="ri-folder-line" style="font-size:0.6rem;"></i> ${escapeHTML(ev.project_name)}
+              </div>
+              <div style="font-size:0.6rem; opacity:0.75; font-weight:500;">
+                Client: ${escapeHTML(ev.client_name)}
+              </div>
+            `;
+
+            evDiv.addEventListener("click", () => openDetailsModal(ev));
+            eventsContainer.appendChild(evDiv);
+          });
+        }
+      }
+    }
+
+    /**
+     * Tooltip: Show popup on event hover
+     */
+    function showTooltip(e, ev, isOverdue) {
+      const tooltip = document.getElementById("tooltip-element");
+      
+      const typeLabel = ev.event_type === "project" ? "Project Deadline" : "Task Deadline";
+      
+      document.getElementById("tooltip-title").textContent = ev.title;
+      document.getElementById("tooltip-type").innerHTML = `Type: <strong>${typeLabel}</strong>`;
+      document.getElementById("tooltip-project").innerHTML = `Project: <strong>${escapeHTML(ev.project_name)}</strong>`;
+      document.getElementById("tooltip-client").innerHTML = `Client: <strong>${escapeHTML(ev.client_name)}</strong>`;
+      
+      let statusStr = ev.status;
+      if (ev.status === "Completed") {
+        statusStr = "Completed ✅";
+      } else if (isOverdue) {
+        statusStr = "Overdue ⚠️";
+      }
+      document.getElementById("tooltip-status").innerHTML = `Status: <strong>${statusStr}</strong>`;
+
+      tooltip.style.display = "flex";
+      tooltip.style.left = (e.pageX + 12) + "px";
+      tooltip.style.top = (e.pageY + 12) + "px";
+    }
+
+    /**
+     * Tooltip: Hide popup
+     */
+    function hideTooltip() {
+      const tooltip = document.getElementById("tooltip-element");
+      tooltip.style.display = "none";
+    }
+
+    /**
+     * Modal: Open full details view overlay
+     */
+    function openDetailsModal(ev) {
+      document.getElementById("details-title").textContent = ev.title;
+      
+      const typeLabel = ev.event_type === "project" ? "Project Deadline" : "Task Deadline";
+      const typeBadge = document.getElementById("details-type-badge");
+      typeBadge.textContent = typeLabel;
+      typeBadge.className = "badge " + (ev.event_type === "project" ? "badge-progress" : "badge-todo");
+
+      document.getElementById("details-project").textContent = ev.project_name;
+      document.getElementById("details-client").textContent = ev.client_name;
+      document.getElementById("details-description").textContent = ev.description ? ev.description : "No description guidelines provided.";
+
+      // Status Badge mapping
+      const statusBadge = document.getElementById("details-status-badge");
+      statusBadge.textContent = ev.status;
+      statusBadge.className = "badge";
+      let statusClass = "badge-todo";
+      if (ev.status === "In Progress") statusClass = "badge-progress";
+      else if (ev.status === "Completed") statusClass = "badge-done";
+      else if (ev.status === "On Hold") statusClass = "badge-onhold";
+      statusBadge.classList.add(statusClass);
+
+      // Priority Badge mapping
+      const priorityBadge = document.getElementById("details-priority-badge");
+      priorityBadge.textContent = ev.priority;
+      priorityBadge.className = "badge";
+      let priorityClass = "badge-priority-low";
+      if (ev.priority === "High") priorityClass = "badge-priority-high";
+      else if (ev.priority === "Medium") priorityClass = "badge-priority-medium";
+      priorityBadge.classList.add(priorityClass);
+
+      // Deadline Date
+      const dlDate = new Date(ev.deadline);
+      const dlOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+      const formattedDl = dlDate.toLocaleDateString(undefined, dlOptions);
+      
+      const dlTextEl = document.getElementById("details-deadline");
+      dlTextEl.textContent = formattedDl;
+      dlTextEl.style.color = "";
+      
+      const isCompleted = ev.status === "Completed";
+      const isOverdue = !isCompleted && dlDate < new Date().setHours(0,0,0,0);
+      if (isOverdue) {
+        dlTextEl.textContent = `${formattedDl} (Overdue)`;
+        dlTextEl.style.color = "#ef4444";
+      }
+
+      // Completion details
+      const compRow = document.getElementById("details-completed-row");
+      if (isCompleted && ev.completed_at) {
+        compRow.classList.remove("hidden");
+        const compOptions = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+        document.getElementById("details-completed-date").textContent = new Date(ev.completed_at).toLocaleDateString(undefined, compOptions);
+      } else {
+        compRow.classList.add("hidden");
+      }
+
+      // Icon details header
+      const headerIcon = document.getElementById("details-header-icon");
+      headerIcon.className = ev.event_type === "project" ? "ri-folder-line" : "ri-task-line";
+
+      document.getElementById("details-modal").classList.add("active");
+    }
+
+    function closeDetailsModal() {
+      document.getElementById("details-modal").classList.remove("active");
+    }
+
+    /**
+     * Helpers: date formatter mapping
+     */
+    function getISOStringDateOnly(d) {
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    function escapeHTML(str) {
+      return str.replace(/[&<>'"]/g, 
+        tag => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          "'": '&#39;',
+          '"': '&quot;'
+        }[tag] || tag)
+      );
+    }
+  </script>
+</body>
+</html>

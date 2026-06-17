@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Management - CreateFlowX</title>
+  
+  <!-- Remix Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet"/>
+  
+  <!-- CSS Styling Files -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css?v=2">
+  <link rel="stylesheet" href="css/layouts.css">
+  
+  <style>
+    /* Task Spec Styles */
+    .tasks-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: var(--space-lg);
+    }
+
+    .task-card {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      min-height: 200px;
+    }
+
+    .task-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: var(--space-sm);
+    }
+
+    .task-title-wrapper {
+      flex: 1;
+      min-width: 0;
+      padding-right: var(--space-xs);
+    }
+
+    .task-card-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-md);
+    }
+
+    .task-card-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--space-sm);
+      border-top: 1px solid var(--border-color);
+      padding-top: var(--space-sm);
+    }
+
+    /* Badges */
+    .badge-onhold {
+      background-color: rgba(245, 158, 11, 0.08);
+      color: #f59e0b;
+    }
+    [data-theme="dark"] .badge-onhold {
+      background-color: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+    }
+
+    /* Modal dialog styling overrides */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(15, 23, 42, 0.4);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--transition-normal);
+    }
+
+    .modal-backdrop.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-content {
+      width: 100%;
+      max-width: 520px;
+      transform: translateY(20px);
+      transition: transform var(--transition-normal);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-backdrop.active .modal-content {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-lg);
+    }
+
+    .modal-close-btn {
+      background: none;
+      border: none;
+      font-size: 1.25rem;
+      cursor: pointer;
+      color: var(--text-secondary);
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--space-sm);
+      margin-top: var(--space-lg);
+    }
+
+    /* Filters Row Adjustments */
+    .filter-group {
+      display: flex;
+      gap: var(--space-sm);
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .filter-select {
+      min-width: 130px;
+    }
+
+    .deadline-display {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .deadline-display i {
+      color: var(--text-muted);
+    }
+
+    .deadline-display.overdue {
+      color: #ef4444;
+      font-weight: 600;
+    }
+
+    .deadline-display.overdue i {
+      color: #ef4444;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Route Guard -->
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/notifications.js"></script>
+  <script>
+    auth.guardRoute();
+  </script>
+
+  <div class="dashboard-layout">
+    <!-- Left Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <!-- SVG Logo -->
+        <svg width="24" height="24" viewBox="0 0 200 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M70 15 C35 15, 15 35, 15 50 C15 65, 35 85, 70 85 L90 85 L90 73 L70 73 C45 73, 30 63, 30 50 C30 37, 45 27, 70 27 L90 27 L90 15 Z" fill="url(#dbLogoBlue)" />
+          <path d="M85 35 L120 35 L120 47 L97 47 L97 55 L115 55 L115 65 L97 65 L97 85 L85 85 Z" fill="url(#dbLogoBlue)" />
+          <path d="M125 15 L140 15 L168 52 L195 15 L210 15 L175 62 L175 85 L162 85 L162 62 Z" fill="url(#dbLogoPurple)" />
+          <defs>
+            <linearGradient id="dbLogoBlue" x1="15" y1="15" x2="120" y2="85" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#00f2fe" />
+              <stop offset="100%" stop-color="#0082ff" />
+            </linearGradient>
+            <linearGradient id="dbLogoPurple" x1="125" y1="15" x2="210" y2="85" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#7b2cbf" />
+              <stop offset="100%" stop-color="#c77dff" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <span style="font-weight: 800;">Create<span class="text-gradient-blue">Flow</span><span class="text-gradient-purple">X</span></span>
+      </div>
+
+      <nav class="sidebar-menu">
+        <a href="dashboard.html" class="sidebar-link"><i class="ri-layout-grid-line"></i> <span>Dashboard</span></a>
+        <a href="clients.html" class="sidebar-link"><i class="ri-user-star-line"></i> <span>Clients</span></a>
+        <a href="projects.html" class="sidebar-link"><i class="ri-folders-line"></i> <span>Projects</span></a>
+        <a href="tasks.html" class="sidebar-link active"><i class="ri-task-line"></i> <span>Tasks</span></a>
+        <a href="calendar.html" class="sidebar-link"><i class="ri-calendar-event-line"></i> <span>Calendar</span></a>
+        <a href="notifications.html" class="sidebar-link"><i class="ri-notification-3-line"></i> <span>Notifications</span></a>
+        <a class="sidebar-link"><i class="ri-attachment-line"></i> <span>Files</span></a>
+        <a class="sidebar-link"><i class="ri-bill-line"></i> <span>Invoices</span></a>
+        <a class="sidebar-link"><i class="ri-bar-chart-box-line"></i> <span>Analytics</span></a>
+        <a class="sidebar-link"><i class="ri-time-line"></i> <span>Activity</span></a>
+        <a class="sidebar-link"><i class="ri-settings-4-line"></i> <span>Settings</span></a>
+      </nav>
+
+      <!-- Sidebar User Footer -->
+      <div class="sidebar-footer">
+        <a onclick="auth.logout()" class="sidebar-link" style="color: var(--text-muted); margin-bottom: var(--space-sm);">
+          <i class="ri-logout-box-r-line"></i> <span>Log out</span>
+        </a>
+        <div class="user-profile-widget">
+          <div class="user-avatar" id="avatar-char">U</div>
+          <div class="user-info">
+            <div class="user-name" id="user-display-name">Loading User...</div>
+            <div class="user-role" id="user-display-role">Freelancer</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Top Header Bar -->
+      <header class="dashboard-header">
+        <div class="dashboard-top-nav">
+          <div class="search-wrapper">
+            <i class="ri-search-line"></i>
+            <input type="text" class="form-control" id="sidebar-search" placeholder="Search anything...          Ctrl + /">
+          </div>
+        </div>
+        
+        <div style="display: flex; align-items: center; gap: var(--space-md);">
+          <button class="theme-toggle" onclick="auth.toggleTheme()" aria-label="Toggle theme">
+            <i class="ri-sun-line"></i>
+          </button>
+          
+          <!-- Notifications Bell & Dropdown Wrapper -->
+          <div class="notifications-wrapper" id="notifications-topbar-wrapper">
+            <button class="notifications-bell-btn" id="notifications-bell-btn" aria-label="Notifications">
+              <i class="ri-notification-2-line"></i>
+              <span class="notifications-badge" id="notifications-unread-count" style="display: none;">0</span>
+            </button>
+            <div class="notifications-dropdown" id="notifications-dropdown">
+              <div class="notifications-dropdown-header">
+                <h4>Notifications</h4>
+                <a href="#" id="mark-all-read-btn" onclick="notificationsManager.markAllRead(event)">Mark all as read</a>
+              </div>
+              <ul class="notifications-dropdown-list" id="notifications-dropdown-list">
+                <!-- Dynamically populated -->
+              </ul>
+              <div class="notifications-dropdown-footer">
+                <a href="notifications.html">View all notifications</a>
+              </div>
+            </div>
+          </div>
+          
+          <div class="user-profile-header">
+            <div class="user-avatar" id="header-avatar-char" style="width: 32px; height: 32px; font-size: 0.85rem; flex-shrink: 0;">U</div>
+            <div style="text-align: left;">
+              <div style="font-size: 0.85rem; font-weight: 600;" id="header-user-name">Loading...</div>
+              <div style="font-size: 0.7rem; color: var(--text-muted);" id="header-user-role">Creator</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Dashboard Contents -->
+      <div class="dashboard-body">
+        
+        <!-- Welcome Greetings -->
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h1 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 2px;">Tasks Checklist</h1>
+            <p style="font-size: 0.85rem; color: var(--text-secondary);">Manage, schedule, and check off task milestones across client projects.</p>
+          </div>
+          <button class="btn btn-primary" onclick="openAddModal()"><i class="ri-task-line"></i> Add Task</button>
+        </div>
+
+        <!-- Filter / Search Section -->
+        <div class="card" style="padding: var(--space-sm) var(--space-md); display: flex; justify-content: space-between; align-items: center; gap: var(--space-md); flex-wrap: wrap;">
+          <div style="display: flex; align-items: center; gap: var(--space-sm); color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">
+            <i class="ri-checkbox-circle-line" style="color: var(--accent-color);"></i>
+            <span>Tasks Total: <span id="tasks-count" style="color: var(--text-primary);">0</span></span>
+          </div>
+
+          <div class="filter-group">
+            <!-- Dynamic search -->
+            <div class="search-wrapper" style="max-width: 250px; width: 100%; margin-bottom: 0;">
+              <i class="ri-search-line"></i>
+              <input type="text" class="form-control" id="tasks-search-input" placeholder="Search tasks or projects..." oninput="handleSearch()">
+            </div>
+
+            <!-- Status filter dropdown -->
+            <select class="form-control filter-select" id="filter-status" onchange="handleFilterChange()">
+              <option value="">All Statuses</option>
+              <option value="To Do">To Do</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Completed">Completed</option>
+              <option value="On Hold">On Hold</option>
+            </select>
+
+            <!-- Priority filter dropdown -->
+            <select class="form-control filter-select" id="filter-priority" onchange="handleFilterChange()">
+              <option value="">All Priorities</option>
+              <option value="Low">Low</option>
+              <option value="Medium">Medium</option>
+              <option value="High">High</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Alerts -->
+        <div id="tasks-alert" class="alert alert-danger hidden">
+          <i class="ri-error-warning-line"></i>
+          <span id="tasks-alert-msg"></span>
+        </div>
+
+        <!-- Loader Spinner -->
+        <div id="tasks-loader" class="flex-center" style="padding: var(--space-2xl);">
+          <div class="spinner" style="border-top-color: var(--accent-color); width: 2.5rem; height: 2.5rem;"></div>
+        </div>
+
+        <!-- Grid of Task Cards -->
+        <div class="tasks-grid hidden" id="tasks-grid-container">
+          <!-- Populated dynamically via JS -->
+        </div>
+
+        <!-- Empty State View -->
+        <div class="card glass-panel flex-center hidden" id="tasks-empty-view" style="flex-direction: column; padding: var(--space-3xl); text-align: center;">
+          <div class="feature-icon-box purple" style="width: 56px; height: 56px; font-size: 1.75rem; margin-bottom: var(--space-md);">
+            <i class="ri-task-line"></i>
+          </div>
+          <h2 style="font-size: 1.25rem; margin-bottom: var(--space-xs);">No tasks found</h2>
+          <p class="text-muted" style="max-width: 400px; margin-bottom: var(--space-md);">Get started by creating a project and breaking it down into actionable tasks.</p>
+          <button class="btn btn-primary" onclick="openAddModal()"><i class="ri-task-line"></i> Add Task</button>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Add / Edit Task Modal Overlay -->
+  <div class="modal-backdrop" id="task-modal">
+    <div class="card modal-content" style="padding: var(--space-lg);">
+      <div class="modal-header">
+        <h3 id="modal-title" style="font-size: 1.15rem; font-weight: 700;">Add Task</h3>
+        <button class="modal-close-btn" onclick="closeModal()"><i class="ri-close-line"></i></button>
+      </div>
+      
+      <form id="task-form" onsubmit="handleFormSubmit(event)">
+        <input type="hidden" id="modal-task-id">
+        
+        <div class="form-group">
+          <label class="form-label" for="task_name">Task Name *</label>
+          <input type="text" id="task_name" class="form-control" placeholder="E.g., Design homepage UI" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="project_id">Select Project *</label>
+          <select id="project_id" class="form-control" required>
+            <!-- Loaded dynamically -->
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="description">Description</label>
+          <textarea id="description" class="form-control" rows="3" placeholder="Outline specific task guidelines or notes..." style="resize: vertical; font-family: var(--font-body);"></textarea>
+        </div>
+
+        <div class="grid-two" style="gap: var(--space-md); margin-bottom: 0;">
+          <div class="form-group">
+            <label class="form-label" for="status">Status</label>
+            <select id="status" class="form-control">
+              <option value="To Do">To Do</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Completed">Completed</option>
+              <option value="On Hold">On Hold</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="priority">Priority</label>
+            <select id="priority" class="form-control">
+              <option value="Low">Low</option>
+              <option value="Medium">Medium</option>
+              <option value="High">High</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="deadline">Deadline Date</label>
+          <input type="date" id="deadline" class="form-control">
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeModal()">Cancel</button>
+          <button type="submit" id="modal-save-btn" class="btn btn-primary">
+            <span>Save Task</span>
+            <div id="modal-spinner" class="spinner hidden"></div>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Task Details Modal Overlay -->
+  <div class="modal-backdrop" id="details-modal">
+    <div class="card modal-content" style="padding: var(--space-lg); max-width: 550px;">
+      <div class="modal-header" style="margin-bottom: var(--space-md);">
+        <h3 style="font-size: 1.15rem; font-weight: 700;">Task Details</h3>
+        <button class="modal-close-btn" onclick="closeDetailsModal()"><i class="ri-close-line"></i></button>
+      </div>
+
+      <div style="margin-bottom: var(--space-md); padding-bottom: var(--space-md); border-bottom: 1px solid var(--border-color);">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-sm); margin-bottom: var(--space-xs);">
+          <h2 style="font-size: 1.25rem; font-weight: 700; margin: 0; line-height: 1.3;" id="details-task-name">Task Name</h2>
+          <div style="display: flex; gap: var(--space-xs); flex-shrink: 0;">
+            <span class="badge" id="details-status-badge">To Do</span>
+            <span class="badge" id="details-priority-badge">High</span>
+          </div>
+        </div>
+        
+        <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 8px;">
+          <div style="font-size: 0.85rem; color: var(--text-primary); font-weight: 600;" id="details-project-name">
+            <i class="ri-folder-line" style="color: var(--accent-color);"></i> Project: Loading...
+          </div>
+          <div style="font-size: 0.78rem; color: var(--text-secondary); font-weight: 500;" id="details-client-name">
+            <i class="ri-user-star-line" style="color: var(--text-muted);"></i> Client: Loading...
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: var(--space-md); margin-bottom: var(--space-lg);">
+        <div>
+          <h4 style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); margin-bottom: var(--space-xs);">Task Guidelines</h4>
+          <div id="details-description" style="background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: var(--space-md); font-size: 0.9rem; min-height: 70px; white-space: pre-wrap; color: var(--text-primary); line-height: 1.5;">No detailed guidelines provided.</div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: var(--space-md); flex-wrap: wrap;">
+          <div>
+            <h4 style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); margin-bottom: var(--space-xs);">Deadline</h4>
+            <div id="details-deadline-wrapper" class="deadline-display" style="font-size: 0.9rem; font-weight: 600;">
+              <i class="ri-calendar-line"></i> <span id="details-deadline">No Deadline</span>
+            </div>
+          </div>
+          
+          <div id="details-completed-wrapper" class="hidden">
+            <h4 style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); margin-bottom: var(--space-xs);">Completed Date</h4>
+            <div style="font-size: 0.9rem; font-weight: 600; color: #10b981;">
+              <i class="ri-checkbox-circle-line"></i> <span id="details-completed-date">Date</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.72rem; color: var(--text-muted); border-top: 1px solid var(--border-color); padding-top: var(--space-md);">
+        <span>Created: <span id="details-created">June 16, 2026</span></span>
+        <span>Last Updated: <span id="details-updated">June 16, 2026</span></span>
+      </div>
+
+      <div class="modal-footer" style="margin-top: var(--space-lg); padding-top: 0;">
+        <button class="btn btn-secondary" onclick="closeDetailsModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Script Files -->
+  <script>
+    // Initialize profile widgets
+    window.addEventListener("DOMContentLoaded", () => {
+      const user = auth.getCurrentUser();
+      if (user) {
+        const fallbackName = user.full_name || "Creator Workspace";
+        const roleStr = user.role === "admin" ? "Platform Admin" : "Freelancer";
+        
+        document.getElementById("user-display-name").textContent = fallbackName;
+        document.getElementById("header-user-name").textContent = fallbackName;
+        document.getElementById("user-display-role").textContent = roleStr;
+        document.getElementById("header-user-role").textContent = roleStr;
+
+        const firstLetter = fallbackName.charAt(0).toUpperCase();
+        document.getElementById("avatar-char").textContent = firstLetter;
+        document.getElementById("header-avatar-char").textContent = firstLetter;
+      }
+      
+      loadTasks();
+      loadProjectsDropdown();
+    });
+
+    let tasksList = [];
+    let searchTimeout = null;
+
+    /**
+     * Load project dropdown dynamically
+     */
+    async function loadProjectsDropdown() {
+      try {
+        const projects = await api.get("/projects/");
+        const projSelect = document.getElementById("project_id");
+        projSelect.innerHTML = '<option value="" disabled selected>Select Project *</option>';
+        
+        if (projects.length === 0) {
+          const opt = document.createElement("option");
+          opt.disabled = true;
+          opt.textContent = "No projects available. Add a project first.";
+          projSelect.appendChild(opt);
+        } else {
+          projects.forEach(p => {
+            const opt = document.createElement("option");
+            opt.value = p.id;
+            opt.textContent = p.client_name ? `${p.project_name} [${p.client_name}]` : p.project_name;
+            projSelect.appendChild(opt);
+          });
+        }
+      } catch (err) {
+        console.error("Failed to load projects for task select dropdown:", err);
+      }
+    }
+
+    /**
+     * Fetch tasks from API matching filters
+     */
+    async function loadTasks() {
+      const grid = document.getElementById("tasks-grid-container");
+      const emptyView = document.getElementById("tasks-empty-view");
+      const loader = document.getElementById("tasks-loader");
+      const alertBox = document.getElementById("tasks-alert");
+      
+      loader.classList.remove("hidden");
+      grid.classList.add("hidden");
+      emptyView.classList.add("hidden");
+      alertBox.classList.add("hidden");
+
+      const searchQuery = document.getElementById("tasks-search-input").value;
+      const statusQuery = document.getElementById("filter-status").value;
+      const priorityQuery = document.getElementById("filter-priority").value;
+
+      try {
+        let endpoint = "/tasks/?";
+        const params = [];
+        if (searchQuery) params.push(`search=${encodeURIComponent(searchQuery)}`);
+        if (statusQuery) params.push(`status=${encodeURIComponent(statusQuery)}`);
+        if (priorityQuery) params.push(`priority=${encodeURIComponent(priorityQuery)}`);
+        endpoint += params.join("&");
+
+        tasksList = await api.get(endpoint);
+        
+        document.getElementById("tasks-count").textContent = tasksList.length;
+
+        if (tasksList.length === 0) {
+          emptyView.classList.remove("hidden");
+        } else {
+          renderTaskCards(tasksList);
+          grid.classList.remove("hidden");
+        }
+      } catch (err) {
+        document.getElementById("tasks-alert-msg").textContent = err.message || "Failed to load tasks.";
+        alertBox.classList.remove("hidden");
+      } finally {
+        loader.classList.add("hidden");
+      }
+    }
+
+    /**
+     * Map lists to grid cards
+     */
+    function renderTaskCards(list) {
+      const container = document.getElementById("tasks-grid-container");
+      container.innerHTML = "";
+
+      list.forEach(t => {
+        // Status class
+        let statusClass = "badge-todo";
+        if (t.status === "In Progress") statusClass = "badge-progress";
+        else if (t.status === "Completed") statusClass = "badge-done";
+        else if (t.status === "On Hold") statusClass = "badge-onhold";
+
+        // Priority class
+        let priorityClass = "badge-priority-low";
+        if (t.priority === "High") priorityClass = "badge-priority-high";
+        else if (t.priority === "Medium") priorityClass = "badge-priority-medium";
+
+        // Deadline
+        let deadlineHTML = `<i class="ri-calendar-line"></i> No Deadline`;
+        if (t.deadline) {
+          const dlDate = new Date(t.deadline);
+          const formatted = dlDate.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+          const today = new Date();
+          today.setHours(0,0,0,0);
+          
+          if (dlDate < today && t.status !== "Completed") {
+            deadlineHTML = `<i class="ri-error-warning-line"></i> Overdue: ${formatted}`;
+          } else {
+            deadlineHTML = `<i class="ri-calendar-line"></i> Due: ${formatted}`;
+          }
+        }
+
+        const isOverdue = t.deadline && new Date(t.deadline) < new Date().setHours(0,0,0,0) && t.status !== "Completed";
+
+        const card = document.createElement("div");
+        card.className = "card task-card card-hover";
+        card.innerHTML = `
+          <div class="task-card-header">
+            <div class="task-title-wrapper">
+              <strong style="font-size: 1rem; color: var(--text-primary); display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHTML(t.task_name)}">${escapeHTML(t.task_name)}</strong>
+              <span style="font-size: 0.76rem; color: var(--text-secondary); font-weight:600; display:block; margin-top:3px;">
+                <i class="ri-folder-line"></i> ${escapeHTML(t.project_name)}
+              </span>
+              <span style="font-size: 0.72rem; color: var(--text-muted); font-weight:500; display:block;">
+                Client: ${t.client_name ? escapeHTML(t.client_name) : "Independent"}
+              </span>
+            </div>
+            <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px; flex-shrink:0;">
+              <span class="badge ${statusClass}" style="font-size: 0.68rem; padding: 2px 6px;">${t.status}</span>
+              <span class="badge ${priorityClass}" style="font-size: 0.65rem; padding: 2px 6px;">${t.priority}</span>
+            </div>
+          </div>
+          <div class="task-card-body">
+            <p style="font-size: 0.82rem; line-height: 1.4; color: var(--text-secondary); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin:0;">
+              ${t.description ? escapeHTML(t.description) : "No detailed task guidelines provided."}
+            </p>
+            <div class="deadline-display ${isOverdue ? 'overdue' : ''}" style="margin-top:auto;">
+              ${deadlineHTML}
+            </div>
+          </div>
+          <div class="task-card-footer">
+            <button class="btn btn-outline" style="padding: 4px 10px; font-size: 0.75rem;" onclick="viewTaskDetails(${t.id})" title="Details">
+              <i class="ri-eye-line"></i> View
+            </button>
+            <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.75rem;" onclick="openEditModal(${t.id})" title="Edit">
+              <i class="ri-edit-line"></i> Edit
+            </button>
+            <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.75rem; color: #ef4444; border-color: rgba(239, 68, 68, 0.1);" onclick="deleteTask(${t.id})" title="Delete">
+              <i class="ri-delete-bin-line"></i> Delete
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    /**
+     * Debounce search query
+     */
+    function handleSearch() {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        loadTasks();
+      }, 300);
+    }
+
+    /**
+     * Filter list on state select
+     */
+    function handleFilterChange() {
+      loadTasks();
+    }
+
+    // Modal Operations
+    function openAddModal() {
+      document.getElementById("task-form").reset();
+      document.getElementById("modal-task-id").value = "";
+      document.getElementById("modal-title").textContent = "Add Task";
+      document.getElementById("task-modal").classList.add("active");
+    }
+
+    function openEditModal(taskId) {
+      const task = tasksList.find(t => t.id === taskId);
+      if (!task) return;
+
+      document.getElementById("modal-task-id").value = task.id;
+      document.getElementById("task_name").value = task.task_name;
+      document.getElementById("project_id").value = task.project_id;
+      document.getElementById("description").value = task.description || "";
+      document.getElementById("status").value = task.status;
+      document.getElementById("priority").value = task.priority;
+      document.getElementById("deadline").value = task.deadline || "";
+
+      document.getElementById("modal-title").textContent = "Edit Task";
+      document.getElementById("task-modal").classList.add("active");
+    }
+
+    function closeModal() {
+      document.getElementById("task-modal").classList.remove("active");
+    }
+
+    /**
+     * Submit modal save/update triggers
+     */
+    async function handleFormSubmit(event) {
+      event.preventDefault();
+
+      const id = document.getElementById("modal-task-id").value;
+      const name = document.getElementById("task_name").value;
+      const projId = document.getElementById("project_id").value;
+      const description = document.getElementById("description").value;
+      const status = document.getElementById("status").value;
+      const priority = document.getElementById("priority").value;
+      const deadline = document.getElementById("deadline").value;
+
+      const modalBtn = document.getElementById("modal-save-btn");
+      const spinner = document.getElementById("modal-spinner");
+
+      modalBtn.disabled = true;
+      spinner.classList.remove("hidden");
+
+      const payload = {
+        task_name: name,
+        project_id: parseInt(projId),
+        description: description ? description : null,
+        status: status,
+        priority: priority,
+        deadline: deadline ? deadline : null
+      };
+
+      try {
+        if (id) {
+          await api.put(`/tasks/${id}`, payload);
+        } else {
+          await api.post("/tasks/", payload);
+        }
+        closeModal();
+        loadTasks();
+      } catch (err) {
+        alert("Operation failed: " + err.message);
+      } finally {
+        modalBtn.disabled = false;
+        spinner.classList.add("hidden");
+      }
+    }
+
+    /**
+     * Open detailed view for task
+     */
+    async function viewTaskDetails(taskId) {
+      try {
+        const t = await api.get(`/tasks/${taskId}`);
+
+        document.getElementById("details-task-name").textContent = t.task_name;
+        document.getElementById("details-project-name").innerHTML = `<i class="ri-folder-line" style="color: var(--accent-color);"></i> Project: <strong>${escapeHTML(t.project_name)}</strong>`;
+        document.getElementById("details-client-name").innerHTML = `<i class="ri-user-star-line" style="color: var(--text-muted);"></i> Client: <strong>${t.client_name ? escapeHTML(t.client_name) : "Independent Client"}</strong> ${t.company_name ? `(${escapeHTML(t.company_name)})` : ""}`;
+        document.getElementById("details-description").textContent = t.description ? t.description : "No task guidelines provided.";
+
+        // Badges
+        const sBadge = document.getElementById("details-status-badge");
+        sBadge.textContent = t.status;
+        sBadge.className = "badge";
+        let statusClass = "badge-todo";
+        if (t.status === "In Progress") statusClass = "badge-progress";
+        else if (t.status === "Completed") statusClass = "badge-done";
+        else if (t.status === "On Hold") statusClass = "badge-onhold";
+        sBadge.classList.add(statusClass);
+
+        const pBadge = document.getElementById("details-priority-badge");
+        pBadge.textContent = t.priority;
+        pBadge.className = "badge";
+        let priorityClass = "badge-priority-low";
+        if (t.priority === "High") priorityClass = "badge-priority-high";
+        else if (t.priority === "Medium") priorityClass = "badge-priority-medium";
+        pBadge.classList.add(priorityClass);
+
+        // Deadline
+        const dlWrapper = document.getElementById("details-deadline-wrapper");
+        dlWrapper.className = "deadline-display";
+        if (t.deadline) {
+          const dlDate = new Date(t.deadline);
+          const formatted = dlDate.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+          document.getElementById("details-deadline").textContent = formatted;
+          
+          if (dlDate < new Date().setHours(0,0,0,0) && t.status !== "Completed") {
+            dlWrapper.classList.add("overdue");
+            document.getElementById("details-deadline").textContent = `${formatted} (Overdue)`;
+          }
+        } else {
+          document.getElementById("details-deadline").textContent = "No Deadline Specified";
+        }
+
+        // Completed timestamp check
+        const compWrapper = document.getElementById("details-completed-wrapper");
+        if (t.status === "Completed" && t.completed_at) {
+          compWrapper.classList.remove("hidden");
+          const compOptions = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+          document.getElementById("details-completed-date").textContent = new Date(t.completed_at).toLocaleDateString(undefined, compOptions);
+        } else {
+          compWrapper.classList.add("hidden");
+        }
+
+        // Audits
+        const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+        document.getElementById("details-created").textContent = new Date(t.created_at).toLocaleDateString(undefined, options);
+        document.getElementById("details-updated").textContent = new Date(t.updated_at).toLocaleDateString(undefined, options);
+
+        document.getElementById("details-modal").classList.add("active");
+      } catch (err) {
+        alert("Failed to load details: " + err.message);
+      }
+    }
+
+    function closeDetailsModal() {
+      document.getElementById("details-modal").classList.remove("active");
+    }
+
+    /**
+     * Delete Task triggers
+     */
+    async function deleteTask(taskId) {
+      const task = tasksList.find(t => t.id === taskId);
+      if (!task) return;
+
+      const confirmDelete = confirm(`Are you sure you want to delete task "${task.task_name}"? This action cannot be undone.`);
+      if (!confirmDelete) return;
+
+      try {
+        await api.delete(`/tasks/${task.id}`);
+        loadTasks();
+      } catch (err) {
+        alert("Failed to delete task: " + err.message);
+      }
+    }
+
+    /**
+     * Escape HTML chars
+     */
+    function escapeHTML(str) {
+      return str.replace(/[&<>'"]/g, 
+        tag => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          "'": '&#39;',
+          '"': '&quot;'
+        }[tag] || tag)
+      );
+    }
+  </script>
+</body>
+</html>

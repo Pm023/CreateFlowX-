@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - CreateFlowX (CFX)</title>
+  
+  <!-- Remix Icons for modern design icons -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet"/>
+  
+  <!-- CSS Styling Files -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css?v=2">
+  <link rel="stylesheet" href="css/layouts.css">
+  
+  <style>
+    .top-bar {
+      position: absolute;
+      top: var(--space-md);
+      right: var(--space-md);
+      display: flex;
+      gap: var(--space-sm);
+      z-index: 100;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Utilities (Theme Toggler) -->
+  <div class="top-bar">
+    <button class="theme-toggle" onclick="auth.toggleTheme()" aria-label="Toggle theme">
+      <i class="ri-sun-line"></i>
+    </button>
+  </div>
+
+  <div class="auth-wrapper">
+    <!-- Glowing decorative backgrounds -->
+    <div class="auth-glow-1"></div>
+    <div class="auth-glow-2"></div>
+
+    <div class="auth-container">
+      <!-- Brand Header -->
+      <div class="auth-header">
+        <div class="auth-logo">
+          <!-- CFX Inline SVG Logo -->
+          <svg width="40" height="40" viewBox="0 0 200 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M70 15 C35 15, 15 35, 15 50 C15 65, 35 85, 70 85 L90 85 L90 73 L70 73 C45 73, 30 63, 30 50 C30 37, 45 27, 70 27 L90 27 L90 15 Z" fill="url(#logoBlueGrad)" />
+            <path d="M85 35 L120 35 L120 47 L97 47 L97 55 L115 55 L115 65 L97 65 L97 85 L85 85 Z" fill="url(#logoBlueGrad)" />
+            <path d="M125 15 L140 15 L168 52 L195 15 L210 15 L175 62 L175 85 L162 85 L162 62 Z" fill="url(#logoPurpleGrad)" />
+            <defs>
+              <linearGradient id="logoBlueGrad" x1="15" y1="15" x2="120" y2="85" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#00f2fe" />
+                <stop offset="100%" stop-color="#0082ff" />
+              </linearGradient>
+              <linearGradient id="logoPurpleGrad" x1="125" y1="15" x2="210" y2="85" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#7b2cbf" />
+                <stop offset="100%" stop-color="#c77dff" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <span style="font-weight: 800; font-family: var(--font-heading);">
+            Create<span class="text-gradient-blue" style="font-weight: 800;">Flow</span><span class="text-gradient-purple" style="font-weight: 800;">X</span>
+          </span>
+        </div>
+        <p class="auth-subtitle">Create. Collaborate. Flow.</p>
+      </div>
+
+      <!-- Auth Form Card -->
+      <div class="card glass-panel auth-card">
+        <!-- Error / Success Alert Banners -->
+        <div id="alert-box" class="alert alert-danger hidden">
+          <i class="ri-error-warning-line"></i>
+          <span id="alert-message"></span>
+        </div>
+
+        <form id="register-form">
+          <div class="form-group">
+            <label for="fullName" class="form-label">Full Name</label>
+            <input 
+              type="text" 
+              id="fullName" 
+              class="form-control" 
+              placeholder="Alex Morgan" 
+              required
+              autocomplete="name"
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="email" class="form-label">Email Address</label>
+            <input 
+              type="email" 
+              id="email" 
+              class="form-control" 
+              placeholder="you@example.com" 
+              required
+              autocomplete="email"
+            >
+          </div>
+          
+          <div class="form-group">
+            <label for="password" class="form-label">Password</label>
+            <input 
+              type="password" 
+              id="password" 
+              class="form-control" 
+              placeholder="Min. 8 characters" 
+              required
+              minlength="8"
+              autocomplete="new-password"
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPassword" class="form-label">Confirm Password</label>
+            <input 
+              type="password" 
+              id="confirmPassword" 
+              class="form-control" 
+              placeholder="••••••••" 
+              required
+              minlength="8"
+              autocomplete="new-password"
+            >
+          </div>
+
+          <button type="submit" id="submit-btn" class="btn btn-primary btn-block">
+            <span>Create Account</span>
+            <div id="btn-spinner" class="spinner hidden"></div>
+          </button>
+        </form>
+      </div>
+
+      <!-- Footer Info -->
+      <div class="auth-footer">
+        Already have an account? <a href="login.html">Sign in instead</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Script Imports -->
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    // Guard route: If already logged in, redirect straight to dashboard
+    auth.guardAuthPages();
+
+    const registerForm = document.getElementById("register-form");
+    const submitBtn = document.getElementById("submit-btn");
+    const btnSpinner = document.getElementById("btn-spinner");
+    const alertBox = document.getElementById("alert-box");
+    const alertMessage = document.getElementById("alert-message");
+
+    registerForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      
+      // Reset alerts
+      alertBox.classList.add("hidden");
+      
+      // Get values
+      const fullName = document.getElementById("fullName").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const confirmPassword = document.getElementById("confirmPassword").value;
+
+      // Validate passwords match
+      if (password !== confirmPassword) {
+        alertBox.className = "alert alert-danger";
+        alertMessage.textContent = "Passwords do not match.";
+        alertBox.classList.remove("hidden");
+        return;
+      }
+
+      // Loading state
+      submitBtn.disabled = true;
+      btnSpinner.classList.remove("hidden");
+
+      try {
+        await auth.register(fullName, email, password);
+        // On success, auth.register automatically logs the user in and caches details.
+        // Redirect to dashboard.html
+        window.location.href = "dashboard.html";
+      } catch (error) {
+        // Show error message
+        alertBox.className = "alert alert-danger";
+        alertMessage.textContent = error.message || "Registration failed. Please try again.";
+        alertBox.classList.remove("hidden");
+      } finally {
+        // Stop loading state
+        submitBtn.disabled = false;
+        btnSpinner.classList.add("hidden");
+      }
+    });
+  </script>
+</body>
+</html>
