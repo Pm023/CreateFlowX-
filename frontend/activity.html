@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Activity Timeline - CreateFlowX</title>
+  
+  <!-- Remix Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet"/>
+  
+  <!-- CSS Styling Files -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css?v=2">
+  <link rel="stylesheet" href="css/layouts.css">
+  
+  <style>
+    /* Scoped Timeline Styles */
+    .timeline-container {
+      position: relative;
+      margin-top: var(--space-xl);
+      padding-left: var(--space-2xl);
+    }
+
+    .timeline-container::before {
+      content: '';
+      position: absolute;
+      left: 11px;
+      top: 8px;
+      bottom: 8px;
+      width: 2px;
+      background-color: var(--border-color);
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: var(--space-lg);
+      animation: fadeInUp 0.4s ease forwards;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: -33px;
+      top: 6px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background-color: var(--bg-secondary);
+      border: 2px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Color styles based on actions */
+    .action-green {
+      border-color: #10b981;
+      color: #10b981;
+      background-color: rgba(16, 185, 129, 0.08);
+    }
+    [data-theme="dark"] .action-green {
+      background-color: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+    }
+
+    .action-blue {
+      border-color: #3b82f6;
+      color: #3b82f6;
+      background-color: rgba(59, 130, 246, 0.08);
+    }
+    [data-theme="dark"] .action-blue {
+      background-color: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+    }
+
+    .action-yellow {
+      border-color: #f59e0b;
+      color: #f59e0b;
+      background-color: rgba(245, 158, 11, 0.08);
+    }
+    [data-theme="dark"] .action-yellow {
+      background-color: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+    }
+
+    .action-red {
+      border-color: #ef4444;
+      color: #ef4444;
+      background-color: rgba(239, 68, 68, 0.08);
+    }
+    [data-theme="dark"] .action-red {
+      background-color: rgba(239, 68, 68, 0.15);
+      color: #fca5a5;
+    }
+
+    .timeline-card {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+
+    .timeline-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--accent-color);
+    }
+
+    .timeline-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-xs);
+    }
+
+    .timeline-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    .timeline-time {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      font-weight: 500;
+    }
+
+    .timeline-desc {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: var(--space-sm);
+    }
+
+    .timeline-meta {
+      display: flex;
+      gap: var(--space-sm);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .timeline-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+      background-color: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      text-transform: capitalize;
+    }
+
+    .timeline-tag i {
+      font-size: 0.8rem;
+    }
+
+    /* Filters spacing adjustments */
+    .filter-group {
+      display: flex;
+      gap: var(--space-sm);
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .filter-select {
+      min-width: 140px;
+    }
+
+    /* Animation */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Route Guard -->
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/notifications.js"></script>
+  <script>
+    auth.guardRoute();
+  </script>
+
+  <div class="dashboard-layout">
+    <!-- Left Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <!-- SVG Logo -->
+        <svg width="24" height="24" viewBox="0 0 200 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M70 15 C35 15, 15 35, 15 50 C15 65, 35 85, 70 85 L90 85 L90 73 L70 73 C45 73, 30 63, 30 50 C30 37, 45 27, 70 27 L90 27 L90 15 Z" fill="url(#dbLogoBlue)" />
+          <path d="M85 35 L120 35 L120 47 L97 47 L97 55 L115 55 L115 65 L97 65 L97 85 L85 85 Z" fill="url(#dbLogoBlue)" />
+          <path d="M125 15 L140 15 L168 52 L195 15 L210 15 L175 62 L175 85 L162 85 L162 62 Z" fill="url(#dbLogoPurple)" />
+          <defs>
+            <linearGradient id="dbLogoBlue" x1="15" y1="15" x2="120" y2="85" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#00f2fe" />
+              <stop offset="100%" stop-color="#0082ff" />
+            </linearGradient>
+            <linearGradient id="dbLogoPurple" x1="125" y1="15" x2="210" y2="85" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#7b2cbf" />
+              <stop offset="100%" stop-color="#c77dff" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <span style="font-weight: 800;">Create<span class="text-gradient-blue">Flow</span><span class="text-gradient-purple">X</span></span>
+      </div>
+
+      <nav class="sidebar-menu">
+        <a href="dashboard.html" class="sidebar-link"><i class="ri-layout-grid-line"></i> <span>Dashboard</span></a>
+        <a href="clients.html" class="sidebar-link"><i class="ri-user-star-line"></i> <span>Clients</span></a>
+        <a href="projects.html" class="sidebar-link"><i class="ri-folders-line"></i> <span>Projects</span></a>
+        <a href="tasks.html" class="sidebar-link"><i class="ri-task-line"></i> <span>Tasks</span></a>
+        <a href="calendar.html" class="sidebar-link"><i class="ri-calendar-event-line"></i> <span>Calendar</span></a>
+        <a href="notifications.html" class="sidebar-link"><i class="ri-notification-3-line"></i> <span>Notifications</span></a>
+        <a href="invoices.html" class="sidebar-link"><i class="ri-bill-line"></i> <span>Invoices</span></a>
+        <a href="analytics.html" class="sidebar-link"><i class="ri-bar-chart-box-line"></i> <span>Analytics</span></a>
+        <a href="activity.html" class="sidebar-link active"><i class="ri-time-line"></i> <span>Activity</span></a>
+        <a href="admin/" id="sidebar-admin-link" class="sidebar-link hidden"><i class="ri-shield-user-line"></i> <span>Admin Panel</span></a>
+        <a href="settings.html" class="sidebar-link"><i class="ri-settings-4-line"></i> <span>Settings</span></a>
+      </nav>
+
+      <!-- Sidebar User Footer -->
+      <div class="sidebar-footer">
+        <a onclick="auth.logout()" class="sidebar-link" style="color: var(--text-muted); margin-bottom: var(--space-sm);">
+          <i class="ri-logout-box-r-line"></i> <span>Log out</span>
+        </a>
+        <div class="user-profile-widget">
+          <div class="user-avatar" id="avatar-char">U</div>
+          <div class="user-info">
+            <div class="user-name" id="user-display-name">Loading Creator...</div>
+            <div class="user-role" id="user-display-role">Freelancer</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Top Header Bar -->
+      <header class="dashboard-header">
+        <div class="dashboard-top-nav">
+          <div class="search-wrapper">
+            <i class="ri-search-line"></i>
+            <input type="text" class="form-control" id="sidebar-search" placeholder="Search anything...          Ctrl + /">
+          </div>
+        </div>
+        
+        <div style="display: flex; align-items: center; gap: var(--space-md);">
+          <button class="theme-toggle" onclick="auth.toggleTheme()" aria-label="Toggle theme">
+            <i class="ri-sun-line"></i>
+          </button>
+          
+          <!-- Notifications Bell & Dropdown Wrapper -->
+          <div class="notifications-wrapper" id="notifications-topbar-wrapper">
+            <button class="notifications-bell-btn" id="notifications-bell-btn" aria-label="Notifications">
+              <i class="ri-notification-2-line"></i>
+              <span class="notifications-badge" id="notifications-unread-count" style="display: none;">0</span>
+            </button>
+            <div class="notifications-dropdown" id="notifications-dropdown">
+              <div class="notifications-dropdown-header">
+                <h4>Notifications</h4>
+                <a href="#" id="mark-all-read-btn" onclick="notificationsManager.markAllRead(event)">Mark all as read</a>
+              </div>
+              <ul class="notifications-dropdown-list" id="notifications-dropdown-list">
+                <!-- Dynamically populated -->
+              </ul>
+              <div class="notifications-dropdown-footer">
+                <a href="notifications.html">View all notifications</a>
+              </div>
+            </div>
+          </div>
+          
+          <div class="user-profile-header">
+            <div class="user-avatar" id="header-avatar-char" style="width: 32px; height: 32px; font-size: 0.85rem; flex-shrink: 0;">U</div>
+            <div style="text-align: left;">
+              <div style="font-size: 0.85rem; font-weight: 600;" id="header-user-name">Loading...</div>
+              <div style="font-size: 0.7rem; color: var(--text-muted);" id="header-user-role">Creator</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Dashboard Contents -->
+      <div class="dashboard-body">
+        
+        <!-- Header Section -->
+        <div>
+          <h1 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 2px;">Activity Timeline</h1>
+          <p style="font-size: 0.85rem; color: var(--text-secondary);">Track background events, database modifications, and login triggers in your workspace.</p>
+        </div>
+
+        <!-- Filter / Search Section -->
+        <div class="card" style="padding: var(--space-sm) var(--space-md); display: flex; justify-content: space-between; align-items: center; gap: var(--space-md); flex-wrap: wrap;">
+          <div style="display: flex; align-items: center; gap: var(--space-sm); color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">
+            <i class="ri-history-line" style="color: var(--accent-color);"></i>
+            <span>Log Entries: <span id="activities-count" style="color: var(--text-primary);">0</span></span>
+          </div>
+
+          <div class="filter-group">
+            <!-- Search field -->
+            <div class="search-wrapper" style="max-width: 220px; width: 100%; margin-bottom: 0;">
+              <i class="ri-search-line"></i>
+              <input type="text" class="form-control" id="activity-search-input" placeholder="Search keywords..." oninput="handleSearch()">
+            </div>
+
+            <!-- Entity type select filter -->
+            <select class="form-control filter-select" id="filter-entity" onchange="handleFilterChange()">
+              <option value="">All Entities</option>
+              <option value="client">Clients</option>
+              <option value="project">Projects</option>
+              <option value="task">Tasks</option>
+              <option value="invoice">Invoices</option>
+              <option value="user">Authentication</option>
+            </select>
+
+            <!-- Time filter select -->
+            <select class="form-control filter-select" id="filter-time" onchange="handleFilterChange()">
+              <option value="">All Time</option>
+              <option value="today">Today</option>
+              <option value="week">Past Week</option>
+              <option value="month">Past Month</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Error Alert -->
+        <div id="activity-alert" class="alert alert-danger hidden">
+          <i class="ri-error-warning-line"></i>
+          <span id="activity-alert-msg"></span>
+        </div>
+
+        <!-- Loader Spinner -->
+        <div id="activity-loader" class="flex-center" style="padding: var(--space-2xl);">
+          <div class="spinner" style="border-top-color: var(--accent-color); width: 2.5rem; height: 2.5rem;"></div>
+        </div>
+
+        <!-- Empty State View -->
+        <div class="card glass-panel flex-center hidden" id="activity-empty-view" style="flex-direction: column; padding: var(--space-3xl); text-align: center;">
+          <div class="feature-icon-box blue" style="width: 56px; height: 56px; font-size: 1.75rem; margin-bottom: var(--space-md);">
+            <i class="ri-history-line"></i>
+          </div>
+          <h2 style="font-size: 1.25rem; margin-bottom: var(--space-xs);">No activity recorded</h2>
+          <p class="text-muted" style="max-width: 400px; margin-bottom: var(--space-md);">All system actions like client setups, project adjustments, and completions are auto-tracked here.</p>
+        </div>
+
+        <!-- Vertical Timeline Layout -->
+        <div class="timeline-container hidden" id="activity-timeline-container">
+          <div id="timeline-list">
+            <!-- Dynamically populated timeline items -->
+          </div>
+
+          <!-- Load More pagination button -->
+          <div class="flex-center" style="margin-top: var(--space-xl); margin-bottom: var(--space-lg);">
+            <button class="btn btn-outline" id="load-more-btn" onclick="loadMoreActivities()">
+              <span>Load More Activities</span>
+              <div id="load-more-spinner" class="spinner hidden" style="border-top-color: var(--text-primary); width: 1rem; height: 1rem; margin-left: 8px;"></div>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Script logics -->
+  <script>
+    let limit = 15;
+    let skip = 0;
+    let loading = false;
+    let allLoaded = false;
+    let searchTimeout = null;
+
+    window.addEventListener("DOMContentLoaded", () => {
+      // Setup Header details
+      const user = auth.getCurrentUser();
+      if (user) {
+        const fallbackName = user.full_name || "Workspace Creator";
+        const roleStr = user.role === "admin" ? "Platform Admin" : "Freelancer";
+        
+        document.getElementById("user-display-name").textContent = fallbackName;
+        document.getElementById("header-user-name").textContent = fallbackName;
+        document.getElementById("user-display-role").textContent = roleStr;
+        document.getElementById("header-user-role").textContent = roleStr;
+
+        const firstLetter = fallbackName.charAt(0).toUpperCase();
+        document.getElementById("avatar-char").textContent = firstLetter;
+        document.getElementById("header-avatar-char").textContent = firstLetter;
+      }
+
+      // Initial Fetch
+      fetchActivities(true);
+    });
+
+    /**
+     * Fetch activities from endpoint
+     */
+    async function fetchActivities(reset = false) {
+      if (loading) return;
+      loading = true;
+
+      const timelineContainer = document.getElementById("activity-timeline-container");
+      const emptyView = document.getElementById("activity-empty-view");
+      const loader = document.getElementById("activity-loader");
+      const alertBox = document.getElementById("activity-alert");
+      const listDiv = document.getElementById("timeline-list");
+      const loadMoreBtn = document.getElementById("load-more-btn");
+      const loadMoreSpinner = document.getElementById("load-more-spinner");
+
+      if (reset) {
+        skip = 0;
+        allLoaded = false;
+        if (reset) {
+          loader.classList.remove("hidden");
+          timelineContainer.classList.add("hidden");
+          emptyView.classList.add("hidden");
+        }
+        alertBox.classList.add("hidden");
+        loadMoreBtn.classList.remove("hidden");
+      } else {
+        loadMoreSpinner.classList.remove("hidden");
+      }
+
+      const searchVal = document.getElementById("activity-search-input").value;
+      const entityVal = document.getElementById("filter-entity").value;
+      const timeVal = document.getElementById("filter-time").value;
+
+      try {
+        let endpoint = `/activities/?limit=${limit}&skip=${skip}`;
+        if (searchVal) endpoint += `&search=${encodeURIComponent(searchVal)}`;
+        if (entityVal) endpoint += `&entity_type=${encodeURIComponent(entityVal)}`;
+        if (timeVal) endpoint += `&time_filter=${encodeURIComponent(timeVal)}`;
+
+        const data = await api.get(endpoint);
+
+        if (reset) {
+          listDiv.innerHTML = "";
+          // Also fetch total/count if any, or use length as baseline
+          document.getElementById("activities-count").textContent = data.length;
+        } else {
+          const count = parseInt(document.getElementById("activities-count").textContent);
+          document.getElementById("activities-count").textContent = count + data.length;
+        }
+
+        if (data.length < limit) {
+          allLoaded = true;
+          loadMoreBtn.classList.add("hidden");
+        }
+
+        if (reset && data.length === 0) {
+          emptyView.classList.remove("hidden");
+          timelineContainer.classList.add("hidden");
+        } else {
+          renderTimelineItems(data, listDiv);
+          timelineContainer.classList.remove("hidden");
+        }
+
+      } catch (err) {
+        document.getElementById("activity-alert-msg").textContent = err.message || "Failed to load activity logs feed.";
+        alertBox.classList.remove("hidden");
+      } finally {
+        loader.classList.add("hidden");
+        loadMoreSpinner.classList.add("hidden");
+        loading = false;
+      }
+    }
+
+    /**
+     * Render items to timeline list
+     */
+    function renderTimelineItems(list, container) {
+      list.forEach(item => {
+        const itemEl = document.createElement("div");
+        itemEl.className = "timeline-item";
+
+        // Dot color based on action type
+        let dotColorClass = "action-blue";
+        if (item.action_type === "complete" || item.action_type === "paid") {
+          dotColorClass = "action-green";
+        } else if (item.action_type === "update") {
+          dotColorClass = "action-yellow";
+        } else if (item.action_type === "delete") {
+          dotColorClass = "action-red";
+        } else if (item.action_type === "login") {
+          dotColorClass = "action-yellow"; // Authentication update indicators
+        }
+
+        // Entity Icon class
+        let entityIcon = "ri-history-line";
+        if (item.entity_type === "client") entityIcon = "ri-user-star-line";
+        else if (item.entity_type === "project") entityIcon = "ri-folders-line";
+        else if (item.entity_type === "task") entityIcon = "ri-task-line";
+        else if (item.entity_type === "invoice") entityIcon = "ri-bill-line";
+        else if (item.entity_type === "user") entityIcon = "ri-shield-user-line";
+
+        const relativeTime = formatRelativeTime(item.created_at);
+
+        itemEl.innerHTML = `
+          <div class="timeline-dot ${dotColorClass}">
+            <i class="${entityIcon}"></i>
+          </div>
+          <div class="timeline-card">
+            <div class="timeline-header">
+              <span class="timeline-title">${escapeHTML(item.title)}</span>
+              <span class="timeline-time"><i class="ri-time-line"></i> ${relativeTime}</span>
+            </div>
+            <div class="timeline-desc">${escapeHTML(item.description)}</div>
+            <div class="timeline-meta">
+              <span class="timeline-tag">
+                <i class="${entityIcon}"></i> ${escapeHTML(item.entity_type)}
+              </span>
+              <span class="timeline-tag" style="text-transform: capitalize;">
+                action: ${escapeHTML(item.action_type)}
+              </span>
+            </div>
+          </div>
+        `;
+        container.appendChild(itemEl);
+      });
+    }
+
+    /**
+     * Load more pagination trigger
+     */
+    function loadMoreActivities() {
+      if (allLoaded || loading) return;
+      skip += limit;
+      fetchActivities(false);
+    }
+
+    /**
+     * Debounced Search handlers
+     */
+    function handleSearch() {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        fetchActivities(true);
+      }, 350);
+    }
+
+    /**
+     * Filter Select Changes
+     */
+    function handleFilterChange() {
+      fetchActivities(true);
+    }
+
+    /**
+     * Relative time string generator
+     */
+    function formatRelativeTime(dateString) {
+      const date = new Date(dateString);
+      const now = new Date();
+      const diffMs = now - date;
+      const diffSec = Math.floor(diffMs / 1000);
+      const diffMin = Math.floor(diffSec / 60);
+      const diffHr = Math.floor(diffMin / 60);
+      const diffDays = Math.floor(diffHr / 24);
+
+      if (diffSec < 60) {
+        return "Just now";
+      } else if (diffMin < 60) {
+        return `${diffMin}m ago`;
+      } else if (diffHr < 24) {
+        return `${diffHr}h ago`;
+      } else if (diffDays === 1) {
+        return "Yesterday";
+      } else if (diffDays < 7) {
+        return `${diffDays}d ago`;
+      } else {
+        return date.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+      }
+    }
+
+    function escapeHTML(str) {
+      if (!str) return "";
+      return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+  </script>
+</body>
+</html>

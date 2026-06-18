@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Financial Analytics Workspace - CreateFlowX</title>
+  
+  <!-- Remix Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet"/>
+  
+  <!-- CSS Styling Files -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css?v=2">
+  <link rel="stylesheet" href="css/layouts.css">
+  
+  <style>
+    /* Premium Scoped Styling for Analytics Module */
+    .analytics-grid-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-md);
+    }
+    
+    .client-contribution-card {
+      padding: var(--space-lg);
+    }
+    
+    .table-container {
+      margin-top: var(--space-md);
+      overflow-x: auto;
+    }
+    
+    /* Hover effects for SVG charts */
+    .bar-hover:hover {
+      opacity: 0.85;
+      transform: scaleY(1.02);
+      transform-origin: bottom;
+    }
+    
+    .donut-segment {
+      transition: stroke-width 0.2s ease;
+    }
+    .donut-segment:hover {
+      stroke-width: 6;
+      cursor: pointer;
+    }
+    
+    /* Responsive adjustment */
+    @media (max-width: 1024px) {
+      .analytics-grid-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 640px) {
+      .analytics-grid-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Route Guard -->
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/notifications.js"></script>
+  <script>
+    auth.guardRoute();
+  </script>
+
+  <div class="dashboard-layout">
+    <!-- Left Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <!-- SVG Logo -->
+        <svg width="24" height="24" viewBox="0 0 200 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M70 15 C35 15, 15 35, 15 50 C15 65, 35 85, 70 85 L90 85 L90 73 L70 73 C45 73, 30 63, 30 50 C30 37, 45 27, 70 27 L90 27 L90 15 Z" fill="url(#dbLogoBlue)" />
+          <path d="M85 35 L120 35 L120 47 L97 47 L97 55 L115 55 L115 65 L97 65 L97 85 L85 85 Z" fill="url(#dbLogoBlue)" />
+          <path d="M125 15 L140 15 L168 52 L195 15 L210 15 L175 62 L175 85 L162 85 L162 62 Z" fill="url(#dbLogoPurple)" />
+          <defs>
+            <linearGradient id="dbLogoBlue" x1="15" y1="15" x2="120" y2="85" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#00f2fe" />
+              <stop offset="100%" stop-color="#0082ff" />
+            </linearGradient>
+            <linearGradient id="dbLogoPurple" x1="125" y1="15" x2="210" y2="85" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#7b2cbf" />
+              <stop offset="100%" stop-color="#c77dff" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <span style="font-weight: 800;">Create<span class="text-gradient-blue">Flow</span><span class="text-gradient-purple">X</span></span>
+      </div>
+
+      <nav class="sidebar-menu">
+        <a href="dashboard.html" class="sidebar-link"><i class="ri-layout-grid-line"></i> <span>Dashboard</span></a>
+        <a href="clients.html" class="sidebar-link"><i class="ri-user-star-line"></i> <span>Clients</span></a>
+        <a href="projects.html" class="sidebar-link"><i class="ri-folders-line"></i> <span>Projects</span></a>
+        <a href="tasks.html" class="sidebar-link"><i class="ri-task-line"></i> <span>Tasks</span></a>
+        <a href="calendar.html" class="sidebar-link"><i class="ri-calendar-event-line"></i> <span>Calendar</span></a>
+        <a href="notifications.html" class="sidebar-link"><i class="ri-notification-3-line"></i> <span>Notifications</span></a>
+        <a href="invoices.html" class="sidebar-link"><i class="ri-bill-line"></i> <span>Invoices</span></a>
+        <a href="analytics.html" class="sidebar-link active"><i class="ri-bar-chart-box-line"></i> <span>Analytics</span></a>
+        <a href="activity.html" class="sidebar-link"><i class="ri-time-line"></i> <span>Activity</span></a>
+        <a href="admin/" id="sidebar-admin-link" class="sidebar-link hidden"><i class="ri-shield-user-line"></i> <span>Admin Panel</span></a>
+        <a href="settings.html" class="sidebar-link"><i class="ri-settings-4-line"></i> <span>Settings</span></a>
+      </nav>
+
+      <!-- Sidebar User Footer -->
+      <div class="sidebar-footer">
+        <a onclick="auth.logout()" class="sidebar-link" style="color: var(--text-muted); margin-bottom: var(--space-sm);">
+          <i class="ri-logout-box-r-line"></i> <span>Log out</span>
+        </a>
+        <div class="user-profile-widget">
+          <div class="user-avatar" id="avatar-char">U</div>
+          <div class="user-info">
+            <div class="user-name" id="user-display-name">Loading Creator...</div>
+            <div class="user-role" id="user-display-role">Freelancer</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Top Header Bar -->
+      <header class="dashboard-header">
+        <div class="dashboard-top-nav">
+          <div class="search-wrapper">
+            <i class="ri-search-line"></i>
+            <input type="text" class="form-control" id="sidebar-search" placeholder="Search anything...          Ctrl + /">
+          </div>
+        </div>
+        
+        <div style="display: flex; align-items: center; gap: var(--space-md);">
+          <button class="theme-toggle" onclick="auth.toggleTheme()" aria-label="Toggle theme">
+            <i class="ri-sun-line"></i>
+          </button>
+          
+          <!-- Notifications Bell & Dropdown Wrapper -->
+          <div class="notifications-wrapper" id="notifications-topbar-wrapper">
+            <button class="notifications-bell-btn" id="notifications-bell-btn" aria-label="Notifications">
+              <i class="ri-notification-2-line"></i>
+              <span class="notifications-badge" id="notifications-unread-count" style="display: none;">0</span>
+            </button>
+            <div class="notifications-dropdown" id="notifications-dropdown">
+              <div class="notifications-dropdown-header">
+                <h4>Notifications</h4>
+                <a href="#" id="mark-all-read-btn" onclick="notificationsManager.markAllRead(event)">Mark all as read</a>
+              </div>
+              <ul class="notifications-dropdown-list" id="notifications-dropdown-list">
+                <!-- Dynamically populated -->
+              </ul>
+              <div class="notifications-dropdown-footer">
+                <a href="notifications.html">View all notifications</a>
+              </div>
+            </div>
+          </div>
+          
+          <div class="user-profile-header">
+            <div class="user-avatar" id="header-avatar-char" style="width: 32px; height: 32px; font-size: 0.85rem; flex-shrink: 0;">U</div>
+            <div style="text-align: left;">
+              <div style="font-size: 0.85rem; font-weight: 600;" id="header-user-name">Loading...</div>
+              <div style="font-size: 0.7rem; color: var(--text-muted);" id="header-user-role">Creator</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Dashboard Contents -->
+      <div class="dashboard-body">
+        
+        <!-- Welcome Greetings -->
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h1 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 2px;">Financial Analytics Workspace</h1>
+            <p style="font-size: 0.85rem; color: var(--text-secondary);">Real-time tracking of revenue generation, client payments, and invoice status metrics.</p>
+          </div>
+          <button class="btn btn-primary" onclick="location.href='invoices.html'"><i class="ri-bill-line"></i> Invoices Workspace</button>
+        </div>
+
+        <!-- Loader Spinner -->
+        <div id="analytics-loader" class="flex-center" style="padding: var(--space-3xl);">
+          <div class="spinner" style="border-top-color: var(--accent-color); width: 2.5rem; height: 2.5rem;"></div>
+        </div>
+
+        <!-- Main Content (Hidden until loaded) -->
+        <div id="analytics-main-content" class="hidden" style="display: flex; flex-direction: column; gap: var(--space-xl);">
+          
+          <!-- Revenue Metric Cards Row -->
+          <div>
+            <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin-bottom: var(--space-md);">Revenue Metrics Overview</h3>
+            <div class="analytics-grid-row">
+              <div class="card card-hover" style="border-left: 4px solid var(--accent-color);">
+                <span class="text-muted" style="font-size: 0.78rem; font-weight: 600;">Total Revenue</span>
+                <div class="metric-value" id="rev-total-value">₹0</div>
+                <div class="text-secondary" style="font-size: 0.72rem; margin-top: 4px;">Accrual billed revenue</div>
+              </div>
+              <div class="card card-hover" style="border-left: 4px solid #10b981;">
+                <span class="text-muted" style="font-size: 0.78rem; font-weight: 600;">Paid Revenue</span>
+                <div class="metric-value" style="color: #10b981;" id="rev-paid-value">₹0</div>
+                <div class="text-secondary" style="font-size: 0.72rem; margin-top: 4px;">Completed payments</div>
+              </div>
+              <div class="card card-hover" style="border-left: 4px solid #3b82f6;">
+                <span class="text-muted" style="font-size: 0.78rem; font-weight: 600;">Pending Revenue</span>
+                <div class="metric-value" style="color: #3b82f6;" id="rev-pending-value">₹0</div>
+                <div class="text-secondary" style="font-size: 0.72rem; margin-top: 4px;">Draft, Sent, or Pending</div>
+              </div>
+              <div class="card card-hover" style="border-left: 4px solid #ef4444;">
+                <span class="text-muted" style="font-size: 0.78rem; font-weight: 600;">Overdue Revenue</span>
+                <div class="metric-value" style="color: #ef4444;" id="rev-overdue-value">₹0</div>
+                <div class="text-secondary" style="font-size: 0.72rem; margin-top: 4px;">Unpaid past due invoices</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Invoices Metric Cards Row -->
+          <div>
+            <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin-bottom: var(--space-md);">Invoices Metrics Overview</h3>
+            <div class="analytics-grid-row">
+              <div class="card card-hover" style="border-left: 4px solid var(--accent-color);">
+                <span class="text-muted" style="font-size: 0.78rem; font-weight: 600;">Total Invoices</span>
+                <div class="metric-value" id="inv-total-value">0</div>
+                <div class="text-secondary" style="font-size: 0.72rem; margin-top: 4px;">Across all accounts</div>
+              </div>
+              <div class="card card-hover" style="border-left: 4px solid #10b981;">
+                <span class="text-muted" style="font-size: 0.78rem; font-weight: 600;">Paid Invoices</span>
+                <div class="metric-value" style="color: #10b981;" id="inv-paid-value">0</div>
+                <div class="text-secondary" style="font-size: 0.72rem; margin-top: 4px;">Settled billings</div>
+              </div>
+              <div class="card card-hover" style="border-left: 4px solid #3b82f6;">
+                <span class="text-muted" style="font-size: 0.78rem; font-weight: 600;">Pending Invoices</span>
+                <div class="metric-value" style="color: #3b82f6;" id="inv-pending-value">0</div>
+                <div class="text-secondary" style="font-size: 0.72rem; margin-top: 4px;">Unsettled active billings</div>
+              </div>
+              <div class="card card-hover" style="border-left: 4px solid #ef4444;">
+                <span class="text-muted" style="font-size: 0.78rem; font-weight: 600;">Overdue Invoices</span>
+                <div class="metric-value" style="color: #ef4444;" id="inv-overdue-value">0</div>
+                <div class="text-secondary" style="font-size: 0.72rem; margin-top: 4px;">Critical overdue count</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Charts Row -->
+          <div class="grid-three">
+            <!-- Monthly Revenue Bar Chart -->
+            <div class="card">
+              <h3 class="section-title" style="margin-bottom: var(--space-md);">Monthly Revenue (Accrual)</h3>
+              <div id="chart-monthly-revenue-container" style="height: 150px; display: flex; align-items: flex-end; justify-content: space-between; padding-top: var(--space-md);">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+
+            <!-- Status Distribution Donut Chart -->
+            <div class="card">
+              <h3 class="section-title" style="margin-bottom: var(--space-md);">Status Distribution</h3>
+              <div style="display: flex; align-items: center; gap: var(--space-md); justify-content: center; height: 150px;">
+                <div style="position: relative; width: 100px; height: 100px; flex-shrink: 0;">
+                  <svg width="100%" height="100%" viewBox="0 0 42 42" class="donut" id="chart-status-donut-svg">
+                    <circle cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="var(--border-color)" stroke-width="4"></circle>
+                  </svg>
+                  <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+                    <div style="font-size: 1.1rem; font-weight: 800; color: var(--text-primary);" id="donut-total-count">0</div>
+                    <div style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600;">Invoices</div>
+                  </div>
+                </div>
+                
+                <div class="chart-legend" id="donut-legend-container" style="gap: 4px;">
+                  <!-- Injected dynamically -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Revenue Trend Line Chart -->
+            <div class="card">
+              <h3 class="section-title" style="margin-bottom: var(--space-md);">Revenue Trend (Current Month)</h3>
+              <div style="height: 110px; width: 100%; position: relative; margin-top: var(--space-md);">
+                <div style="position: absolute; top: -15px; left: 0; font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Cumulative Revenue Trend</div>
+                <div style="position: absolute; top: -15px; right: 0; font-size: 0.82rem; font-weight: 700; color: var(--accent-color);" id="trend-peak-value">₹0</div>
+                <svg viewBox="0 0 100 30" width="100%" height="100%" preserveAspectRatio="none" style="margin-top: 10px;" id="chart-revenue-trend-svg">
+                  <!-- Paths injected dynamically -->
+                </svg>
+                <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--text-muted); margin-top: 4px;">
+                  <span>Week 1</span>
+                  <span>Week 2</span>
+                  <span>Week 3</span>
+                  <span>Week 4</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Client Contributions Analysis -->
+          <div class="card client-contribution-card">
+            <h3 class="section-title" style="margin-bottom: var(--space-xs);">Client Contributions Breakdown</h3>
+            <p class="text-secondary" style="font-size: 0.82rem; margin-bottom: var(--space-md);">Percentage shares calculated based on settled/paid invoice revenue figures.</p>
+            
+            <div class="table-container">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Client Name</th>
+                    <th>Total Billed</th>
+                    <th>Paid Amount</th>
+                    <th>Share Percentage</th>
+                    <th style="width: 200px;">Progress Bar</th>
+                  </tr>
+                </thead>
+                <tbody id="client-contributions-tbody">
+                  <!-- Injected dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div> <!-- end #analytics-main-content -->
+      </div>
+    </main>
+  </div>
+
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      // Load user details
+      const user = auth.getCurrentUser();
+      if (user) {
+        const fallbackName = user.full_name || "Pooja Sharma";
+        const roleStr = user.role === "admin" ? "Platform Admin" : "Freelancer";
+        
+        document.getElementById("user-display-name").textContent = fallbackName;
+        document.getElementById("header-user-name").textContent = fallbackName;
+        document.getElementById("user-display-role").textContent = roleStr;
+        document.getElementById("header-user-role").textContent = roleStr;
+        
+        const firstLetter = fallbackName.charAt(0).toUpperCase();
+        document.getElementById("avatar-char").textContent = firstLetter;
+        document.getElementById("header-avatar-char").textContent = firstLetter;
+      }
+      
+      loadAnalyticsData();
+    });
+
+    async function loadAnalyticsData() {
+      const loader = document.getElementById("analytics-loader");
+      const mainContent = document.getElementById("analytics-main-content");
+      
+      try {
+        const stats = await api.get("/invoices/stats");
+        
+        // Populate Revenue Metrics Overview values
+        document.getElementById("rev-total-value").textContent = formatINR(stats.revenue.total);
+        document.getElementById("rev-paid-value").textContent = formatINR(stats.revenue.paid);
+        document.getElementById("rev-pending-value").textContent = formatINR(stats.revenue.pending);
+        document.getElementById("rev-overdue-value").textContent = formatINR(stats.revenue.overdue);
+
+        // Populate Invoices Metrics Overview values
+        document.getElementById("inv-total-value").textContent = stats.invoices.total;
+        document.getElementById("inv-paid-value").textContent = stats.invoices.paid;
+        document.getElementById("inv-pending-value").textContent = stats.invoices.pending;
+        document.getElementById("inv-overdue-value").textContent = stats.invoices.overdue;
+
+        // Render charts
+        renderMonthlyRevenueChart(stats.charts.monthly_revenue);
+        renderStatusDistributionChart(stats.charts.status_distribution, stats.invoices.total);
+        renderRevenueTrendChart(stats.charts.revenue_trend);
+
+        // Render client contributions
+        renderClientContributions(stats.analytics.client_contribution);
+
+        loader.classList.add("hidden");
+        mainContent.classList.remove("hidden");
+
+      } catch (err) {
+        console.error("Failed to load analytics data:", err);
+      }
+    }
+
+    function formatINR(val) {
+      return auth.formatCurrency(val);
+    }
+
+    function renderMonthlyRevenueChart(data) {
+      const container = document.getElementById("chart-monthly-revenue-container");
+      if (!container) return;
+      container.innerHTML = "";
+
+      const maxAmt = Math.max(...data.map(d => d.amount), 1000);
+
+      data.forEach(item => {
+        const barHeight = Math.max(Math.round((item.amount / maxAmt) * 90), 4);
+        const formatted = item.amount >= 1000 ? `${(item.amount / 1000).toFixed(0)}k` : `${item.amount}`;
+
+        container.innerHTML += `
+          <div style="display: flex; flex-direction: column; align-items: center; flex: 1; gap: 4px;">
+            <div style="font-size: 0.65rem; font-weight: 700; color: var(--accent-color); margin-bottom: 2px;">${auth.getCurrencySymbol()}${formatted}</div>
+            <div class="bar-hover" style="width: 18px; height: ${barHeight}px; background: var(--grad-primary); border-radius: 4px 4px 0 0; transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer;" title="Accrual: ${formatINR(item.amount)}"></div>
+            <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600; white-space: nowrap;">${item.month}</span>
+          </div>
+        `;
+      });
+    }
+
+    function renderStatusDistributionChart(data, totalCount) {
+      const svg = document.getElementById("chart-status-donut-svg");
+      const legend = document.getElementById("donut-legend-container");
+      const totalDisplay = document.getElementById("donut-total-count");
+      
+      if (!svg || !legend || !totalDisplay) return;
+      
+      totalDisplay.textContent = totalCount;
+      legend.innerHTML = "";
+      
+      svg.innerHTML = `<circle cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="var(--border-color)" stroke-width="4"></circle>`;
+
+      const statusColors = {
+        "Paid": "#10b981",
+        "Pending": "#3b82f6",
+        "Sent": "#6366f1",
+        "Draft": "#94a3b8",
+        "Overdue": "#ef4444",
+        "Cancelled": "#64748b"
+      };
+
+      if (totalCount === 0) {
+        legend.innerHTML = `<div style="font-size:0.72rem; color:var(--text-muted);">No invoice data</div>`;
+        return;
+      }
+
+      let currentOffset = 25;
+
+      data.forEach(item => {
+        if (item.count === 0) return;
+        
+        const percentage = (item.count / totalCount) * 100;
+        const color = statusColors[item.status] || "#94a3b8";
+
+        const segment = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        segment.setAttribute("cx", "21");
+        segment.setAttribute("cy", "21");
+        segment.setAttribute("r", "15.91549430918954");
+        segment.setAttribute("fill", "transparent");
+        segment.setAttribute("stroke", color);
+        segment.setAttribute("stroke-width", "5");
+        segment.setAttribute("stroke-dasharray", `${percentage} ${100 - percentage}`);
+        segment.setAttribute("stroke-dashoffset", `${currentOffset}`);
+        segment.setAttribute("class", "donut-segment");
+        segment.innerHTML = `<title>${item.status}: ${item.count} invoices (${formatINR(item.amount)})</title>`;
+        svg.appendChild(segment);
+
+        currentOffset = (currentOffset - percentage);
+        if (currentOffset < 0) currentOffset += 100;
+
+        legend.innerHTML += `
+          <div class="legend-item" style="display:flex; align-items:center; gap:4px; font-size:0.7rem;">
+            <span class="legend-dot" style="background-color: ${color}; width:6px; height:6px; border-radius:50%; display:inline-block;"></span>
+            <span><strong>${item.count}</strong> ${item.status} (${formatINR(item.amount)})</span>
+          </div>
+        `;
+      });
+    }
+
+    function renderRevenueTrendChart(trendData) {
+      const svg = document.getElementById("chart-revenue-trend-svg");
+      const peakDisplay = document.getElementById("trend-peak-value");
+      if (!svg || !peakDisplay) return;
+
+      const maxVal = Math.max(...trendData.map(d => d.amount), 1000);
+      peakDisplay.textContent = formatINR(trendData[3] ? trendData[3].amount : 0);
+
+      const points = [];
+      const xCoords = [0, 33.3, 66.6, 100];
+
+      for (let i = 0; i < 4; i++) {
+        const amt = trendData[i] ? trendData[i].amount : 0;
+        const x = xCoords[i];
+        const y = 28 - (amt / maxVal) * 24;
+        points.push({x, y});
+      }
+
+      const lineD = `M ${points[0].x},${points[0].y} L ${points[1].x},${points[1].y} L ${points[2].x},${points[2].y} L ${points[3].x},${points[3].y}`;
+      const areaD = `${lineD} L 100,30 L 0,30 Z`;
+
+      svg.innerHTML = `
+        <defs>
+          <linearGradient id="revenueTrendGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="rgba(79, 70, 229, 0.2)" />
+            <stop offset="100%" stop-color="rgba(79, 70, 229, 0.0)" />
+          </linearGradient>
+        </defs>
+        <path d="${areaD}" fill="url(#revenueTrendGrad)" />
+        <path d="${lineD}" fill="none" stroke="var(--accent-color)" stroke-width="2" />
+        <circle cx="${points[0].x}" cy="${points[0].y}" r="1.5" fill="var(--accent-color)" />
+        <circle cx="${points[1].x}" cy="${points[1].y}" r="1.5" fill="var(--accent-color)" />
+        <circle cx="${points[2].x}" cy="${points[2].y}" r="1.5" fill="var(--accent-color)" />
+        <circle cx="${points[3].x}" cy="${points[3].y}" r="1.5" fill="var(--accent-color)" />
+      `;
+    }
+
+    function renderClientContributions(contributions) {
+      const tbody = document.getElementById("client-contributions-tbody");
+      if (!tbody) return;
+      tbody.innerHTML = "";
+
+      if (!contributions || contributions.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted); font-size:0.82rem; padding:var(--space-md);">No client contribution data calculated yet.</td></tr>`;
+        return;
+      }
+
+      contributions.forEach(c => {
+        let progressColor = "#ef4444";
+        if (c.contribution_percentage >= 50) {
+          progressColor = "#10b981";
+        } else if (c.contribution_percentage >= 20) {
+          progressColor = "#3b82f6";
+        } else if (c.contribution_percentage > 0) {
+          progressColor = "#f59e0b";
+        }
+
+        tbody.innerHTML += `
+          <tr>
+            <td><strong>${escapeHTML(c.client_name)}</strong></td>
+            <td><strong>${formatINR(c.total_amount)}</strong></td>
+            <td style="color: #10b981;"><strong>${formatINR(c.paid_amount)}</strong></td>
+            <td><strong>${c.contribution_percentage}%</strong></td>
+            <td>
+              <div class="progress-container" style="margin-top: 0;">
+                <div class="progress-bar" style="height: 6px; width: 100%;">
+                  <div class="progress-fill" style="width: ${c.contribution_percentage}%; background-color: ${progressColor};"></div>
+                </div>
+              </div>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    function escapeHTML(str) {
+      if (!str) return "";
+      return str.replace(/[&<>'"]/g, 
+        tag => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          "'": '&#39;',
+          '"': '&quot;'
+        }[tag] || tag)
+      );
+    }
+  </script>
+</body>
+</html>

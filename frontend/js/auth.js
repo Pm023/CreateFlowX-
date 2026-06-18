@@ -29,6 +29,12 @@ const auth = {
     localStorage.setItem("cfx_token", data.access_token);
     localStorage.setItem("cfx_user", JSON.stringify(data.user));
 
+    // Cache user settings if returned
+    if (data.user && data.user.settings) {
+      localStorage.setItem("cfx_settings", JSON.stringify(data.user.settings));
+      localStorage.setItem("cfx_theme", data.user.settings.theme);
+    }
+
     return data;
   },
 
@@ -38,7 +44,9 @@ const auth = {
   logout() {
     localStorage.removeItem("cfx_token");
     localStorage.removeItem("cfx_user");
-    window.location.href = "login.html";
+    localStorage.removeItem("cfx_settings");
+    const isSubdir = window.location.pathname.includes("/admin");
+    window.location.href = isSubdir ? "../login.html" : "login.html";
   },
 
   /**
@@ -65,7 +73,8 @@ const auth = {
    */
   guardRoute() {
     if (!this.isAuthenticated()) {
-      window.location.href = "login.html";
+      const isSubdir = window.location.pathname.includes("/admin");
+      window.location.href = isSubdir ? "../login.html" : "login.html";
     }
   },
 
@@ -86,14 +95,36 @@ const auth = {
     const currentTheme = localStorage.getItem("cfx_theme") || "light";
     document.documentElement.setAttribute("data-theme", currentTheme);
     this.updateThemeToggleIcon(currentTheme);
+
+    // Eager load preferences from database if logged in
+    if (this.isAuthenticated()) {
+      this.loadSettings();
+    }
   },
 
-  toggleTheme() {
+  async toggleTheme() {
     const currentTheme = document.documentElement.getAttribute("data-theme");
     const newTheme = currentTheme === "dark" ? "light" : "dark";
     document.documentElement.setAttribute("data-theme", newTheme);
     localStorage.setItem("cfx_theme", newTheme);
     this.updateThemeToggleIcon(newTheme);
+
+    // Sync to database settings
+    const settings = this.getCurrentSettings();
+    settings.theme = newTheme;
+    localStorage.setItem("cfx_settings", JSON.stringify(settings));
+
+    if (this.isAuthenticated()) {
+      try {
+        await api.put("/settings/", {
+          theme: newTheme,
+          currency: settings.currency,
+          date_format: settings.date_format
+        });
+      } catch (e) {
+        console.error("Theme preference sync failed:", e);
+      }
+    }
   },
 
   updateThemeToggleIcon(theme) {
@@ -101,9 +132,95 @@ const auth = {
     if (!toggleBtn) return;
     
     if (theme === "dark") {
-      toggleBtn.className = "ri-sun-line"; // Assuming Remix Icon, or standard replacement
+      toggleBtn.className = "ri-sun-line"; 
     } else {
       toggleBtn.className = "ri-moon-line";
+    }
+  },
+
+  /* Central Workspace Preferences Formatting Helpers */
+  getCurrentSettings() {
+    const settingsStr = localStorage.getItem("cfx_settings");
+    try {
+      return settingsStr ? JSON.parse(settingsStr) : { theme: "light", currency: "INR", date_format: "DD/MM/YYYY" };
+    } catch (e) {
+      return { theme: "light", currency: "INR", date_format: "DD/MM/YYYY" };
+    }
+  },
+
+  async loadSettings() {
+    try {
+      const settings = await api.get("/settings/");
+      localStorage.setItem("cfx_settings", JSON.stringify(settings));
+      localStorage.setItem("cfx_theme", settings.theme);
+      
+      // Update theme to match DB configuration
+      document.documentElement.setAttribute("data-theme", settings.theme);
+      this.updateThemeToggleIcon(settings.theme);
+      
+      return settings;
+    } catch (e) {
+      console.error("Failed to load settings from server:", e);
+      return this.getCurrentSettings();
+    }
+  },
+
+  getCurrencySymbol() {
+    const settings = this.getCurrentSettings();
+    const currency = settings.currency || "INR";
+    if (currency === 'USD') return '$';
+    if (currency === 'EUR') return '€';
+    if (currency === 'GBP') return '£';
+    return '₹';
+  },
+
+  formatCurrency(amount) {
+    const settings = this.getCurrentSettings();
+    const currency = settings.currency || "INR";
+    
+    let locale = 'en-IN';
+    if (currency === 'USD') locale = 'en-US';
+    else if (currency === 'EUR') locale = 'de-DE';
+    else if (currency === 'GBP') locale = 'en-GB';
+    
+    return new Intl.NumberFormat(locale, {
+      style: 'currency',
+      currency: currency,
+      maximumFractionDigits: 0
+    }).format(amount);
+  },
+
+  formatDate(dateString) {
+    if (!dateString) return "N/A";
+    
+    let date;
+    if (dateString instanceof Date) {
+      date = dateString;
+    } else {
+      const cleanDate = dateString.split("T")[0];
+      const parts = cleanDate.split("-");
+      if (parts.length === 3) {
+        date = new Date(parts[0], parts[1] - 1, parts[2]);
+      } else {
+        date = new Date(dateString);
+      }
+    }
+    
+    if (isNaN(date.getTime())) return "N/A";
+    
+    const settings = this.getCurrentSettings();
+    const fmt = settings.date_format || "DD/MM/YYYY";
+    
+    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const yyyy = date.getFullYear();
+    
+    if (fmt === "MM/DD/YYYY") {
+      return `${mm}/${dd}/${yyyy}`;
+    } else if (fmt === "YYYY-MM-DD") {
+      return `${yyyy}-${mm}-${dd}`;
+    } else {
+      return `${dd}/${mm}/${yyyy}`;
     }
   }
 };
@@ -111,4 +228,13 @@ const auth = {
 // Initialize theme immediately on script import
 document.addEventListener("DOMContentLoaded", () => {
   auth.initTheme();
+
+  // Show admin link if user is admin
+  const user = auth.getCurrentUser();
+  if (user && user.role === "admin") {
+    const adminLink = document.getElementById("sidebar-admin-link");
+    if (adminLink) {
+      adminLink.classList.remove("hidden");
+    }
+  }
 });

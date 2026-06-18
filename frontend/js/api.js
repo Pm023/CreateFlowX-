@@ -24,6 +24,17 @@ const api = {
    * Evaluates request response. If status is 401, clears invalid tokens and redirects.
    */
   async handleResponse(response) {
+    if (response.status === 503) {
+      const data = await response.json().catch(() => ({}));
+      alert("System Maintenance: " + (data.detail || "The platform is currently undergoing maintenance. Please try again later."));
+      localStorage.removeItem("cfx_token");
+      localStorage.removeItem("cfx_user");
+      localStorage.removeItem("cfx_settings");
+      const isSubdir = window.location.pathname.includes("/admin");
+      window.location.href = isSubdir ? "../login.html?maintenance=true" : "login.html?maintenance=true";
+      throw new Error(data.detail || "System under maintenance.");
+    }
+
     if (response.status === 401) {
       // Clear token and redirect to login if unauthorized
       localStorage.removeItem("cfx_token");
@@ -32,7 +43,8 @@ const api = {
       // Prevent infinite redirect loop if already on login/register pages
       const currentPath = window.location.pathname;
       if (!currentPath.includes("login.html") && !currentPath.includes("register.html") && !currentPath.includes("index.html") && currentPath !== "/") {
-        window.location.href = "login.html?expired=true";
+        const isSubdir = currentPath.includes("/admin");
+        window.location.href = isSubdir ? "../login.html?expired=true" : "login.html?expired=true";
       }
     }
     

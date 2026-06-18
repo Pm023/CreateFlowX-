@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invoice Workspace - CreateFlowX</title>
+  
+  <!-- Remix Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet"/>
+  
+  <!-- CSS Styling Files -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css?v=2">
+  <link rel="stylesheet" href="css/layouts.css">
+  
+  <style>
+    /* Invoice Page Custom Layouts */
+    .invoices-workspace-grid {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+
+    /* Status badges for financial views */
+    .badge-paid {
+      background-color: rgba(16, 185, 129, 0.08);
+      color: #10b981;
+    }
+    [data-theme="dark"] .badge-paid {
+      background-color: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+    }
+
+    .badge-sent {
+      background-color: rgba(59, 130, 246, 0.08);
+      color: #3b82f6;
+    }
+    [data-theme="dark"] .badge-sent {
+      background-color: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+    }
+
+    .badge-overdue {
+      background-color: rgba(239, 68, 68, 0.08);
+      color: #ef4444;
+      font-weight: 700;
+    }
+    [data-theme="dark"] .badge-overdue {
+      background-color: rgba(239, 68, 68, 0.15);
+      color: #fca5a5;
+    }
+
+    .badge-cancelled {
+      background-color: rgba(100, 116, 139, 0.08);
+      color: #64748b;
+    }
+    [data-theme="dark"] .badge-cancelled {
+      background-color: rgba(100, 116, 139, 0.15);
+      color: #94a3b8;
+    }
+
+    /* Modal dialog styling overrides */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(15, 23, 42, 0.4);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--transition-normal);
+    }
+
+    .modal-backdrop.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-content {
+      width: 100%;
+      max-width: 580px;
+      transform: translateY(20px);
+      transition: transform var(--transition-normal);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-backdrop.active .modal-content {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-lg);
+    }
+
+    .modal-close-btn {
+      background: none;
+      border: none;
+      font-size: 1.25rem;
+      cursor: pointer;
+      color: var(--text-secondary);
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--space-sm);
+      margin-top: var(--space-lg);
+    }
+
+    .filter-group {
+      display: flex;
+      gap: var(--space-sm);
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .filter-select {
+      min-width: 140px;
+    }
+
+    .info-grid-2x2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-md);
+      background-color: var(--bg-tertiary);
+      padding: var(--space-md);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      margin-bottom: var(--space-md);
+    }
+
+    .info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .info-label {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .info-value {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Route Guard -->
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/notifications.js"></script>
+  <script>
+    auth.guardRoute();
+  </script>
+
+  <div class="dashboard-layout">
+    <!-- Left Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <!-- SVG Logo -->
+        <svg width="24" height="24" viewBox="0 0 200 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M70 15 C35 15, 15 35, 15 50 C15 65, 35 85, 70 85 L90 85 L90 73 L70 73 C45 73, 30 63, 30 50 C30 37, 45 27, 70 27 L90 27 L90 15 Z" fill="url(#dbLogoBlue)" />
+          <path d="M85 35 L120 35 L120 47 L97 47 L97 55 L115 55 L115 65 L97 65 L97 85 L85 85 Z" fill="url(#dbLogoBlue)" />
+          <path d="M125 15 L140 15 L168 52 L195 15 L210 15 L175 62 L175 85 L162 85 L162 62 Z" fill="url(#dbLogoPurple)" />
+          <defs>
+            <linearGradient id="dbLogoBlue" x1="15" y1="15" x2="120" y2="85" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#00f2fe" />
+              <stop offset="100%" stop-color="#0082ff" />
+            </linearGradient>
+            <linearGradient id="dbLogoPurple" x1="125" y1="15" x2="210" y2="85" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#7b2cbf" />
+              <stop offset="100%" stop-color="#c77dff" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <span style="font-weight: 800;">Create<span class="text-gradient-blue">Flow</span><span class="text-gradient-purple">X</span></span>
+      </div>
+
+      <nav class="sidebar-menu">
+        <a href="dashboard.html" class="sidebar-link"><i class="ri-layout-grid-line"></i> <span>Dashboard</span></a>
+        <a href="clients.html" class="sidebar-link"><i class="ri-user-star-line"></i> <span>Clients</span></a>
+        <a href="projects.html" class="sidebar-link"><i class="ri-folders-line"></i> <span>Projects</span></a>
+        <a href="tasks.html" class="sidebar-link"><i class="ri-task-line"></i> <span>Tasks</span></a>
+        <a href="calendar.html" class="sidebar-link"><i class="ri-calendar-event-line"></i> <span>Calendar</span></a>
+        <a href="notifications.html" class="sidebar-link"><i class="ri-notification-3-line"></i> <span>Notifications</span></a>
+        <a href="invoices.html" class="sidebar-link active"><i class="ri-bill-line"></i> <span>Invoices</span></a>
+        <a href="analytics.html" class="sidebar-link"><i class="ri-bar-chart-box-line"></i> <span>Analytics</span></a>
+        <a href="activity.html" class="sidebar-link"><i class="ri-time-line"></i> <span>Activity</span></a>
+        <a href="admin/" id="sidebar-admin-link" class="sidebar-link hidden"><i class="ri-shield-user-line"></i> <span>Admin Panel</span></a>
+        <a href="settings.html" class="sidebar-link"><i class="ri-settings-4-line"></i> <span>Settings</span></a>
+      </nav>
+
+      <!-- Sidebar User Footer -->
+      <div class="sidebar-footer">
+        <a onclick="auth.logout()" class="sidebar-link" style="color: var(--text-muted); margin-bottom: var(--space-sm);">
+          <i class="ri-logout-box-r-line"></i> <span>Log out</span>
+        </a>
+        <div class="user-profile-widget">
+          <div class="user-avatar" id="avatar-char">U</div>
+          <div class="user-info">
+            <div class="user-name" id="user-display-name">Loading Creator...</div>
+            <div class="user-role" id="user-display-role">Freelancer</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Top Header Bar -->
+      <header class="dashboard-header">
+        <div class="dashboard-top-nav">
+          <div class="search-wrapper">
+            <i class="ri-search-line"></i>
+            <input type="text" class="form-control" id="sidebar-search" placeholder="Search anything...          Ctrl + /">
+          </div>
+        </div>
+        
+        <div style="display: flex; align-items: center; gap: var(--space-md);">
+          <button class="theme-toggle" onclick="auth.toggleTheme()" aria-label="Toggle theme">
+            <i class="ri-sun-line"></i>
+          </button>
+          
+          <!-- Notifications Bell & Dropdown Wrapper -->
+          <div class="notifications-wrapper" id="notifications-topbar-wrapper">
+            <button class="notifications-bell-btn" id="notifications-bell-btn" aria-label="Notifications">
+              <i class="ri-notification-2-line"></i>
+              <span class="notifications-badge" id="notifications-unread-count" style="display: none;">0</span>
+            </button>
+            <div class="notifications-dropdown" id="notifications-dropdown">
+              <div class="notifications-dropdown-header">
+                <h4>Notifications</h4>
+                <a href="#" id="mark-all-read-btn" onclick="notificationsManager.markAllRead(event)">Mark all as read</a>
+              </div>
+              <ul class="notifications-dropdown-list" id="notifications-dropdown-list">
+                <!-- Dynamically populated -->
+              </ul>
+              <div class="notifications-dropdown-footer">
+                <a href="notifications.html">View all notifications</a>
+              </div>
+            </div>
+          </div>
+          
+          <div class="user-profile-header">
+            <div class="user-avatar" id="header-avatar-char" style="width: 32px; height: 32px; font-size: 0.85rem; flex-shrink: 0;">U</div>
+            <div style="text-align: left;">
+              <div style="font-size: 0.85rem; font-weight: 600;" id="header-user-name">Loading...</div>
+              <div style="font-size: 0.7rem; color: var(--text-muted);" id="header-user-role">Creator</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Dashboard Contents -->
+      <div class="dashboard-body">
+        
+        <!-- Workspace Header -->
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h1 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 2px;">Invoices Workspace</h1>
+            <p style="font-size: 0.85rem; color: var(--text-secondary);">Manage, track, and monitor billings connected to clients and projects.</p>
+          </div>
+          <button class="btn btn-primary" onclick="openAddModal()"><i class="ri-add-line"></i> New Invoice</button>
+        </div>
+
+        <!-- Filter / Search Section -->
+        <div class="card" style="padding: var(--space-sm) var(--space-md); display: flex; justify-content: space-between; align-items: center; gap: var(--space-md); flex-wrap: wrap;">
+          <div style="display: flex; align-items: center; gap: var(--space-sm); color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">
+            <i class="ri-bill-line" style="color: var(--accent-color);"></i>
+            <span>Invoices Count: <span id="invoices-count" style="color: var(--text-primary);">0</span></span>
+          </div>
+
+          <div class="filter-group">
+            <!-- Dynamic search -->
+            <div class="search-wrapper" style="max-width: 230px; width: 100%; margin-bottom: 0;">
+              <i class="ri-search-line"></i>
+              <input type="text" class="form-control" id="invoices-search-input" placeholder="Search INV#, client, project..." oninput="handleSearch()">
+            </div>
+
+            <!-- Status filter dropdown -->
+            <select class="form-control filter-select" id="filter-status" onchange="handleFilterChange()">
+              <option value="">All Statuses</option>
+              <option value="Draft">Draft</option>
+              <option value="Sent">Sent</option>
+              <option value="Pending">Pending</option>
+              <option value="Paid">Paid</option>
+              <option value="Overdue">Overdue</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+
+            <!-- Client filter dropdown -->
+            <select class="form-control filter-select" id="filter-client" onchange="handleFilterChange()">
+              <option value="">All Clients</option>
+            </select>
+
+            <!-- Project filter dropdown -->
+            <select class="form-control filter-select" id="filter-project" onchange="handleFilterChange()">
+              <option value="">All Projects</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Alerts -->
+        <div id="invoices-alert" class="alert alert-danger hidden">
+          <i class="ri-error-warning-line"></i>
+          <span id="invoices-alert-msg"></span>
+        </div>
+
+        <!-- Loader Spinner -->
+        <div id="invoices-loader" class="flex-center" style="padding: var(--space-2xl);">
+          <div class="spinner" style="border-top-color: var(--accent-color); width: 2.5rem; height: 2.5rem;"></div>
+        </div>
+
+        <!-- Table Listing Panel -->
+        <div class="card hidden" id="invoices-table-card" style="padding: 0; overflow: hidden;">
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Invoice ID</th>
+                  <th>Title</th>
+                  <th>Client</th>
+                  <th>Project</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Due Date</th>
+                  <th style="text-align: right; width: 240px;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="invoices-table-body">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Empty State View -->
+        <div class="card glass-panel flex-center hidden" id="invoices-empty-view" style="flex-direction: column; padding: var(--space-3xl); text-align: center;">
+          <div class="feature-icon-box blue" style="width: 56px; height: 56px; font-size: 1.75rem; margin-bottom: var(--space-md);">
+            <i class="ri-bill-line"></i>
+          </div>
+          <h2 style="font-size: 1.25rem; margin-bottom: var(--space-xs);">No invoices found</h2>
+          <p class="text-muted" style="max-width: 400px; margin-bottom: var(--space-md);">Billing records are key to tracking financial workflows. Create your first client invoice today!</p>
+          <button class="btn btn-primary" onclick="openAddModal()"><i class="ri-add-line"></i> New Invoice</button>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Add / Edit Invoice Modal Overlay -->
+  <div class="modal-backdrop" id="invoice-modal">
+    <div class="card modal-content" style="padding: var(--space-lg);">
+      <div class="modal-header">
+        <h3 id="modal-title" style="font-size: 1.15rem; font-weight: 700;">Create Invoice</h3>
+        <button class="modal-close-btn" onclick="closeModal()"><i class="ri-close-line"></i></button>
+      </div>
+      
+      <form id="invoice-form" onsubmit="handleFormSubmit(event)">
+        <input type="hidden" id="modal-invoice-id">
+        
+        <div class="grid-two" style="gap: var(--space-md); margin-bottom: var(--space-sm);">
+          <div class="form-group">
+            <label class="form-label" for="invoice_client_id">Select Client *</label>
+            <select id="invoice_client_id" class="form-control" onchange="handleClientDropdownChange()" required>
+              <option value="" disabled selected>Select Client *</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="invoice_project_id">Select Project *</label>
+            <select id="invoice_project_id" class="form-control" required>
+              <option value="" disabled selected>Select Project *</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="title">Invoice Title *</label>
+          <input type="text" id="title" class="form-control" placeholder="E.g., Website Redesign Phase 1 Milestone" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="description">Invoice Description</label>
+          <textarea id="description" class="form-control" rows="3" placeholder="Outline invoice line items, deliverables, hourly parameters..." style="resize: vertical; font-family: var(--font-body);"></textarea>
+        </div>
+
+        <div class="grid-two" style="gap: var(--space-md); margin-bottom: var(--space-sm);">
+          <div class="form-group">
+            <label class="form-label" for="amount">Invoice Amount (₹) *</label>
+            <input type="number" id="amount" class="form-control" min="0" step="0.01" placeholder="E.g., 25000" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="status">Status</label>
+            <select id="status" class="form-control">
+              <option value="Draft">Draft</option>
+              <option value="Sent">Sent</option>
+              <option value="Pending">Pending</option>
+              <option value="Paid">Paid</option>
+              <option value="Overdue">Overdue</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid-two" style="gap: var(--space-md); margin-bottom: 0;">
+          <div class="form-group">
+            <label class="form-label" for="issue_date">Issue Date *</label>
+            <input type="date" id="issue_date" class="form-control" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="due_date">Due Date *</label>
+            <input type="date" id="due_date" class="form-control" required>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeModal()">Cancel</button>
+          <button type="submit" id="modal-save-btn" class="btn btn-primary">
+            <span>Save Invoice</span>
+            <div id="modal-spinner" class="spinner hidden"></div>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Invoice Details Modal Overlay -->
+  <div class="modal-backdrop" id="details-modal">
+    <div class="card modal-content" style="padding: var(--space-lg); max-width: 620px;">
+      <div class="modal-header" style="margin-bottom: var(--space-md);">
+        <h3 style="font-size: 1.15rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+          <i class="ri-bill-line" style="color: var(--accent-color);"></i>
+          <span id="details-invoice-number">INV-000</span>
+        </h3>
+        <button class="modal-close-btn" onclick="closeDetailsModal()"><i class="ri-close-line"></i></button>
+      </div>
+
+      <div style="margin-bottom: var(--space-md); padding-bottom: var(--space-md); border-bottom: 1px solid var(--border-color);">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-sm); margin-bottom: var(--space-sm);">
+          <h2 style="font-size: 1.2rem; font-weight: 700; margin: 0; line-height: 1.3;" id="details-title">Invoice Title</h2>
+          <span class="badge" id="details-status-badge">Draft</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <div style="font-size: 0.85rem; color: var(--accent-color); font-weight: 600;" id="details-client-name">
+            <i class="ri-user-star-line"></i> Client: Loading...
+          </div>
+          <div style="font-size: 0.82rem; color: var(--text-secondary); font-weight: 500;" id="details-project-name">
+            <i class="ri-folder-line"></i> Project: Loading...
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: var(--space-md); margin-bottom: var(--space-lg);">
+        <div>
+          <h4 style="font-size: 0.76rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); margin-bottom: var(--space-xs);">Description</h4>
+          <div id="details-description" style="background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: var(--space-md); font-size: 0.88rem; min-height: 60px; white-space: pre-wrap; color: var(--text-primary); line-height: 1.5;">No detailed description provided.</div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; background-color: rgba(79, 70, 229, 0.02); border: 1px dashed rgba(79, 70, 229, 0.2); padding: var(--space-md); border-radius: var(--radius-md);">
+          <div>
+            <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Total Invoice Amount</span>
+            <div style="font-size: 1.4rem; font-weight: 800; color: var(--accent-color); margin-top: 2px;" id="details-amount">₹0.00</div>
+          </div>
+          <div id="details-paid-date-wrapper" class="hidden" style="text-align: right;">
+            <span style="font-size: 0.72rem; color: #10b981; font-weight: 700; text-transform: uppercase;">Paid Date Timestamp</span>
+            <div style="font-size: 0.88rem; font-weight: 700; color: #10b981; margin-top: 2px;" id="details-paid-date">Date</div>
+          </div>
+        </div>
+
+        <div class="info-grid-2x2">
+          <div class="info-item">
+            <span class="info-label">Issue Date</span>
+            <span class="info-value" id="details-issue-date">Date</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Due Date</span>
+            <span class="info-value" id="details-due-date">Date</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Created Time</span>
+            <span class="info-value" id="details-created-at">Date</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Last Updated</span>
+            <span class="info-value" id="details-updated-at">Date</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="margin-top: var(--space-lg); border-top: 1px solid var(--border-color); padding-top: var(--space-md);">
+        <button class="btn btn-secondary" onclick="closeDetailsModal()">Close Details</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    let clientsList = [];
+    let projectsList = [];
+    let invoicesList = [];
+    let searchTimeout = null;
+
+    window.addEventListener("DOMContentLoaded", () => {
+      // Set Header profile details
+      const user = auth.getCurrentUser();
+      if (user) {
+        const fallbackName = user.full_name || "Workspace Creator";
+        const roleStr = user.role === "admin" ? "Platform Admin" : "Freelancer";
+        
+        document.getElementById("user-display-name").textContent = fallbackName;
+        document.getElementById("header-user-name").textContent = fallbackName;
+        document.getElementById("user-display-role").textContent = roleStr;
+        document.getElementById("header-user-role").textContent = roleStr;
+
+        const firstLetter = fallbackName.charAt(0).toUpperCase();
+        document.getElementById("avatar-char").textContent = firstLetter;
+        document.getElementById("header-avatar-char").textContent = firstLetter;
+      }
+      
+      // Load raw dropdown configurations first
+      loadClientsData();
+      loadProjectsData();
+      loadInvoices();
+    });
+
+    /**
+     * Cache Clients globally
+     */
+    async function loadClientsData() {
+      try {
+        clientsList = await api.get("/clients");
+        
+        // Populate Client filter dropdown
+        const clientFilter = document.getElementById("filter-client");
+        clientFilter.innerHTML = '<option value="">All Clients</option>';
+        clientsList.forEach(c => {
+          const opt = document.createElement("option");
+          opt.value = c.id;
+          opt.textContent = c.company_name ? `${c.client_name} (${c.company_name})` : c.client_name;
+          clientFilter.appendChild(opt);
+        });
+
+        // Populate modal Client dropdown
+        const clientModalSelect = document.getElementById("invoice_client_id");
+        clientModalSelect.innerHTML = '<option value="" disabled selected>Select Client *</option>';
+        clientsList.forEach(c => {
+          const opt = document.createElement("option");
+          opt.value = c.id;
+          opt.textContent = c.company_name ? `${c.client_name} (${c.company_name})` : c.client_name;
+          clientModalSelect.appendChild(opt);
+        });
+      } catch (err) {
+        console.error("Failed to load clients data:", err);
+      }
+    }
+
+    /**
+     * Cache Projects globally
+     */
+    async function loadProjectsData() {
+      try {
+        projectsList = await api.get("/projects/");
+        
+        // Populate Project filter dropdown
+        const projectFilter = document.getElementById("filter-project");
+        projectFilter.innerHTML = '<option value="">All Projects</option>';
+        projectsList.forEach(p => {
+          const opt = document.createElement("option");
+          opt.value = p.id;
+          opt.textContent = p.project_name;
+          projectFilter.appendChild(opt);
+        });
+      } catch (err) {
+        console.error("Failed to load projects data:", err);
+      }
+    }
+
+    /**
+     * Chained dropdown: triggered when Client selection changes in Creation Modal
+     */
+    function handleClientDropdownChange() {
+      const clientId = parseInt(document.getElementById("invoice_client_id").value);
+      const projectModalSelect = document.getElementById("invoice_project_id");
+      projectModalSelect.innerHTML = '<option value="" disabled selected>Select Project *</option>';
+
+      if (isNaN(clientId)) return;
+
+      const filteredProjects = projectsList.filter(p => p.client_id === clientId);
+      if (filteredProjects.length === 0) {
+        const opt = document.createElement("option");
+        opt.disabled = true;
+        opt.textContent = "No projects found for this client.";
+        projectModalSelect.appendChild(opt);
+      } else {
+        filteredProjects.forEach(p => {
+          const opt = document.createElement("option");
+          opt.value = p.id;
+          opt.textContent = p.project_name;
+          projectModalSelect.appendChild(opt);
+        });
+      }
+    }
+
+    /**
+     * Load Invoices from API
+     */
+    async function loadInvoices() {
+      const card = document.getElementById("invoices-table-card");
+      const emptyView = document.getElementById("invoices-empty-view");
+      const loader = document.getElementById("invoices-loader");
+      const alertBox = document.getElementById("invoices-alert");
+      
+      loader.classList.remove("hidden");
+      card.classList.add("hidden");
+      emptyView.classList.add("hidden");
+      alertBox.classList.add("hidden");
+
+      const searchVal = document.getElementById("invoices-search-input").value;
+      const statusVal = document.getElementById("filter-status").value;
+      const clientVal = document.getElementById("filter-client").value;
+      const projectVal = document.getElementById("filter-project").value;
+
+      try {
+        let endpoint = "/invoices/?";
+        const params = [];
+        if (searchVal) params.push(`search=${encodeURIComponent(searchVal)}`);
+        if (statusVal) params.push(`status=${encodeURIComponent(statusVal)}`);
+        if (clientVal) params.push(`client_id=${clientVal}`);
+        if (projectVal) params.push(`project_id=${projectVal}`);
+        endpoint += params.join("&");
+
+        invoicesList = await api.get(endpoint);
+        
+        document.getElementById("invoices-count").textContent = invoicesList.length;
+
+        if (invoicesList.length === 0) {
+          emptyView.classList.remove("hidden");
+        } else {
+          renderInvoicesTable(invoicesList);
+          card.classList.remove("hidden");
+        }
+      } catch (err) {
+        document.getElementById("invoices-alert-msg").textContent = err.message || "Failed to load invoices workspace.";
+        alertBox.classList.remove("hidden");
+      } finally {
+        loader.classList.add("hidden");
+      }
+    }
+
+    /**
+     * Render invoices rows
+     */
+    function renderInvoicesTable(list) {
+      const tbody = document.getElementById("invoices-table-body");
+      tbody.innerHTML = "";
+
+      list.forEach(inv => {
+        // Status mapper
+        let badgeClass = "badge-todo";
+        if (inv.status === "Paid") badgeClass = "badge-paid";
+        else if (inv.status === "Sent") badgeClass = "badge-sent";
+        else if (inv.status === "Pending") badgeClass = "badge-progress";
+        else if (inv.status === "Overdue") badgeClass = "badge-overdue";
+        else if (inv.status === "Cancelled") badgeClass = "badge-cancelled";
+
+        const formattedAmount = formatCurrency(inv.amount);
+        const formattedDueDate = formatDate(inv.due_date);
+
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td><strong>${escapeHTML(inv.invoice_number)}</strong></td>
+          <td class="text-secondary" style="max-width: 150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHTML(inv.title)}">${escapeHTML(inv.title)}</td>
+          <td class="text-secondary"><i class="ri-user-star-line" style="font-size:0.75rem;"></i> ${escapeHTML(inv.client_name)}</td>
+          <td class="text-secondary"><i class="ri-folder-line" style="font-size:0.75rem;"></i> ${escapeHTML(inv.project_name)}</td>
+          <td><strong>${formattedAmount}</strong></td>
+          <td><span class="badge ${badgeClass}">${inv.status}</span></td>
+          <td class="text-secondary">${formattedDueDate}</td>
+          <td style="text-align: right;">
+            <button class="btn btn-outline" style="padding: 4px 10px; font-size: 0.75rem;" onclick="viewInvoiceDetails(${inv.id})" title="Details">
+              <i class="ri-eye-line"></i> View
+            </button>
+            <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.75rem;" onclick="openEditModal(${inv.id})" title="Edit">
+              <i class="ri-edit-line"></i> Edit
+            </button>
+            <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.75rem; color: #ef4444; border-color: rgba(239, 68, 68, 0.1);" onclick="deleteInvoice(${inv.id})" title="Delete">
+              <i class="ri-delete-bin-line"></i> Delete
+            </button>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    /**
+     * Debounce Search inputs
+     */
+    function handleSearch() {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        loadInvoices();
+      }, 300);
+    }
+
+    /**
+     * Filter Dropdown triggers
+     */
+    function handleFilterChange() {
+      loadInvoices();
+    }
+
+    // Modal helpers
+    function openAddModal() {
+      document.getElementById("invoice-form").reset();
+      document.getElementById("modal-invoice-id").value = "";
+      document.getElementById("modal-title").textContent = "Create Invoice";
+      
+      // Select project options clean
+      document.getElementById("invoice_project_id").innerHTML = '<option value="" disabled selected>Select Project *</option>';
+      
+      // Defaults issue_date to today
+      const today = new Date().toISOString().split("T")[0];
+      document.getElementById("issue_date").value = today;
+      
+      document.getElementById("invoice-modal").classList.add("active");
+    }
+
+    async function openEditModal(invoiceId) {
+      const inv = invoicesList.find(i => i.id === invoiceId);
+      if (!inv) return;
+
+      document.getElementById("modal-invoice-id").value = inv.id;
+      document.getElementById("invoice_client_id").value = inv.client_id;
+      
+      // Chain select project options first
+      handleClientDropdownChange();
+      document.getElementById("invoice_project_id").value = inv.project_id;
+      
+      document.getElementById("title").value = inv.title;
+      document.getElementById("description").value = inv.description || "";
+      document.getElementById("amount").value = inv.amount;
+      document.getElementById("status").value = inv.status;
+      document.getElementById("issue_date").value = inv.issue_date;
+      document.getElementById("due_date").value = inv.due_date;
+
+      document.getElementById("modal-title").textContent = "Edit Invoice";
+      document.getElementById("invoice-modal").classList.add("active");
+    }
+
+    function closeModal() {
+      document.getElementById("invoice-modal").classList.remove("active");
+    }
+
+    /**
+     * Form submit triggers
+     */
+    async function handleFormSubmit(event) {
+      event.preventDefault();
+
+      const id = document.getElementById("modal-invoice-id").value;
+      const client = document.getElementById("invoice_client_id").value;
+      const project = document.getElementById("invoice_project_id").value;
+      const title = document.getElementById("title").value;
+      const description = document.getElementById("description").value;
+      const amount = document.getElementById("amount").value;
+      const status = document.getElementById("status").value;
+      const issue = document.getElementById("issue_date").value;
+      const due = document.getElementById("due_date").value;
+
+      const modalBtn = document.getElementById("modal-save-btn");
+      const spinner = document.getElementById("modal-spinner");
+
+      modalBtn.disabled = true;
+      spinner.classList.remove("hidden");
+
+      const payload = {
+        client_id: parseInt(client),
+        project_id: parseInt(project),
+        title: title,
+        description: description ? description : null,
+        amount: parseFloat(amount),
+        status: status,
+        issue_date: issue,
+        due_date: due
+      };
+
+      try {
+        if (id) {
+          await api.put(`/invoices/${id}`, payload);
+        } else {
+          await api.post("/invoices/", payload);
+        }
+        closeModal();
+        loadInvoices();
+      } catch (err) {
+        alert("Operation failed: " + err.message);
+      } finally {
+        modalBtn.disabled = false;
+        spinner.classList.add("hidden");
+      }
+    }
+
+    /**
+     * Details Modal Open
+     */
+    async function viewInvoiceDetails(invoiceId) {
+      try {
+        const inv = await api.get(`/invoices/${invoiceId}`);
+
+        document.getElementById("details-invoice-number").textContent = inv.invoice_number;
+        document.getElementById("details-title").textContent = inv.title;
+        document.getElementById("details-client-name").innerHTML = `<i class="ri-user-star-line"></i> Client: <strong>${escapeHTML(inv.client_name)}</strong> ${inv.company_name ? `(${escapeHTML(inv.company_name)})` : ''}`;
+        document.getElementById("details-project-name").innerHTML = `<i class="ri-folder-line"></i> Project: <strong>${escapeHTML(inv.project_name)}</strong>`;
+        document.getElementById("details-description").textContent = inv.description ? inv.description : "No description details specified.";
+        
+        document.getElementById("details-amount").textContent = formatCurrency(inv.amount);
+
+        // Status pill
+        const statusBadge = document.getElementById("details-status-badge");
+        statusBadge.textContent = inv.status;
+        statusBadge.className = "badge";
+        let badgeClass = "badge-todo";
+        if (inv.status === "Paid") badgeClass = "badge-paid";
+        else if (inv.status === "Sent") badgeClass = "badge-sent";
+        else if (inv.status === "Pending") badgeClass = "badge-progress";
+        else if (inv.status === "Overdue") badgeClass = "badge-overdue";
+        else if (inv.status === "Cancelled") badgeClass = "badge-cancelled";
+        statusBadge.classList.add(badgeClass);
+
+        // Paid date toggle
+        const paidWrapper = document.getElementById("details-paid-date-wrapper");
+        if (inv.status === "Paid" && inv.paid_date) {
+          paidWrapper.classList.remove("hidden");
+          const paidOptions = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+          document.getElementById("details-paid-date").textContent = new Date(inv.paid_date).toLocaleDateString(undefined, paidOptions);
+        } else {
+          paidWrapper.classList.add("hidden");
+        }
+
+        // Audits dates
+        document.getElementById("details-issue-date").textContent = formatDate(inv.issue_date);
+        document.getElementById("details-due-date").textContent = formatDate(inv.due_date);
+
+        const fullOptions = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+        document.getElementById("details-created-at").textContent = new Date(inv.created_at).toLocaleDateString(undefined, fullOptions);
+        document.getElementById("details-updated-at").textContent = new Date(inv.updated_at).toLocaleDateString(undefined, fullOptions);
+
+        document.getElementById("details-modal").classList.add("active");
+      } catch (err) {
+        alert("Failed to load details: " + err.message);
+      }
+    }
+
+    function closeDetailsModal() {
+      document.getElementById("details-modal").classList.remove("active");
+    }
+
+    /**
+     * Delete operation
+     */
+    async function deleteInvoice(invoiceId) {
+      const inv = invoicesList.find(i => i.id === invoiceId);
+      if (!inv) return;
+
+      const confirmDelete = confirm(`Are you sure you want to delete invoice "${inv.invoice_number}" (${inv.title})? This action cannot be undone.`);
+      if (!confirmDelete) return;
+
+      try {
+        await api.delete(`/invoices/${invoiceId}`);
+        loadInvoices();
+      } catch (err) {
+        alert("Failed to delete invoice: " + err.message);
+      }
+    }
+
+    /**
+     * Currency formatter helper (Indian Locale Format: ₹1,25,000.00)
+     */
+    function formatCurrency(amount) {
+      return auth.formatCurrency(amount);
+    }
+
+    /**
+     * Formatter date helper
+     */
+    function formatDate(dateString) {
+      return auth.formatDate(dateString);
+    }
+
+    /**
+     * XSS Escaping HTML inputs
+     */
+    function escapeHTML(str) {
+      if (!str) return "";
+      return str.replace(/[&<>'"]/g, 
+        tag => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          "'": '&#39;',
+          '"': '&quot;'
+        }[tag] || tag)
+      );
+    }
+  </script>
+</body>
+</html>

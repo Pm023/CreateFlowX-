@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Founder Control Center - CreateFlowX</title>
+  
+  <!-- Synchronous Inline Route Protection Guard -->
+  <script>
+    (function() {
+      try {
+        const user = JSON.parse(localStorage.getItem("cfx_user"));
+        const token = localStorage.getItem("cfx_token");
+        if (!token || !user || user.role !== "admin") {
+          window.location.replace("../dashboard.html");
+        }
+      } catch (e) {
+        window.location.replace("../dashboard.html");
+      }
+    })();
+  </script>
+  
+  <!-- Remix Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet"/>
+  
+  <!-- CSS Styling Files -->
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/layouts.css">
+
+  <style>
+    /* Enforce Dark Theme variables for Admin Control Room */
+    :root {
+      --bg-primary: #050814;
+      --bg-secondary: #0c1122;
+      --bg-tertiary: #141b34;
+      
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(255, 255, 255, 0.15);
+      --border-focus: #06b6d4;
+      
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.6), 0 2px 4px -2px rgba(0, 0, 0, 0.6);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.7), 0 4px 6px -4px rgba(0, 0, 0, 0.7);
+      --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+      
+      --accent-color: #06b6d4;
+      --accent-color-rgb: 6, 182, 212;
+      --accent-color-hover: #0891b2;
+      --card-glow: rgba(6, 182, 212, 0.1);
+      
+      --input-bg: #0f172a;
+      --input-border: rgba(255, 255, 255, 0.1);
+      
+      --sidebar-active-bg: rgba(6, 182, 212, 0.12);
+      --sidebar-active-color: #06b6d4;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+    }
+    
+    .sidebar {
+      background: #090e1d !important;
+      border-right: 1px solid var(--border-color);
+    }
+
+    .card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-lg);
+      backdrop-filter: blur(8px);
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    .card:hover {
+      border-color: var(--border-hover);
+      box-shadow: 0 10px 20px rgba(6, 182, 212, 0.05);
+    }
+
+    .admin-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-md);
+      margin-bottom: var(--space-lg);
+    }
+    
+    @media (max-width: 1024px) {
+      .admin-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 600px) {
+      .admin-stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .admin-console-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: var(--space-lg);
+      margin-bottom: var(--space-xl);
+    }
+
+    @media (max-width: 1024px) {
+      .admin-console-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 700;
+      font-size: 0.65rem;
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-healthy {
+      background-color: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+    }
+    
+    .badge-warning {
+      background-color: rgba(245, 158, 11, 0.12);
+      color: #f59e0b;
+    }
+    
+    .badge-critical {
+      background-color: rgba(239, 68, 68, 0.12);
+      color: #ef4444;
+    }
+
+    .founder-insight-item {
+      display: flex;
+      gap: var(--space-sm);
+      align-items: flex-start;
+      padding: var(--space-sm) 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    
+    .founder-insight-item:last-child {
+      border-bottom: 0;
+    }
+
+    .founder-insight-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(245, 158, 11, 0.12);
+      color: #f59e0b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .activity-feed-item {
+      display: flex;
+      gap: var(--space-sm);
+      align-items: flex-start;
+      font-size: 0.76rem;
+      padding: var(--space-sm) 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .activity-feed-item:last-child {
+      border-bottom: 0;
+    }
+
+    .activity-feed-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(6, 182, 212, 0.12);
+      color: #06b6d4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      flex-shrink: 0;
+    }
+
+    .usage-progress-bar {
+      height: 6px;
+      background: rgba(255,255,255,0.06);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      margin-top: 4px;
+    }
+
+    .usage-progress-fill {
+      height: 100%;
+      border-radius: var(--radius-full);
+      transition: width 0.5s ease;
+    }
+
+    .tab-btn.active-admin {
+      background: var(--sidebar-active-bg) !important;
+      color: var(--sidebar-active-color) !important;
+      font-weight: 700;
+    }
+
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+    
+    .admin-table th {
+      color: var(--text-muted);
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .admin-table td {
+      padding: 12px 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+      font-size: 0.76rem;
+    }
+    
+    .admin-table tr:hover {
+      background: rgba(255, 255, 255, 0.01);
+    }
+  </style>
+</head>
+<body>
+  <!-- Platform Layout Container -->
+  <div class="dashboard-layout">
+    
+    <!-- Left Sidebar Column -->
+    <aside class="sidebar">
+      <div class="sidebar-brand" style="border-bottom: 1px solid var(--border-color); padding-bottom: var(--space-md); margin-bottom: var(--space-md);">
+        <svg class="logo-icon" viewBox="0 0 24 24" width="28" height="28">
+          <defs>
+            <linearGradient id="founderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#06b6d4" />
+              <stop offset="100%" stop-color="#3b82f6" />
+            </linearGradient>
+          </defs>
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" fill="none" stroke="url(#founderGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div style="display:flex; flex-direction:column;">
+          <span style="font-weight: 900; font-size: 1.15rem; color:#fff; letter-spacing:0.5px;">FounderCenter</span>
+          <span style="font-size: 0.58rem; color: var(--accent-color); font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;">Platform Admin</span>
+        </div>
+      </div>
+
+      <!-- Navigation for Founder Panel -->
+      <nav class="sidebar-menu">
+        <a onclick="switchPanel('analytics')" id="menu-btn-analytics" class="sidebar-link active-admin"><i class="ri-pie-chart-2-line"></i> <span>Founder Console</span></a>
+        <a onclick="switchPanel('users')" id="menu-btn-users" class="sidebar-link"><i class="ri-user-settings-line"></i> <span>User Directory</span></a>
+        <a onclick="switchPanel('settings')" id="menu-btn-settings" class="sidebar-link"><i class="ri-settings-5-line"></i> <span>Platform Settings</span></a>
+        <hr style="border: 0; border-top: 1px solid var(--border-color); margin: var(--space-md) 0;">
+        <a href="../dashboard.html" class="sidebar-link" style="color: var(--text-muted); font-weight: 600;"><i class="ri-arrow-left-up-line"></i> <span>Exit Console</span></a>
+      </nav>
+
+      <!-- Sidebar User Footer -->
+      <div class="sidebar-footer">
+        <a onclick="auth.logout()" class="sidebar-link" style="color: var(--text-muted); margin-bottom: var(--space-sm);">
+          <i class="ri-logout-box-r-line"></i> <span>Log out</span>
+        </a>
+        <div class="user-profile-widget" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04);">
+          <div class="user-avatar" id="avatar-char" style="background: var(--accent-color); color: #000; font-weight: 800;">F</div>
+          <div class="user-info">
+            <div class="user-name" id="user-display-name">Founder User</div>
+            <div class="user-role" style="color: var(--accent-color);">System Owner</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Right Content Column -->
+    <main class="main-content" style="padding: var(--space-lg);">
+      
+      <!-- Top Workspace Bar -->
+      <header class="topbar" style="margin-bottom: var(--space-lg); border-bottom: 1px solid var(--border-color); padding-bottom: var(--space-sm);">
+        <div class="topbar-search" style="gap:8px;">
+          <i class="ri-dashboard-fill" style="color: var(--accent-color); font-size: 1.25rem;"></i>
+          <span style="font-weight: 800; font-size: 0.95rem; color: #fff; letter-spacing: 0.5px;">SAAS FOUNDER ANALYTICS CONSOLE</span>
+        </div>
+        
+        <div class="topbar-actions">
+          <span class="status-badge badge-healthy" style="font-size:0.6rem; padding: 4px 10px;" id="system-top-status"><i class="ri-checkbox-circle-fill"></i> System Online</span>
+        </div>
+      </header>
+
+      <!-- SYSTEM ANNOUNCEMENT BANNER IF ACTIVE -->
+      <div id="system-banner" class="hidden" style="background: var(--grad-primary); color: white; padding: var(--space-sm) var(--space-md); border-radius: var(--radius-md); font-size: 0.8rem; font-weight: 700; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: var(--space-lg);">
+        <i class="ri-advertisement-fill" style="color: #f59e0b;"></i>
+        <span id="system-banner-text">Announcement: Banner loading...</span>
+      </div>
+
+      <!-- PANEL 1: CONSOLE DASHBOARD -->
+      <section id="panel-analytics" class="admin-panel-section">
+        
+        <!-- Immediate load statistics grid -->
+        <div class="admin-stats-grid">
+          <!-- Card 1: Total Registered Users -->
+          <div class="card" style="padding: var(--space-md); position:relative; overflow:hidden;">
+            <div style="display:flex; justify-content:space-between; align-items:center; color:var(--text-muted); font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">
+              <span>Total Registered Users</span>
+              <i class="ri-user-3-line" style="color:var(--accent-color); font-size:1rem;"></i>
+            </div>
+            <div id="stat-total-users" style="font-size:1.8rem; font-weight:900; margin: 6px 0 2px 0;">0</div>
+            <div style="font-size:0.65rem; color:var(--text-muted); font-weight:500;">Total platform signups</div>
+          </div>
+          
+          <!-- Card 2: Active Users -->
+          <div class="card" style="padding: var(--space-md);">
+            <div style="display:flex; justify-content:space-between; align-items:center; color:var(--text-muted); font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">
+              <span>Active Users</span>
+              <i class="ri-user-shared-line" style="color:#10b981; font-size:1rem;"></i>
+            </div>
+            <div id="stat-active-users" style="font-size:1.8rem; font-weight:900; margin: 6px 0 2px 0;">0</div>
+            <div style="font-size:0.65rem; color:var(--text-muted); font-weight:500;">Currently active profiles</div>
+          </div>
+
+          <!-- Card 3: Total Projects Created -->
+          <div class="card" style="padding: var(--space-md);">
+            <div style="display:flex; justify-content:space-between; align-items:center; color:var(--text-muted); font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">
+              <span>Total Projects Created</span>
+              <i class="ri-folders-line" style="color:var(--accent-color); font-size:1rem;"></i>
+            </div>
+            <div id="stat-total-projects" style="font-size:1.8rem; font-weight:900; margin: 6px 0 2px 0;">0</div>
+            <div style="font-size:0.65rem; color:var(--text-muted); font-weight:500;">Active creator workspaces</div>
+          </div>
+
+          <!-- Card 4: Total Tasks Created -->
+          <div class="card" style="padding: var(--space-md);">
+            <div style="display:flex; justify-content:space-between; align-items:center; color:var(--text-muted); font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">
+              <span>Total Tasks Created</span>
+              <i class="ri-checkbox-circle-line" style="color:var(--accent-color); font-size:1rem;"></i>
+            </div>
+            <div id="stat-total-tasks" style="font-size:1.8rem; font-weight:900; margin: 6px 0 2px 0;">0</div>
+            <div style="font-size:0.65rem; color:var(--text-muted); font-weight:500;">Platform milestone items</div>
+          </div>
+
+          <!-- Card 5: Total Invoices Generated -->
+          <div class="card" style="padding: var(--space-md);">
+            <div style="display:flex; justify-content:space-between; align-items:center; color:var(--text-muted); font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">
+              <span>Total Invoices Generated</span>
+              <i class="ri-receipt-line" style="color:var(--accent-color); font-size:1rem;"></i>
+            </div>
+            <div id="stat-total-invoices" style="font-size:1.8rem; font-weight:900; margin: 6px 0 2px 0;">0</div>
+            <div style="font-size:0.65rem; color:var(--text-muted); font-weight:500;">Billing transactions count</div>
+          </div>
+
+          <!-- Card 6: Total Revenue Tracked -->
+          <div class="card" style="padding: var(--space-md); border-color: rgba(16,185,129,0.25);">
+            <div style="display:flex; justify-content:space-between; align-items:center; color:var(--text-muted); font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">
+              <span>Total Revenue Tracked</span>
+              <i class="ri-money-dollar-box-line" style="color:#10b981; font-size:1rem;"></i>
+            </div>
+            <div id="stat-total-revenue" style="font-size:1.8rem; font-weight:900; margin: 6px 0 2px 0; color:#10b981;">₹0</div>
+            <div style="font-size:0.65rem; color:var(--text-muted); font-weight:500;">System-wide paid invoices</div>
+          </div>
+
+          <!-- Card 7: New Users This Week -->
+          <div class="card" style="padding: var(--space-md);">
+            <div style="display:flex; justify-content:space-between; align-items:center; color:var(--text-muted); font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">
+              <span>New Users This Week</span>
+              <i class="ri-user-add-line" style="color:#a855f7; font-size:1rem;"></i>
+            </div>
+            <div id="stat-new-users-week" style="font-size:1.8rem; font-weight:900; margin: 6px 0 2px 0;">0</div>
+            <div style="font-size:0.65rem; color:var(--text-muted); font-weight:500;">Registrations in last 7d</div>
+          </div>
+
+          <!-- Card 8: Platform Growth % -->
+          <div class="card" style="padding: var(--space-md); border-color: rgba(6,182,212,0.25);">
+            <div style="display:flex; justify-content:space-between; align-items:center; color:var(--text-muted); font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">
+              <span>Platform Growth %</span>
+              <i class="ri-line-chart-line" style="color:var(--accent-color); font-size:1rem;"></i>
+            </div>
+            <div id="stat-growth-percentage" style="font-size:1.8rem; font-weight:900; margin: 6px 0 2px 0; color:var(--accent-color);">0%</div>
+            <div style="font-size:0.65rem; color:var(--text-muted); font-weight:500;">User growth Month-Over-Month</div>
+          </div>
+        </div>
+
+        <!-- Trends Section -->
+        <div class="admin-console-grid" style="grid-template-columns: 1fr 1fr;">
+          <!-- Trend 1: User Registrations -->
+          <div class="card" style="padding: var(--space-md);">
+            <h3 style="font-size:0.85rem; font-weight:800; margin-bottom:var(--space-md); display:flex; align-items:center; gap:6px;"><i class="ri-user-add-line" style="color:var(--accent-color);"></i> User Registration Trend</h3>
+            <div id="chart-registrations-container" style="display:flex; align-items:flex-end; justify-content:space-between; height:150px; padding-top:10px;">
+              <!-- Javascript population -->
+            </div>
+          </div>
+
+          <!-- Trend 2: Product Usage Analytics -->
+          <div class="card" style="padding: var(--space-md);">
+            <h3 style="font-size:0.85rem; font-weight:800; margin-bottom:var(--space-md); display:flex; align-items:center; gap:6px;"><i class="ri-donut-chart-line" style="color:var(--accent-color);"></i> Product Usage Analytics</h3>
+            
+            <div style="display:flex; flex-direction:column; gap:12px; margin-top:10px;">
+              <div>
+                <div style="display:flex; justify-content:space-between; font-size:0.72rem; font-weight:700;">
+                  <span>Task Completion Efficiency</span>
+                  <span id="usage-task-completion-text">0%</span>
+                </div>
+                <div class="usage-progress-bar">
+                  <div class="usage-progress-fill" id="usage-task-completion-fill" style="width: 0%; background:#10b981;"></div>
+                </div>
+              </div>
+
+              <div>
+                <div style="display:flex; justify-content:space-between; font-size:0.72rem; font-weight:700;">
+                  <span>Billing Liquidity (Paid Invoices)</span>
+                  <span id="usage-paid-invoices-text">0%</span>
+                </div>
+                <div class="usage-progress-bar">
+                  <div class="usage-progress-fill" id="usage-paid-invoices-fill" style="width: 0%; background:#3b82f6;"></div>
+                </div>
+              </div>
+
+              <div>
+                <div style="display:flex; justify-content:space-between; font-size:0.72rem; font-weight:700;">
+                  <span>Invoice Overdue Ratio</span>
+                  <span id="usage-overdue-invoices-text">0%</span>
+                </div>
+                <div class="usage-progress-bar">
+                  <div class="usage-progress-fill" id="usage-overdue-invoices-fill" style="width: 0%; background:#ef4444;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lower Section: Registrations, Activities, and Founder Insights -->
+        <div class="admin-console-grid">
+          <!-- Left Column: Recent Registrations & Platform Activity -->
+          <div style="display:flex; flex-direction:column; gap:var(--space-lg);">
+            <!-- Recent Registrations -->
+            <div class="card" style="padding: var(--space-md);">
+              <h3 style="font-size:0.85rem; font-weight:800; margin-bottom:var(--space-md); display:flex; align-items:center; gap:6px;"><i class="ri-user-heart-line" style="color:var(--accent-color);"></i> Recent Registrations</h3>
+              <div class="table-container" style="overflow-x:auto;">
+                <table class="admin-table" style="width:100%; border-collapse:collapse; text-align:left;">
+                  <thead>
+                    <tr style="border-bottom:1px solid var(--border-color);">
+                      <th style="padding:8px 4px;">User Profile</th>
+                      <th style="padding:8px 4px;">Username</th>
+                      <th style="padding:8px 4px;">Registration Date</th>
+                    </tr>
+                  </thead>
+                  <tbody id="recent-users-tbody">
+                    <!-- Javascript population -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Platform Activity Feed -->
+            <div class="card" style="padding: var(--space-md);">
+              <h3 style="font-size:0.85rem; font-weight:800; margin-bottom:var(--space-md); display:flex; align-items:center; gap:6px;"><i class="ri-notification-3-line" style="color:var(--accent-color);"></i> Platform Activity Feed</h3>
+              <div id="activity-feed-container" style="display:flex; flex-direction:column; max-height:280px; overflow-y:auto; padding-right:4px;">
+                <!-- Javascript population -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Founder Insights & System Health -->
+          <div style="display:flex; flex-direction:column; gap:var(--space-lg);">
+            <!-- Founder Insights -->
+            <div class="card" style="padding: var(--space-md); border-left: 3px solid #f59e0b;">
+              <h3 style="font-size:0.85rem; font-weight:800; margin-bottom:var(--space-md); display:flex; align-items:center; gap:6px; color:#f59e0b;"><i class="ri-lightbulb-line"></i> Founder Insights</h3>
+              <div id="founder-insights-container" style="display:flex; flex-direction:column; gap:8px;">
+                <!-- Javascript population -->
+              </div>
+            </div>
+
+            <!-- System Health -->
+            <div class="card" style="padding: var(--space-md);">
+              <h3 style="font-size:0.85rem; font-weight:800; margin-bottom:var(--space-md); display:flex; align-items:center; gap:6px;"><i class="ri-server-line" style="color:var(--accent-color);"></i> System Node Health</h3>
+              
+              <div style="display:flex; flex-direction:column; gap:10px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.75rem;">
+                  <span>Web Server Interface</span>
+                  <span class="status-badge badge-healthy" id="health-node-api">Healthy</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.75rem;">
+                  <span>SQLite Pool Connection</span>
+                  <span class="status-badge badge-healthy" id="health-node-db">Healthy</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.75rem;">
+                  <span>Total Database Indexes</span>
+                  <strong id="health-total-records" style="color:var(--accent-color);">0 Records</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.75rem;">
+                  <span>Software Node Version</span>
+                  <strong id="health-node-version">v1.0.0</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PANEL 2: USER DIRECTORY -->
+      <section id="panel-users" class="admin-panel-section hidden">
+        <div style="margin-bottom: var(--space-lg);">
+          <h1 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 2px;">User Account Management</h1>
+          <p style="font-size: 0.8rem; color: var(--text-secondary);">Filter, search, and lock/unlock platform user credentials.</p>
+        </div>
+
+        <div class="card" style="padding: var(--space-md);">
+          <div class="filter-bar">
+            <div style="flex: 1; min-width: 250px; position: relative;">
+              <input type="text" id="user-search" class="form-control" placeholder="Search by email, name, or username..." style="padding-left: 32px;" oninput="loadUserDirectory()">
+              <i class="ri-search-line" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+            </div>
+            
+            <div style="min-width: 130px;">
+              <select id="user-filter-role" class="form-control" onchange="loadUserDirectory()">
+                <option value="">All Roles</option>
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+            
+            <div style="min-width: 140px;">
+              <select id="user-filter-status" class="form-control" onchange="loadUserDirectory()">
+                <option value="">All Statuses</option>
+                <option value="active">Active</option>
+                <option value="suspended">Suspended</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="table-container" style="max-height: 480px; overflow-y: auto; margin-top: var(--space-md);">
+            <table class="admin-table" style="width: 100%;">
+              <thead>
+                <tr>
+                  <th>User Profile Details</th>
+                  <th>Username</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                  <th>Registration Date</th>
+                  <th style="text-align: right;">Action Control</th>
+                </tr>
+              </thead>
+              <tbody id="directory-table-body">
+                <!-- Population -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- PANEL 3: PLATFORM SYSTEM SETTINGS -->
+      <section id="panel-settings" class="admin-panel-section hidden">
+        <div style="margin-bottom: var(--space-lg);">
+          <h1 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 2px;">Global Platform Settings</h1>
+          <p style="font-size: 0.8rem; color: var(--text-secondary);">Manage global variables, open/close registrations, and enable maintenance modes.</p>
+        </div>
+
+        <div class="card" style="padding: var(--space-lg); max-width: 650px;">
+          <form id="settings-form" onsubmit="savePlatformSettings(event)">
+            <div class="form-group" style="margin-bottom: var(--space-md);">
+              <label class="form-label" for="field-platform-name">System Platform Name</label>
+              <input type="text" id="field-platform-name" class="form-control" required placeholder="CreateFlowX">
+            </div>
+
+            <div class="form-group" style="margin-bottom: var(--space-md); display:flex; align-items:center; gap:8px;">
+              <input type="checkbox" id="field-registration-open" style="width:16px; height:16px; cursor:pointer;">
+              <label class="form-label" for="field-registration-open" style="margin-bottom:0; cursor:pointer;">Enable Open Signup Registration</label>
+            </div>
+            <p style="font-size:0.7rem; color:var(--text-muted); margin-bottom:var(--space-md); margin-top:-8px;">If unchecked, all new registration attempts will be blocked by system guard filters.</p>
+
+            <div class="form-group" style="margin-bottom: var(--space-md); display:flex; align-items:center; gap:8px;">
+              <input type="checkbox" id="field-maintenance-mode" style="width:16px; height:16px; cursor:pointer;">
+              <label class="form-label" for="field-maintenance-mode" style="margin-bottom:0; cursor:pointer; color:#ef4444; font-weight:700;">ACTIVATE MAINTENANCE MODE</label>
+            </div>
+            <p style="font-size:0.7rem; color:var(--text-muted); margin-bottom:var(--space-md); margin-top:-8px;">Enabling maintenance mode suspends logins and platform-wide request executions for all regular users immediately.</p>
+
+            <div class="form-group" style="margin-bottom: var(--space-lg);">
+              <label class="form-label" for="field-banner-text">Global Announcement Banner (Text)</label>
+              <textarea id="field-banner-text" class="form-control" rows="3" placeholder="Announce launch configurations or system maintenance durations (leave empty to hide)"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="font-weight:700;"><i class="ri-save-line"></i> Save Platform Preferences</button>
+          </form>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Central API fetch script links -->
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  
+  <script>
+    // Double check guard role
+    const currUser = auth.getCurrentUser();
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("user-display-name").textContent = currUser.full_name || "Platform Admin";
+      loadFounderConsole();
+    });
+
+    /**
+     * Tab Switch Panel Helper
+     */
+    function switchPanel(panelId) {
+      const panels = ["analytics", "users", "settings"];
+      panels.forEach(p => {
+        const menuBtn = document.getElementById(`menu-btn-${p}`);
+        const panelSec = document.getElementById(`panel-${p}`);
+        if (p === panelId) {
+          if (menuBtn) menuBtn.classList.add("active-admin");
+          if (panelSec) panelSec.classList.remove("hidden");
+        } else {
+          if (menuBtn) menuBtn.classList.remove("active-admin");
+          if (panelSec) panelSec.classList.add("hidden");
+        }
+      });
+
+      // Lazy load subpanel configurations
+      if (panelId === "analytics") loadFounderConsole();
+      else if (panelId === "users") loadUserDirectory();
+      else if (panelId === "settings") loadPlatformSettings();
+    }
+
+    /**
+     * Dynamic formatters
+     */
+    function formatCurrency(val) {
+      return auth.formatCurrency(val);
+    }
+    
+    function formatDate(str) {
+      return auth.formatDate(str);
+    }
+
+    function escapeHTML(str) {
+      if (!str) return "";
+      return str.replace(/[&<>'"]/g, 
+        tag => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          "'": '&#39;',
+          '"': '&quot;'
+        }[tag] || tag)
+      );
+    }
+
+    /**
+     * Tab 1: Founder Console Dashboard statistics and analytics trend loader
+     */
+    async function loadFounderConsole() {
+      try {
+        const data = await api.get("/admin/dashboard");
+        const stats = data.stats;
+
+        // Core stats variables
+        document.getElementById("stat-total-users").textContent = stats.total_users;
+        document.getElementById("stat-active-users").textContent = stats.active_users;
+        document.getElementById("stat-new-users-week").textContent = stats.new_users_this_week;
+        document.getElementById("stat-total-revenue").textContent = formatCurrency(stats.total_revenue);
+        document.getElementById("stat-total-projects").textContent = stats.total_projects;
+        document.getElementById("stat-total-tasks").textContent = stats.total_tasks;
+        document.getElementById("stat-total-invoices").textContent = stats.total_invoices;
+        document.getElementById("stat-growth-percentage").textContent = `${stats.growth_percentage}%`;
+
+        // Render User Growth bar chart
+        renderUserGrowthTrend(data.charts.user_growth);
+
+        // Product Usage ratios calculation
+        calculateUsageProgress(stats, data.charts.invoice_status);
+
+        // Recent registrations table
+        populateRecentRegistrations(data.recent_registrations);
+
+        // Activity Feed logs
+        populateActivityFeed(data.activity_feed);
+
+        // Founder Insights
+        populateFounderInsights(data.founder_insights);
+
+        // Load health stats
+        loadHealthStats();
+
+        // Load Banner announcement banner text
+        loadBannerAnnouncement();
+      } catch (err) {
+        console.error("Founder console dashboard failed to fetch data:", err);
+      }
+    }
+
+    /**
+     * Load health indicators
+     */
+    async function loadHealthStats() {
+      try {
+        const health = await api.get("/admin/health");
+        document.getElementById("health-node-api").className = `status-badge ${health.services.api === "Healthy" ? "badge-healthy" : "badge-critical"}`;
+        document.getElementById("health-node-api").textContent = health.services.api;
+        
+        document.getElementById("health-node-db").className = `status-badge ${health.services.database === "Healthy" ? "badge-healthy" : "badge-critical"}`;
+        document.getElementById("health-node-db").textContent = health.services.database;
+        
+        document.getElementById("health-total-records").textContent = `${health.stats.total_records} Records`;
+        document.getElementById("health-node-version").textContent = health.stats.platform_version;
+      } catch (e) {
+        console.error("Health indicators failed to check:", e);
+      }
+    }
+
+    /**
+     * Fetch settings to show system announcement banner
+     */
+    async function loadBannerAnnouncement() {
+      try {
+        const settings = await api.get("/admin/settings");
+        const banner = document.getElementById("system-banner");
+        const bannerTxt = document.getElementById("system-banner-text");
+        if (settings.announcement_banner && settings.announcement_banner.trim()) {
+          bannerTxt.textContent = settings.announcement_banner;
+          banner.classList.remove("hidden");
+        } else {
+          banner.classList.add("hidden");
+        }
+      } catch (e) {
+        console.error("Announcement banner check failed:", e);
+      }
+    }
+
+    /**
+     * Render registration bar chart using dynamic SVGs
+     */
+    function renderUserGrowthTrend(data) {
+      const container = document.getElementById("chart-registrations-container");
+      if (!container) return;
+      container.innerHTML = "";
+
+      const maxCount = Math.max(...data.map(d => d.count), 2);
+      data.forEach(item => {
+        const height = Math.max(Math.round((item.count / maxCount) * 110), 4);
+        container.innerHTML += `
+          <div style="display:flex; flex-direction:column; align-items:center; flex:1; gap:4px;">
+            <div style="font-size:0.65rem; font-weight:700; color:var(--accent-color);">${item.count}</div>
+            <div style="width:20px; height:${height}px; background:linear-gradient(180deg, #06b6d4 0%, #3b82f6 100%); border-radius:3px 3px 0 0;"></div>
+            <span style="font-size:0.58rem; color:var(--text-muted); font-weight:700; white-space:nowrap; margin-top:2px;">${item.month.split(" ")[0]}</span>
+          </div>
+        `;
+      });
+    }
+
+    /**
+     * Compute product usage ratios progress fill
+     */
+    function calculateUsageProgress(stats, distribution) {
+      // 1. Task Completion
+      const totalTasks = stats.total_tasks || 0;
+      const completedTasks = stats.completed_tasks || 0;
+      const taskRatio = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+      
+      document.getElementById("usage-task-completion-text").textContent = `${taskRatio}%`;
+      document.getElementById("usage-task-completion-fill").style.width = `${taskRatio}%`;
+
+      // 2. Billing conversion (Paid vs Total Invoices)
+      const totalInvoices = stats.total_invoices || 0;
+      const paidObj = distribution.find(d => d.status === "Paid") || { count: 0 };
+      const paidRatio = totalInvoices > 0 ? Math.round((paidObj.count / totalInvoices) * 100) : 0;
+
+      document.getElementById("usage-paid-invoices-text").textContent = `${paidRatio}%`;
+      document.getElementById("usage-paid-invoices-fill").style.width = `${paidRatio}%`;
+
+      // 3. Invoice Overdue default ratio
+      const overdueObj = distribution.find(d => d.status === "Overdue") || { count: 0 };
+      const overdueRatio = totalInvoices > 0 ? Math.round((overdueObj.count / totalInvoices) * 100) : 0;
+
+      document.getElementById("usage-overdue-invoices-text").textContent = `${overdueRatio}%`;
+      document.getElementById("usage-overdue-invoices-fill").style.width = `${overdueRatio}%`;
+    }
+
+    /**
+     * Recent Platform Registrations table population
+     */
+    function populateRecentRegistrations(users) {
+      const tbody = document.getElementById("recent-users-tbody");
+      tbody.innerHTML = "";
+
+      if (!users || users.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; font-size:0.75rem; color:var(--text-muted); padding:12px;">No new registrations.</td></tr>`;
+        return;
+      }
+
+      users.forEach(u => {
+        tbody.innerHTML += `
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.02);">
+            <td style="padding:8px 4px; font-size:0.75rem;">
+              <div style="font-weight:700;">${escapeHTML(u.full_name)}</div>
+              <div style="font-size:0.65rem; color:var(--text-muted);">${escapeHTML(u.email)}</div>
+            </td>
+            <td style="padding:8px 4px; font-size:0.75rem; font-weight:600; color:var(--accent-color);">@${escapeHTML(u.username || "not_set")}</td>
+            <td style="padding:8px 4px; font-size:0.72rem; color:var(--text-muted);">${formatDate(u.created_at)}</td>
+          </tr>
+        `;
+      });
+    }
+
+    /**
+     * Activity feed log list population
+     */
+    function populateActivityFeed(logs) {
+      const container = document.getElementById("activity-feed-container");
+      container.innerHTML = "";
+
+      if (!logs || logs.length === 0) {
+        container.innerHTML = `<div style="font-size:0.72rem; color:var(--text-muted); padding:12px; text-align:center;">No recent events logged.</div>`;
+        return;
+      }
+
+      logs.forEach(l => {
+        const formattedTime = new Date(l.created_at).toLocaleTimeString(undefined, {hour: '2-digit', minute:'2-digit'});
+        container.innerHTML += `
+          <div class="activity-feed-item">
+            <span class="activity-feed-icon"><i class="ri-broadcast-line"></i></span>
+            <div style="display:flex; flex-direction:column; gap:2px; flex:1;">
+              <div style="color:var(--text-primary); font-weight:700; font-size:0.75rem;">${escapeHTML(l.title)}</div>
+              <div style="color:var(--text-secondary); font-size:0.7rem;">${escapeHTML(l.description)}</div>
+              <div style="font-size:0.62rem; color:var(--text-muted); font-weight:600; margin-top:2px;">
+                by ${escapeHTML(l.user_full_name)} &bull; ${formattedTime}
+              </div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    /**
+     * Founder Insights panel observations population
+     */
+    function populateFounderInsights(insights) {
+      const container = document.getElementById("founder-insights-container");
+      container.innerHTML = "";
+
+      if (!insights || insights.length === 0) {
+        container.innerHTML = `<div style="font-size:0.72rem; color:var(--text-muted); padding:12px;">System indexing in progress.</div>`;
+        return;
+      }
+
+      insights.forEach(insight => {
+        container.innerHTML += `
+          <div class="founder-insight-item">
+            <span class="founder-insight-icon"><i class="ri-lightbulb-fill"></i></span>
+            <span style="font-size:0.75rem; color:var(--text-secondary); line-height:1.4; font-weight:500;">${escapeHTML(insight)}</span>
+          </div>
+        `;
+      });
+    }
+
+    /**
+     * Tab 2: User Directory loader
+     */
+    async function loadUserDirectory() {
+      try {
+        const searchVal = document.getElementById("user-search").value;
+        const roleVal = document.getElementById("user-filter-role").value;
+        const statusVal = document.getElementById("user-filter-status").value;
+        
+        let queryParams = [];
+        if (searchVal) queryParams.push(`search=${encodeURIComponent(searchVal)}`);
+        if (roleVal) queryParams.push(`role=${encodeURIComponent(roleVal)}`);
+        if (statusVal) queryParams.push(`status=${encodeURIComponent(statusVal)}`);
+        
+        const endpoint = `/admin/users` + (queryParams.length ? `?${queryParams.join("&")}` : "");
+        const users = await api.get(endpoint);
+        
+        const tbody = document.getElementById("directory-table-body");
+        tbody.innerHTML = "";
+
+        if (users.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; font-size:0.78rem; color:var(--text-muted); padding:16px;">No users found in directory.</td></tr>`;
+          return;
+        }
+
+        users.forEach(u => {
+          const isSuspended = u.status === "suspended";
+          const statusBadge = isSuspended ? '<span class="status-badge badge-critical">Suspended</span>' : '<span class="status-badge badge-healthy">Active</span>';
+          
+          let actionBtn = "";
+          // Check so admin cannot toggle self status
+          if (u.id !== currUser.id) {
+            if (isSuspended) {
+              actionBtn = `<button class="btn btn-outline" style="font-size:0.68rem; padding: 4px 10px; border-color:#10b981; color:#10b981;" onclick="toggleUserStatus(${u.id}, 'active')"><i class="ri-check-double-line"></i> Reactivate</button>`;
+            } else {
+              actionBtn = `<button class="btn btn-outline" style="font-size:0.68rem; padding: 4px 10px; border-color:#ef4444; color:#ef4444;" onclick="toggleUserStatus(${u.id}, 'suspended')"><i class="ri-user-forbid-line"></i> Suspend</button>`;
+            }
+          } else {
+            actionBtn = `<span style="font-size:0.68rem; color:var(--text-muted); font-weight:700;">Owner Session</span>`;
+          }
+
+          tbody.innerHTML += `
+            <tr style="border-bottom:1px solid rgba(255,255,255,0.02);">
+              <td style="padding:10px 4px;">
+                <div style="display:flex; flex-direction:column; gap:2px;">
+                  <strong style="color:var(--text-primary); font-size:0.8rem;">${escapeHTML(u.full_name)}</strong>
+                  <span style="font-size:0.68rem; color:var(--text-muted);">${escapeHTML(u.email)}</span>
+                </div>
+              </td>
+              <td style="padding:10px 4px; font-size:0.75rem;"><strong>@${escapeHTML(u.username || "not_set")}</strong></td>
+              <td style="padding:10px 4px; font-size:0.72rem;"><span style="font-weight:700; text-transform:uppercase; color:var(--accent-color);">${u.role}</span></td>
+              <td style="padding:10px 4px;">${statusBadge}</td>
+              <td style="padding:10px 4px; font-size:0.72rem; color:var(--text-muted);">${formatDate(u.created_at)}</td>
+              <td style="padding:10px 4px; text-align: right;">${actionBtn}</td>
+            </tr>
+          `;
+        });
+      } catch (err) {
+        console.error("Users list load failed:", err);
+      }
+    }
+
+    /**
+     * Change user status (Suspend / Reactivate)
+     */
+    async function toggleUserStatus(userId, newStatus) {
+      if (!confirm(`Are you sure you want to change this user status to ${newStatus}?`)) return;
+      try {
+        await api.put(`/admin/users/${userId}/status`, { status: newStatus });
+        loadUserDirectory();
+      } catch (err) {
+        alert("Failed to update user status: " + err.message);
+      }
+    }
+
+    /**
+     * Tab 3: System Settings configurations loader
+     */
+    async function loadPlatformSettings() {
+      try {
+        const settings = await api.get("/admin/settings");
+        
+        document.getElementById("field-platform-name").value = settings.platform_name || "CreateFlowX";
+        document.getElementById("field-registration-open").checked = settings.registration_open;
+        document.getElementById("field-maintenance-mode").checked = settings.maintenance_mode;
+        document.getElementById("field-banner-text").value = settings.announcement_banner || "";
+      } catch (err) {
+        console.error("Platform settings load failed:", err);
+      }
+    }
+
+    /**
+     * Save settings parameters via PUT to API
+     */
+    async function savePlatformSettings(event) {
+      event.preventDefault();
+      try {
+        const platformName = document.getElementById("field-platform-name").value;
+        const regOpen = document.getElementById("field-registration-open").checked;
+        const maintMode = document.getElementById("field-maintenance-mode").checked;
+        const bannerTxt = document.getElementById("field-banner-text").value;
+
+        const updated = await api.put("/admin/settings", {
+          platform_name: platformName,
+          registration_open: regOpen,
+          maintenance_mode: maintMode,
+          announcement_banner: bannerTxt
+        });
+
+        alert("System parameters synced and saved successfully!");
+        
+        // Show/hide announcement banner locally
+        const banner = document.getElementById("system-banner");
+        const bannerSpan = document.getElementById("system-banner-text");
+        if (updated.announcement_banner && updated.announcement_banner.trim()) {
+          bannerSpan.textContent = updated.announcement_banner;
+          banner.classList.remove("hidden");
+        } else {
+          banner.classList.add("hidden");
+        }
+
+        loadPlatformSettings();
+      } catch (err) {
+        alert("Failed to save platform preferences: " + err.message);
+      }
+    }
+  </script>
+</body>
+</html>

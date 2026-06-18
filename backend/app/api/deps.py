@@ -49,4 +49,35 @@ def get_current_user(
             status_code=status.HTTP_400_BAD_REQUEST, 
             detail="Inactive user account"
         )
+    
+    # 1. Enforce Suspension checks
+    if getattr(user, "status", None) == "suspended":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, 
+            detail="User account is suspended"
+        )
+
+    # 2. Enforce Maintenance Mode checks for regular users
+    from app.models.system_settings import SystemSettings
+    sys_settings = db.query(SystemSettings).first()
+    if sys_settings and sys_settings.maintenance_mode:
+        if user.role != "admin":
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE, 
+                detail="Platform is currently undergoing maintenance. Please try again later."
+            )
+
     return user
+
+def get_current_admin(
+    current_user: User = Depends(get_current_user)
+) -> User:
+    """
+    Dependency that enforces the current user has the 'admin' role.
+    """
+    if current_user.role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="The user does not have enough privileges"
+        )
+    return current_user

@@ -24,6 +24,15 @@ def register_user(user_in: UserCreate, db: Session = Depends(get_db)):
     Registers a new user on the CreateFlowX platform.
     Checks if the email is already registered first.
     """
+    # Check registration control
+    from app.models.system_settings import SystemSettings
+    sys_settings = db.query(SystemSettings).first()
+    if sys_settings and not sys_settings.registration_open:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Registration is currently closed by the platform administrator."
+        )
+
     existing_user = get_user_by_email(db, email=user_in.email)
     if existing_user:
         raise HTTPException(
@@ -31,6 +40,19 @@ def register_user(user_in: UserCreate, db: Session = Depends(get_db)):
             detail="A user with this email address is already registered."
         )
     user = create_user(db, obj_in=user_in)
+
+    # Activity Log
+    from app.crud.activity_log import create_activity_log
+    create_activity_log(
+        db=db,
+        user_id=user.id,
+        action_type="register",
+        entity_type="user",
+        entity_id=user.id,
+        title="Account Registered",
+        description=f"Creator account registered for email {user.email}."
+    )
+
     return user
 
 @router.post("/login", response_model=Token)
@@ -47,16 +69,43 @@ def login_user(login_in: UserLogin, db: Session = Depends(get_db)):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Incorrect email or password."
         )
+    elif getattr(user, "status", None) == "suspended":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="User account is suspended"
+        )
     elif not user.is_active:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="This user account is inactive."
         )
+
+    # Check maintenance mode
+    from app.models.system_settings import SystemSettings
+    sys_settings = db.query(SystemSettings).first()
+    if sys_settings and sys_settings.maintenance_mode:
+        if user.role != "admin":
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="Platform is under maintenance. Only administrators can log in."
+            )
     
     # Generate JWT token
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         subject=user.id, expires_delta=access_token_expires
+    )
+
+    # Activity Log
+    from app.crud.activity_log import create_activity_log
+    create_activity_log(
+        db=db,
+        user_id=user.id,
+        action_type="login",
+        entity_type="user",
+        entity_id=user.id,
+        title="User Logged In",
+        description=f"User {user.email} successfully logged in."
     )
     
     return {

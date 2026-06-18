@@ -88,6 +88,17 @@ def create_task(db: Session, obj_in: TaskCreate, user_id: int) -> Task:
         task_id=db_obj.id
     )
 
+    from app.crud.activity_log import create_activity_log
+    create_activity_log(
+        db=db,
+        user_id=user_id,
+        action_type="create",
+        entity_type="task",
+        entity_id=db_obj.id,
+        title="Task Created",
+        description=f"Task '{db_obj.task_name}' was created."
+    )
+
     return db_obj
 
 def update_task(db: Session, db_task: Task, obj_in: TaskUpdate) -> Task:
@@ -122,6 +133,7 @@ def update_task(db: Session, db_task: Task, obj_in: TaskUpdate) -> Task:
     if db_task.project_id != old_project_id:
         recalculate_project_progress(db, db_task.project_id)
 
+    from app.crud.activity_log import create_activity_log
     # Dispatch task_completed notification/activity
     if db_task.status == "Completed" and old_status != "Completed":
         from app.services.dispatcher import dispatcher
@@ -135,17 +147,52 @@ def update_task(db: Session, db_task: Task, obj_in: TaskUpdate) -> Task:
             task_id=db_task.id
         )
 
+        create_activity_log(
+            db=db,
+            user_id=db_task.user_id,
+            action_type="complete",
+            entity_type="task",
+            entity_id=db_task.id,
+            title="Task Completed",
+            description=f"Task '{db_task.task_name}' was marked as completed."
+        )
+    else:
+        create_activity_log(
+            db=db,
+            user_id=db_task.user_id,
+            action_type="update",
+            entity_type="task",
+            entity_id=db_task.id,
+            title="Task Updated",
+            description=f"Task '{db_task.task_name}' was updated."
+        )
+
     return db_task
 
 def delete_task(db: Session, db_task: Task) -> Task:
     """
     Deletes a task and recalculates the progress of the associated project.
     """
+    user_id = db_task.user_id
+    task_id = db_task.id
+    task_name = db_task.task_name
     project_id = db_task.project_id
+
     db.delete(db_task)
     db.commit()
 
     # Recalculate progress for project
     recalculate_project_progress(db, project_id)
+
+    from app.crud.activity_log import create_activity_log
+    create_activity_log(
+        db=db,
+        user_id=user_id,
+        action_type="delete",
+        entity_type="task",
+        entity_id=task_id,
+        title="Task Deleted",
+        description=f"Task '{task_name}' was deleted."
+    )
 
     return db_task

@@ -52,6 +52,17 @@ def create_client(db: Session, obj_in: ClientCreate, user_id: int) -> Client:
         message=f"Client \"{db_obj.client_name}\" was successfully added."
     )
 
+    from app.crud.activity_log import create_activity_log
+    create_activity_log(
+        db=db,
+        user_id=user_id,
+        action_type="create",
+        entity_type="client",
+        entity_id=db_obj.id,
+        title="Client Created",
+        description=f"Client '{db_obj.client_name}' was created."
+    )
+
     return db_obj
 
 
@@ -69,12 +80,40 @@ def update_client(db: Session, db_client: Client, obj_in: ClientUpdate) -> Clien
             
     db.commit()
     db.refresh(db_client)
+
+    from app.crud.activity_log import create_activity_log
+    create_activity_log(
+        db=db,
+        user_id=db_client.user_id,
+        action_type="update",
+        entity_type="client",
+        entity_id=db_client.id,
+        title="Client Updated",
+        description=f"Client '{db_client.client_name}' was updated."
+    )
+
     return db_client
 
 def delete_client(db: Session, db_client: Client) -> Client:
     """
     Deletes the client from the database.
     """
+    user_id = db_client.user_id
+    client_id = db_client.id
+    client_name = db_client.client_name
+
     db.delete(db_client)
     db.commit()
+
+    from app.crud.activity_log import create_activity_log
+    create_activity_log(
+        db=db,
+        user_id=user_id,
+        action_type="delete",
+        entity_type="client",
+        entity_id=client_id,
+        title="Client Deleted",
+        description=f"Client '{client_name}' was deleted."
+    )
+
     return db_client

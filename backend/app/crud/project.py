@@ -93,6 +93,17 @@ def create_project(db: Session, obj_in: ProjectCreate, user_id: int) -> Project:
         project_id=db_obj.id
     )
 
+    from app.crud.activity_log import create_activity_log
+    create_activity_log(
+        db=db,
+        user_id=user_id,
+        action_type="create",
+        entity_type="project",
+        entity_id=db_obj.id,
+        title="Project Created",
+        description=f"Project '{db_obj.project_name}' was created."
+    )
+
     return db_obj
 
 def update_project(db: Session, db_project: Project, obj_in: ProjectUpdate) -> Project:
@@ -112,6 +123,7 @@ def update_project(db: Session, db_project: Project, obj_in: ProjectUpdate) -> P
     db.commit()
     db.refresh(db_project)
 
+    from app.crud.activity_log import create_activity_log
     if db_project.status == "Completed" and old_status != "Completed":
         from app.services.dispatcher import dispatcher
         dispatcher.dispatch(
@@ -123,12 +135,48 @@ def update_project(db: Session, db_project: Project, obj_in: ProjectUpdate) -> P
             project_id=db_project.id
         )
 
+        create_activity_log(
+            db=db,
+            user_id=db_project.user_id,
+            action_type="complete",
+            entity_type="project",
+            entity_id=db_project.id,
+            title="Project Completed",
+            description=f"Project '{db_project.project_name}' was marked as completed."
+        )
+    else:
+        create_activity_log(
+            db=db,
+            user_id=db_project.user_id,
+            action_type="update",
+            entity_type="project",
+            entity_id=db_project.id,
+            title="Project Updated",
+            description=f"Project '{db_project.project_name}' was updated."
+        )
+
     return db_project
 
 def delete_project(db: Session, db_project: Project) -> Project:
     """
     Deletes the project from the database.
     """
+    user_id = db_project.user_id
+    project_id = db_project.id
+    project_name = db_project.project_name
+
     db.delete(db_project)
     db.commit()
+
+    from app.crud.activity_log import create_activity_log
+    create_activity_log(
+        db=db,
+        user_id=user_id,
+        action_type="delete",
+        entity_type="project",
+        entity_id=project_id,
+        title="Project Deleted",
+        description=f"Project '{project_name}' was deleted."
+    )
+
     return db_project
