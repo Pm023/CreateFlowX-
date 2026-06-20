@@ -323,7 +323,7 @@
       // Load user details
       const user = auth.getCurrentUser();
       if (user) {
-        const fallbackName = user.full_name || "Pooja Sharma";
+        const fallbackName = user.full_name || "Alexa Sharma";
         const roleStr = user.role === "admin" ? "Platform Admin" : "Freelancer";
         
         document.getElementById("user-display-name").textContent = fallbackName;

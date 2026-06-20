@@ -164,9 +164,9 @@
           <i class="ri-logout-box-r-line"></i> <span>Log out</span>
         </a>
         <div class="user-profile-widget">
-          <div class="user-avatar" id="avatar-char">P</div>
+          <div class="user-avatar" id="avatar-char">A</div>
           <div class="user-info">
-            <div class="user-name" id="user-display-name">Pooja Sharma</div>
+            <div class="user-name" id="user-display-name">Alexa Sharma</div>
             <div class="user-role" id="user-display-role">Freelancer</div>
           </div>
         </div>
@@ -212,9 +212,9 @@
           
           <!-- Right Header Avatar Widget -->
           <div class="user-profile-header">
-            <div class="user-avatar" id="header-avatar-char" style="width: 32px; height: 32px; font-size: 0.85rem; flex-shrink: 0;">P</div>
+            <div class="user-avatar" id="header-avatar-char" style="width: 32px; height: 32px; font-size: 0.85rem; flex-shrink: 0;">A</div>
             <div style="text-align: left;">
-              <div style="font-size: 0.85rem; font-weight: 600;" id="header-user-name">Pooja Sharma</div>
+              <div style="font-size: 0.85rem; font-weight: 600;" id="header-user-name">Alexa Sharma</div>
               <div style="font-size: 0.7rem; color: var(--text-muted);" id="header-user-role">Freelancer</div>
             </div>
           </div>
@@ -225,7 +225,7 @@
       <div class="dashboard-body">
         <!-- Welcome Greeting -->
         <div>
-          <h1 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 2px;">Good Morning, <span id="welcome-name">Pooja</span>! 👋</h1>
+          <h1 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 2px;">Good Morning, <span id="welcome-name">Alexa</span>! 👋</h1>
           <p style="font-size: 0.85rem; color: var(--text-secondary);">Here's what's happening with your projects today.</p>
         </div>
 
@@ -239,50 +239,50 @@
         <div id="dashboard-overview-tab">
           <!-- Row 1: Metrics Cards (Grid of Six) -->
           <div class="grid-six">
-          <div class="card">
-            <span class="text-muted" style="font-size: 0.78rem; font-weight: 600;">Total Projects</span>
-            <div class="metric-value" id="dashboard-total-projects">0</div>
-            <div class="metric-change positive" style="font-size: 0.75rem; font-weight: 600; margin-top: 4px;">
-              <span style="background-color: rgba(16, 185, 129, 0.1); padding: 2px 6px; border-radius: 4px;">Live Projects count</span>
+          <div class="card" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(59, 130, 246, 0.02) 100%); border: 1px solid rgba(59, 130, 246, 0.12); border-left: 4px solid #3b82f6; box-shadow: var(--shadow-sm);">
+            <span class="text-muted" style="font-size: 0.78rem; font-weight: 700; color: var(--text-secondary);">Total Projects</span>
+            <div class="metric-value" style="font-weight: 800; color: var(--text-primary);" id="dashboard-total-projects">0</div>
+            <div class="metric-change positive" style="font-size: 0.72rem; font-weight: 600; margin-top: 4px;">
+              <span style="background-color: rgba(59, 130, 246, 0.12); color: #1d4ed8; padding: 2px 6px; border-radius: 4px;">Live Projects count</span>
             </div>
           </div>
 
-          <div class="card">
-            <span class="text-muted" style="font-size: 0.78rem; font-weight: 600;">Active Projects</span>
-            <div class="metric-value" id="dashboard-active-projects">0</div>
-            <div class="metric-change positive" style="font-size: 0.75rem; font-weight: 600; margin-top: 4px;">
-              <span style="background-color: rgba(16, 185, 129, 0.1); padding: 2px 6px; border-radius: 4px;">In Progress status</span>
+          <div class="card" style="background: linear-gradient(135deg, rgba(0, 242, 254, 0.08) 0%, rgba(59, 130, 246, 0.02) 100%); border: 1px solid rgba(0, 242, 254, 0.15); border-left: 4px solid #00f2fe; box-shadow: var(--shadow-sm);">
+            <span class="text-muted" style="font-size: 0.78rem; font-weight: 700; color: var(--text-secondary);">Active Projects</span>
+            <div class="metric-value" style="font-weight: 800; color: var(--text-primary);" id="dashboard-active-projects">0</div>
+            <div class="metric-change positive" style="font-size: 0.72rem; font-weight: 600; margin-top: 4px;">
+              <span style="background-color: rgba(0, 242, 254, 0.12); color: #0082ff; padding: 2px 6px; border-radius: 4px;">In Progress status</span>
             </div>
           </div>
 
-          <div class="card">
-            <span class="text-muted" style="font-size: 0.78rem; font-weight: 600;">Pending Tasks</span>
-            <div class="metric-value" id="dashboard-pending-tasks">0</div>
-            <div class="metric-change negative" style="font-size: 0.75rem; font-weight: 600; margin-top: 4px;">
-              <span style="background-color: rgba(79, 70, 229, 0.08); padding: 2px 6px; border-radius: 4px; color: var(--accent-color);">Total: <span id="dashboard-total-tasks">0</span></span>
+          <div class="card" style="background: linear-gradient(135deg, rgba(124, 58, 237, 0.08) 0%, rgba(124, 58, 237, 0.02) 100%); border: 1px solid rgba(124, 58, 237, 0.15); border-left: 4px solid #7c3aed; box-shadow: var(--shadow-sm);">
+            <span class="text-muted" style="font-size: 0.78rem; font-weight: 700; color: var(--text-secondary);">Pending Tasks</span>
+            <div class="metric-value" style="font-weight: 800; color: var(--text-primary);" id="dashboard-pending-tasks">0</div>
+            <div class="metric-change negative" style="font-size: 0.72rem; font-weight: 600; margin-top: 4px;">
+              <span style="background-color: rgba(124, 58, 237, 0.1); padding: 2px 6px; border-radius: 4px; color: #7c3aed;">Total: <span id="dashboard-total-tasks">0</span></span>
             </div>
           </div>
 
-          <div class="card">
-            <span class="text-muted" style="font-size: 0.78rem; font-weight: 600;">Completed Tasks</span>
-            <div class="metric-value" id="dashboard-completed-tasks">0</div>
-            <div class="metric-change positive" style="font-size: 0.75rem; font-weight: 600; margin-top: 4px;">
+          <div class="card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(16, 185, 129, 0.02) 100%); border: 1px solid rgba(16, 185, 129, 0.15); border-left: 4px solid #10b981; box-shadow: var(--shadow-sm);">
+            <span class="text-muted" style="font-size: 0.78rem; font-weight: 700; color: var(--text-secondary);">Completed Tasks</span>
+            <div class="metric-value" style="font-weight: 800; color: var(--text-primary);" id="dashboard-completed-tasks">0</div>
+            <div class="metric-change positive" style="font-size: 0.72rem; font-weight: 600; margin-top: 4px;">
               <span style="background-color: rgba(239, 68, 68, 0.08); padding: 2px 6px; border-radius: 4px; color: #ef4444;">Overdue: <span id="dashboard-overdue-tasks">0</span></span>
             </div>
           </div>
 
-          <div class="card">
-            <span class="text-muted" style="font-size: 0.78rem; font-weight: 600;">Upcoming Deadlines</span>
-            <div class="metric-value" id="dashboard-upcoming-deadlines-count">0</div>
-            <div class="text-secondary" style="font-size: 0.75rem; margin-top: 6px;">Next milestones</div>
+          <div class="card" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(245, 158, 11, 0.02) 100%); border: 1px solid rgba(245, 158, 11, 0.15); border-left: 4px solid #f59e0b; box-shadow: var(--shadow-sm);">
+            <span class="text-muted" style="font-size: 0.78rem; font-weight: 700; color: var(--text-secondary);">Upcoming Deadlines</span>
+            <div class="metric-value" style="font-weight: 800; color: var(--text-primary);" id="dashboard-upcoming-deadlines-count">0</div>
+            <div class="text-secondary" style="font-size: 0.72rem; margin-top: 6px; font-weight: 600;">Next milestones</div>
           </div>
 
-          <div class="card" style="border-color: rgba(79, 70, 229, 0.15); background-color: rgba(79, 70, 229, 0.01); cursor: pointer;" onclick="switchDashboardMainTab('revenue', document.querySelectorAll('#dashboard-main-tabs .tab-btn')[1])">
-            <span class="text-muted" style="font-size: 0.78rem; font-weight: 600;">Revenue</span>
-            <div class="metric-value" style="color: #4f46e5;" id="dashboard-revenue-total">₹0</div>
-            <div class="text-secondary" style="font-size: 0.75rem; margin-top: 6px;" id="dashboard-revenue-sub">Across 0 invoices</div>
+          <div class="card" style="background: linear-gradient(135deg, rgba(79, 70, 229, 0.08) 0%, rgba(79, 70, 229, 0.02) 100%); border: 1px solid rgba(79, 70, 229, 0.25); border-left: 4px solid #4f46e5; cursor: pointer; box-shadow: var(--shadow-sm);" onclick="switchDashboardMainTab('revenue', document.querySelectorAll('#dashboard-main-tabs .tab-btn')[1])">
+            <span class="text-muted" style="font-size: 0.78rem; font-weight: 700; color: var(--text-secondary);">Revenue</span>
+            <div class="metric-value" style="color: #4f46e5; font-weight: 800;" id="dashboard-revenue-total">₹0</div>
+            <div class="text-secondary" style="font-size: 0.72rem; margin-top: 6px; font-weight: 600;" id="dashboard-revenue-sub">Across 0 invoices</div>
           </div>
-        </div>
+          </div>
 
         <!-- Row 2: Overviews (Projects donut, Tasks bar, Deadlines list) -->
         <div class="grid-three">
@@ -682,7 +682,7 @@
     window.addEventListener("DOMContentLoaded", () => {
       const user = auth.getCurrentUser();
       if (user) {
-        const fallbackName = user.full_name || "Pooja Sharma";
+        const fallbackName = user.full_name || "Alexa Sharma";
         const roleStr = user.role === "admin" ? "Platform Admin" : "Freelancer";
         
         // Update name strings
