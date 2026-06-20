@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CreateFlowX - Create. Collaborate. Flow.</title>
+  <title>CreateFlowX - Run Your Business From One Workspace</title>
   
   <!-- Remix Icons -->
   <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet"/>
@@ -13,304 +13,26 @@
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/components.css?v=2">
   <link rel="stylesheet" href="css/layouts.css">
-  
-  <style>
-    /* Premium Marketing Page Specifics */
-    .hero-section {
-      text-align: center;
-      padding: var(--space-3xl) var(--space-md) var(--space-md) var(--space-md);
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      z-index: 10;
-    }
+  <link rel="stylesheet" href="css/marketing.css?v=1">
 
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: var(--space-xs);
-      background-color: rgba(79, 70, 229, 0.08);
-      color: var(--accent-color);
-      padding: 0.5rem 1rem;
-      border-radius: var(--radius-full);
-      font-size: 0.8rem;
-      font-weight: 600;
-      margin-bottom: var(--space-md);
-      border: 1px solid rgba(79, 70, 229, 0.15);
-    }
-
-    .hero-title {
-      font-size: 4rem;
-      font-weight: 800;
-      line-height: 1.1;
-      margin-bottom: var(--space-md);
-      color: var(--text-primary);
-      max-width: 900px;
-      letter-spacing: -0.03em;
-    }
-
-    .hero-title span.highlight-purple {
-      color: #4f46e5;
-    }
-
-    .hero-tagline {
-      font-size: 1.15rem;
-      color: var(--text-secondary);
-      max-width: 700px;
-      margin-bottom: var(--space-lg);
-      line-height: 1.6;
-    }
-
-    .hero-ctas {
-      display: flex;
-      align-items: center;
-      gap: var(--space-md);
-      margin-bottom: var(--space-md);
-    }
-
-    .hero-trial-info {
-      display: flex;
-      gap: var(--space-lg);
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-      margin-bottom: var(--space-2xl);
-    }
-
-    .hero-trial-info span {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .hero-trial-info i {
-      color: #10b981;
-    }
-
-    /* Mockup Dashboard Container */
-    .dashboard-preview {
-      width: 100%;
-      max-width: 960px;
-      border-radius: var(--radius-lg);
-      box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.12);
-      border: 1px solid var(--border-color);
-      overflow: hidden;
-      margin-bottom: var(--space-3xl);
-      background-color: var(--bg-secondary);
-      transition: transform var(--transition-normal);
-    }
-
-    .dashboard-preview:hover {
-      transform: scale(1.01);
-    }
-
-    .dashboard-preview img {
-      width: 100%;
-      display: block;
-    }
-
-    /* Trusted By Section */
-    .trusted-section {
-      width: 100%;
-      text-align: center;
-      margin-bottom: var(--space-3xl);
-    }
-
-    .trusted-title {
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.15em;
-      color: var(--text-muted);
-      margin-bottom: var(--space-lg);
-    }
-
-    .trusted-logos {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: var(--space-2xl);
-      padding: 0 var(--space-md);
-    }
-
-    .brand-logo {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #475569;
-    }
-
-    .brand-logo i {
-      font-size: 1.3rem;
-    }
-
-    /* Features Grid Redesign */
-    .features-section {
-      padding: var(--space-2xl) var(--space-xl);
-      max-width: 1200px;
-      margin: 0 auto;
-      text-align: center;
-    }
-
-    .features-badge {
-      display: inline-block;
-      color: var(--accent-color);
-      font-size: 0.8rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.15em;
-      margin-bottom: var(--space-xs);
-    }
-
-    .features-title {
-      font-size: 2.25rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      margin-bottom: var(--space-2xl);
-    }
-
-    .features-title span {
-      color: #4f46e5;
-    }
-
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: var(--space-lg);
-    }
-
-    .feature-card {
-      text-align: left;
-      padding: var(--space-lg);
-      border-radius: var(--radius-md);
-      background-color: var(--bg-secondary);
-      border: 1px solid var(--border-color);
-    }
-
-    .feature-icon-box {
-      width: 42px;
-      height: 42px;
-      border-radius: var(--radius-sm);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.3rem;
-      margin-bottom: var(--space-md);
-    }
-
-    .feature-icon-box.purple { background-color: rgba(124, 58, 237, 0.08); color: #7c3aed; }
-    .feature-icon-box.blue { background-color: rgba(59, 130, 246, 0.08); color: #3b82f6; }
-    .feature-icon-box.cyan { background-color: rgba(6, 182, 212, 0.08); color: #0891b2; }
-
-    /* Steps Section (Dark Footer block matching mockup bottom left) */
-    .steps-section {
-      background: var(--grad-dark-footer);
-      color: #ffffff;
-      padding: var(--space-3xl) var(--space-xl);
-      text-align: center;
-      position: relative;
-    }
-
-    .steps-title {
-      font-size: 2rem;
-      font-weight: 800;
-      margin-bottom: var(--space-2xl);
-      color: #ffffff;
-    }
-
-    .steps-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      max-width: 1100px;
-      margin: 0 auto;
-      gap: var(--space-md);
-      position: relative;
-    }
-
-    .step-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      position: relative;
-      z-index: 5;
-    }
-
-    .step-icon-circle {
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-      background-color: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.75rem;
-      color: #ffffff;
-      margin-bottom: var(--space-md);
-      transition: background-color var(--transition-fast);
-    }
-
-    .step-item:hover .step-icon-circle {
-      background-color: rgba(79, 70, 229, 0.2);
-      border-color: #4f46e5;
-    }
-
-    .step-number {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      color: #94a3b8;
-      margin-bottom: var(--space-2xs);
-    }
-
-    .step-title {
-      font-size: 1.05rem;
-      font-weight: 600;
-      margin-bottom: 4px;
-      color: #ffffff;
-    }
-
-    .step-desc {
-      font-size: 0.85rem;
-      color: #94a3b8;
-      max-width: 200px;
-    }
-
-    /* Connecting lines between steps on Desktop */
-    .steps-connector-line {
-      position: absolute;
-      top: 32px;
-      left: 12.5%;
-      width: 75%;
-      height: 1px;
-      background-color: rgba(255, 255, 255, 0.1);
-      z-index: 1;
-    }
-
-    @media (max-width: 992px) {
-      .features-grid { grid-template-columns: repeat(2, 1fr); }
-      .steps-grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-xl); }
-      .steps-connector-line { display: none; }
-    }
-
-    @media (max-width: 768px) {
-      .hero-title { font-size: 2.75rem; }
-      .features-grid { grid-template-columns: 1fr; }
-      .steps-grid { grid-template-columns: 1fr; }
-    }
-  </style>
+  <!-- Load theme from preference or default to dark theme -->
+  <script>
+    const savedTheme = localStorage.getItem("cfx_theme") || "dark";
+    document.documentElement.setAttribute("data-theme", savedTheme);
+  </script>
 </head>
-<body>
+<body class="marketing-body">
+
+  <div class="bg-glow-container">
+    <div class="glow-light glow-blue"></div>
+    <div class="glow-light glow-purple"></div>
+    <div class="glow-light glow-cyan"></div>
+  </div>
 
   <!-- Header Navigation -->
-  <header class="navbar">
+  <header class="marketing-navbar">
     <div class="navbar-brand">
-      <!-- Inline SVG Logo -->
-      <svg width="28" height="28" viewBox="0 0 200 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg width="52" height="26" viewBox="0 0 220 100" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M70 15 C35 15, 15 35, 15 50 C15 65, 35 85, 70 85 L90 85 L90 73 L70 73 C45 73, 30 63, 30 50 C30 37, 45 27, 70 27 L90 27 L90 15 Z" fill="url(#logoBlueGrad)" />
         <path d="M85 35 L120 35 L120 47 L97 47 L97 55 L115 55 L115 65 L97 65 L97 85 L85 85 Z" fill="url(#logoBlueGrad)" />
         <path d="M125 15 L140 15 L168 52 L195 15 L210 15 L175 62 L175 85 L162 85 L162 62 Z" fill="url(#logoPurpleGrad)" />
@@ -331,240 +53,1107 @@
     <div class="navbar-links" style="gap: var(--space-xl);">
       <a href="#features" class="navbar-link">Features</a>
       <a href="#how-it-works" class="navbar-link">How It Works</a>
+      <a href="#why-choose" class="navbar-link">Why Choose Us</a>
       <a href="#pricing" class="navbar-link">Pricing</a>
-      <a href="#about" class="navbar-link">About Us</a>
-      <a href="#contact" class="navbar-link">Contact</a>
+      <a href="#faqs" class="navbar-link">FAQs</a>
     </div>
 
-    <div class="navbar-links" id="auth-nav-links">
-      <a href="login.html" class="navbar-link" style="font-weight: 600;">Log In</a>
+    <div class="navbar-links" id="auth-nav-links" style="display: flex; align-items: center; gap: var(--space-md);">
+      <button class="theme-toggle-premium light" onclick="auth.toggleTheme()" aria-label="Toggle theme">
+        <span class="toggle-track">
+          <span class="toggle-thumb">
+            <i class="ri-sun-line sun-icon"></i>
+            <i class="ri-moon-line moon-icon"></i>
+          </span>
+        </span>
+      </button>
+      <a href="login.html" class="navbar-link" style="font-weight: 600; margin-left: 0.5rem;">Log In</a>
       <a href="register.html" class="btn btn-primary" style="padding: 0.5rem 1.25rem;">Get Started</a>
     </div>
   </header>
 
-  <!-- Hero Block -->
-  <main class="hero-section">
-    <div class="hero-badge">
-      <i class="ri-sparkling-fill"></i>
-      <span>All-in-One Workflow Management</span>
-    </div>
-    <h1 class="hero-title">
-      Work Smarter. <span class="highlight-purple">Deliver Better.</span>
-    </h1>
-    <p class="hero-tagline">
-      CreateFlowX helps freelancers and agencies manage clients, projects, tasks, deadlines, files, and invoices — all in one powerful workspace.
-    </p>
-    
-    <div class="hero-ctas">
-      <a href="register.html" class="btn btn-primary" style="padding: 0.8rem 1.75rem; font-size: 0.95rem;">Get Started Free</a>
-      <a href="login.html" class="btn btn-outline" style="padding: 0.8rem 1.75rem; font-size: 0.95rem;">
-        <i class="ri-play-circle-line"></i> Watch Demo
-      </a>
-    </div>
-
-    <div class="hero-trial-info">
-      <span><i class="ri-checkbox-circle-fill"></i> 14-Day Free Trial</span>
-      <span><i class="ri-checkbox-circle-fill"></i> No Credit Card</span>
-      <span><i class="ri-checkbox-circle-fill"></i> Cancel Anytime</span>
-    </div>
-
-    <!-- Mockup dashboard preview matching the screen shot -->
-    <div class="dashboard-preview card">
-      <!-- Create a CSS representation of the dashboard inside to look gorgeous, or a placeholder preview -->
-      <div style="background-color: var(--bg-primary); padding: var(--space-sm); display: flex; border-bottom: 1px solid var(--border-color); align-items: center; justify-content: space-between;">
-        <div style="display: flex; gap: 6px;">
-          <span style="width: 10px; height: 10px; border-radius: 50%; background-color: #ef4444;"></span>
-          <span style="width: 10px; height: 10px; border-radius: 50%; background-color: #f59e0b;"></span>
-          <span style="width: 10px; height: 10px; border-radius: 50%; background-color: #10b981;"></span>
-        </div>
-        <div style="background-color: var(--bg-secondary); padding: 2px 12px; font-size: 0.7rem; border-radius: 4px; color: var(--text-muted); width: 200px; text-align: center;">cfx-app.com/dashboard</div>
-        <div></div>
+  <!-- Hero Section -->
+  <section class="market-hero section-padding">
+    <div class="container-wide">
+      <div class="hero-badge-pill">
+        <i class="ri-sparkling-fill"></i>
+        <span>Designed for Creators & Small Teams</span>
       </div>
-      <!-- Miniature layout preview -->
-      <div style="display: flex; height: 380px; background-color: #f8f9fd;">
-        <div style="width: 70px; background-color: #ffffff; border-right: 1px solid #e2e8f0; padding: var(--space-sm); display: flex; flex-direction: column; gap: var(--space-sm);">
-          <div style="width: 20px; height: 20px; border-radius: 4px; background: var(--grad-primary); margin-bottom: 10px;"></div>
-          <div style="width: 100%; height: 8px; background-color: #e2e8f0; border-radius: 2px;"></div>
-          <div style="width: 70%; height: 8px; background-color: #e2e8f0; border-radius: 2px;"></div>
-          <div style="width: 80%; height: 8px; background-color: #e2e8f0; border-radius: 2px;"></div>
-          <div style="width: 60%; height: 8px; background-color: #e2e8f0; border-radius: 2px;"></div>
-        </div>
-        <div style="flex: 1; padding: var(--space-md); display: flex; flex-direction: column; gap: var(--space-md); overflow: hidden;">
-          <div style="display: flex; justify-content: space-between;">
-            <div style="width: 120px; height: 12px; background-color: #cbd5e1; border-radius: 2px;"></div>
-            <div style="width: 60px; height: 12px; background-color: #cbd5e1; border-radius: 2px;"></div>
-          </div>
-          <div style="display: flex; gap: var(--space-md);">
-            <div style="flex: 1; height: 60px; background-color: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px;">
-              <div style="width: 50px; height: 8px; background-color: #cbd5e1; border-radius: 2px; margin-bottom: 8px;"></div>
-              <div style="width: 30px; height: 16px; background-color: #0f172a; border-radius: 2px;"></div>
+      <h1 class="hero-main-title">
+        Run Your Business <br/>
+        <span class="text-gradient-purple-blue">From One Workspace.</span>
+      </h1>
+      <p class="hero-desc">
+        Manage clients, projects, tasks, invoices, and revenue without juggling multiple apps. CreateFlowX coordinates your daily workflows into one simple dashboard.
+      </p>
+      
+      <div class="flex-center" style="gap: var(--space-md);">
+        <a href="register.html" class="btn btn-primary" style="padding: 0.85rem 2rem; font-size: 1rem; font-weight: 600;">Get Started Free</a>
+        <a href="#showcase" class="btn btn-outline" style="padding: 0.85rem 2rem; font-size: 1rem; font-weight: 600;">
+          <i class="ri-layout-grid-line"></i> View Dashboard
+        </a>
+      </div>
+
+      <div class="flex-center" style="gap: var(--space-xl); margin-top: 2rem; font-size: 0.85rem; color: var(--market-text-secondary);">
+        <span><i class="ri-checkbox-circle-fill" style="color: #00f2fe; margin-right: 4px;"></i> Free Forever Tier</span>
+        <span><i class="ri-checkbox-circle-fill" style="color: #00f2fe; margin-right: 4px;"></i> No Credit Card Required</span>
+        <span><i class="ri-checkbox-circle-fill" style="color: #00f2fe; margin-right: 4px;"></i> Instant Access Setup</span>
+      </div>
+
+      <!-- Hero Visual Mockup -->
+      <div style="position: relative; max-width: 1000px; margin: 3.5rem auto 0 auto; z-index: 10;">
+        <div class="hero-bg-accent-glow"></div>
+        
+        <div class="hero-mockup-wrapper">
+          <div class="hero-mockup-inner">
+            <div class="mockup-window-header">
+              <div class="mockup-dots">
+                <span class="mockup-dot red"></span>
+                <span class="mockup-dot yellow"></span>
+                <span class="mockup-dot green"></span>
+              </div>
+              <div class="mockup-address-bar">cfx-app.com/dashboard</div>
+              <div style="width: 40px;"></div>
             </div>
-            <div style="flex: 1; height: 60px; background-color: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px;">
-              <div style="width: 50px; height: 8px; background-color: #cbd5e1; border-radius: 2px; margin-bottom: 8px;"></div>
-              <div style="width: 30px; height: 16px; background-color: #0f172a; border-radius: 2px;"></div>
-            </div>
-            <div style="flex: 1; height: 60px; background-color: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px;">
-              <div style="width: 50px; height: 8px; background-color: #cbd5e1; border-radius: 2px; margin-bottom: 8px;"></div>
-              <div style="width: 30px; height: 16px; background-color: #0f172a; border-radius: 2px;"></div>
-            </div>
-          </div>
-          <div style="display: flex; gap: var(--space-md); flex: 1;">
-            <div style="flex: 2; background-color: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px;">
-              <div style="width: 80px; height: 10px; background-color: #cbd5e1; border-radius: 2px; margin-bottom: 15px;"></div>
-              <div style="display: flex; flex-direction: column; gap: 8px;">
-                <div style="width: 100%; height: 8px; background-color: #f1f5f9; border-radius: 2px;"></div>
-                <div style="width: 90%; height: 8px; background-color: #f1f5f9; border-radius: 2px;"></div>
-                <div style="width: 95%; height: 8px; background-color: #f1f5f9; border-radius: 2px;"></div>
+            
+            <!-- Mockup Content layout -->
+            <div style="display: grid; grid-template-columns: 200px 1fr; height: 500px; text-align: left; background-color: var(--bg-primary);">
+              <!-- Left Sidebar -->
+              <div style="background-color: var(--bg-secondary); border-right: 1px solid var(--border-color); padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; border-bottom-left-radius: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 1.5rem;">
+                  <div style="width: 24px; height: 24px; border-radius: 4px; background: var(--market-gradient-blue-purple)"></div>
+                  <span style="font-weight: 800; font-size: 0.95rem; color: var(--text-primary);">CreateFlowX</span>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                  <div class="mockup-sidebar-btn active" onclick="switchMockupTab('mockup-dashboard', this)"><i class="ri-layout-grid-line"></i> Dashboard</div>
+                  <div class="mockup-sidebar-btn" onclick="switchMockupTab('mockup-clients', this)"><i class="ri-user-star-line"></i> Clients</div>
+                  <div class="mockup-sidebar-btn" onclick="switchMockupTab('mockup-projects', this)"><i class="ri-folders-line"></i> Projects</div>
+                  <div class="mockup-sidebar-btn" onclick="switchMockupTab('mockup-tasks', this)"><i class="ri-task-line"></i> Tasks</div>
+                  <div class="mockup-sidebar-btn" onclick="switchMockupTab('mockup-invoices', this)"><i class="ri-bill-line"></i> Invoices</div>
+                  <div class="mockup-sidebar-btn" onclick="switchMockupTab('mockup-analytics', this)"><i class="ri-bar-chart-box-line"></i> Analytics</div>
+                </div>
+              </div>
+              
+              <!-- Dashboard Main Mockup Pane -->
+              <div style="padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; overflow: hidden; background: var(--bg-primary); position: relative; height: 500px; overflow-y: auto; border-bottom-right-radius: 8px;">
+                <!-- Welcome and metrics -->
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; flex-shrink: 0;">
+                  <div>
+                    <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text-primary); margin: 0;">Workspace Dashboard</h3>
+                    <p style="font-size: 0.72rem; color: var(--text-secondary); margin: 2px 0 0 0;">Active workspace session data.</p>
+                  </div>
+                  <div style="display: flex; gap: 8px; align-items: center;">
+                    <span style="position: relative; width: 28px; height: 28px; border-radius: 50%; background: var(--bg-secondary); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: var(--text-primary);">
+                      <i class="ri-notification-2-line"></i>
+                      <span class="badge-pulse" id="mockup-notif-pulse"></span>
+                    </span>
+                    <span style="width: 28px; height: 28px; border-radius: 50%; background: var(--market-gradient-blue-purple); color: var(--market-text-primary); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold;">P</span>
+                  </div>
+                </div>
+
+                <!-- VIEW 1: Dashboard Panel -->
+                <div id="mockup-dashboard" class="mockup-panel active">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div>
+                      <h4 style="font-size: 1.05rem; font-weight: 700; color: var(--text-primary); margin: 0;">Good Morning, Pooja! 👋</h4>
+                      <p style="font-size: 0.72rem; color: var(--text-secondary); margin: 2px 0 0 0;">Here's your business digest for today.</p>
+                    </div>
+                  </div>
+
+                  <!-- Top Widgets Row -->
+                  <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.85rem; margin-bottom: 1.25rem;">
+                    <!-- Active Projects -->
+                    <div style="background: linear-gradient(135deg, rgba(0, 242, 254, 0.08) 0%, rgba(59, 130, 246, 0.02) 100%); border: 1px solid rgba(0, 242, 254, 0.15); border-left: 3px solid #00f2fe; padding: 0.85rem; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                      <div>
+                        <div style="font-size: 0.62rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 700; letter-spacing: 0.02em;">Active Projects</div>
+                        <div style="font-size: 1.35rem; font-weight: 800; color: var(--text-primary); margin-top: 4px;" id="mockup-count-projects">10</div>
+                      </div>
+                      <div style="width: 32px; height: 32px; border-radius: 6px; background: rgba(0, 242, 254, 0.12); display: flex; align-items: center; justify-content: center; color: #00f2fe; font-size: 1.1rem;">
+                        <i class="ri-folders-line"></i>
+                      </div>
+                    </div>
+                    <!-- Pending Tasks -->
+                    <div style="background: linear-gradient(135deg, rgba(124, 58, 237, 0.08) 0%, rgba(192, 132, 252, 0.02) 100%); border: 1px solid rgba(124, 58, 237, 0.15); border-left: 3px solid #7c3aed; padding: 0.85rem; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                      <div>
+                        <div style="font-size: 0.62rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 700; letter-spacing: 0.02em;">Pending Tasks</div>
+                        <div style="font-size: 1.35rem; font-weight: 800; color: var(--text-primary); margin-top: 4px;" id="mockup-count-tasks">14</div>
+                      </div>
+                      <div style="width: 32px; height: 32px; border-radius: 6px; background: rgba(124, 58, 237, 0.12); display: flex; align-items: center; justify-content: center; color: #7c3aed; font-size: 1.1rem;">
+                        <i class="ri-task-line"></i>
+                      </div>
+                    </div>
+                    <!-- Month Revenue -->
+                    <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(52, 211, 153, 0.02) 100%); border: 1px solid rgba(16, 185, 129, 0.15); border-left: 3px solid #10b981; padding: 0.85rem; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                      <div>
+                        <div style="font-size: 0.62rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 700; letter-spacing: 0.02em;">Month Revenue</div>
+                        <div style="font-size: 1.35rem; font-weight: 800; color: #10b981; margin-top: 4px;" id="mockup-count-revenue">₹1,25,000</div>
+                      </div>
+                      <div style="width: 32px; height: 32px; border-radius: 6px; background: rgba(16, 185, 129, 0.12); display: flex; align-items: center; justify-content: center; color: #10b981; font-size: 1.1rem;">
+                        <i class="ri-bank-card-line"></i>
+                      </div>
+                    </div>
+                    <!-- Active Clients -->
+                    <div style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(251, 191, 36, 0.02) 100%); border: 1px solid rgba(245, 158, 11, 0.15); border-left: 3px solid #f59e0b; padding: 0.85rem; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                      <div>
+                        <div style="font-size: 0.62rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 700; letter-spacing: 0.02em;">Active Clients</div>
+                        <div style="font-size: 1.35rem; font-weight: 800; color: var(--text-primary); margin-top: 4px;" id="mockup-count-clients">8</div>
+                      </div>
+                      <div style="width: 32px; height: 32px; border-radius: 6px; background: rgba(245, 158, 11, 0.12); display: flex; align-items: center; justify-content: center; color: #f59e0b; font-size: 1.1rem;">
+                        <i class="ri-user-star-line"></i>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Split view (Chart + Tasks) -->
+                  <div style="display: grid; grid-template-columns: 1.6fr 1fr; gap: 1rem;">
+                    <!-- Chart -->
+                    <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px; display: flex; flex-direction: column; justify-content: space-between; height: 180px;">
+                      <div style="display: flex; justify-content: space-between; font-size: 0.75rem; align-items: center;">
+                        <span style="font-weight: 600; color: var(--text-primary);">Revenue Trend</span>
+                        <span style="color: #10b981; font-weight: 700; font-size: 0.7rem;"><i class="ri-arrow-up-line"></i> +24%</span>
+                      </div>
+                      <div style="height: 100px; width: 100%; position: relative; margin-top: 5px;">
+                        <svg viewBox="0 0 100 30" width="100%" height="100%" preserveAspectRatio="none">
+                          <defs>
+                            <linearGradient id="mockupLineGrad" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="0%" stop-color="rgba(0, 242, 254, 0.25)" />
+                              <stop offset="100%" stop-color="rgba(0, 242, 254, 0.0)" />
+                            </linearGradient>
+                          </defs>
+                          <path class="chart-path-bg" d="M0,25 Q15,22 30,16 T60,8 T85,4 T100,1 L100,30 L0,30 Z" fill="url(#mockupLineGrad)" />
+                          <path class="chart-path" d="M0,25 Q15,22 30,16 T60,8 T85,4 T100,1" fill="none" stroke="var(--accent-color)" stroke-width="1.8" />
+                        </svg>
+                      </div>
+                      <div style="display: flex; justify-content: space-between; font-size: 0.55rem; color: var(--text-muted);">
+                        <span>W1</span><span>W2</span><span>W3</span><span>W4</span>
+                      </div>
+                    </div>
+                    <!-- Recent Tasks Checklist -->
+                    <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px; display: flex; flex-direction: column; gap: 8px; height: 180px; overflow-y: auto;">
+                      <div style="font-size: 0.75rem; font-weight: 600; color: var(--text-primary); margin-bottom: 4px;">Top Priorities</div>
+                      <div class="mockup-task-item" style="display: flex; align-items: center; gap: 8px; font-size: 0.68rem; padding: 6px; background: var(--bg-tertiary); border-radius: 4px; border: 1px solid var(--border-color); transition: all 0.3s ease;">
+                        <i class="ri-checkbox-blank-circle-line" style="color: #7c3aed;" id="mockup-task-icon-1"></i>
+                        <div style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color: var(--text-primary);" id="mockup-task-text-1">Finalize Figma mockup</div>
+                        <span style="font-size: 0.55rem; color: #ef4444; background: rgba(239,68,68,0.1); padding: 1px 4px; border-radius: 3px; font-weight: 600;">High</span>
+                      </div>
+                      <div class="mockup-task-item" style="display: flex; align-items: center; gap: 8px; font-size: 0.68rem; padding: 6px; background: var(--bg-tertiary); border-radius: 4px; border: 1px solid var(--border-color); transition: all 0.3s ease;">
+                        <i class="ri-checkbox-blank-circle-line" style="color: #00f2fe;" id="mockup-task-icon-2"></i>
+                        <div style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color: var(--text-primary);" id="mockup-task-text-2">Client feedback audit</div>
+                        <span style="font-size: 0.55rem; color: #f59e0b; background: rgba(245,158,11,0.1); padding: 1px 4px; border-radius: 3px; font-weight: 600;">Medium</span>
+                      </div>
+                      <div class="mockup-task-item completed" style="display: flex; align-items: center; gap: 8px; font-size: 0.68rem; padding: 6px; background: var(--bg-tertiary); border-radius: 4px; border: 1px solid var(--border-color); opacity: 0.7; transition: all 0.3s ease;">
+                        <i class="ri-checkbox-circle-fill" style="color: #10b981;" id="mockup-task-icon-3"></i>
+                        <div style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color: var(--text-muted); text-decoration: line-through;" id="mockup-task-text-3">Send invoice #CFX-88</div>
+                        <span style="font-size: 0.55rem; color: #10b981; background: rgba(16,185,129,0.1); padding: 1px 4px; border-radius: 3px; font-weight: 600;">Low</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- VIEW 2: Clients Panel -->
+                <div id="mockup-clients" class="mockup-panel">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h4 style="font-size: 1.05rem; font-weight: 700; color: var(--text-primary); margin: 0;">Client Directory</h4>
+                    <span style="font-size: 0.65rem; background: rgba(0,242,254,0.1); color: var(--accent-color); padding: 3px 8px; border-radius: 4px; font-weight: 600;">8 Active Clients</span>
+                  </div>
+                  <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 0.85rem; border-radius: 8px; display: flex; align-items: center; justify-content: space-between;">
+                      <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="width: 32px; height: 32px; border-radius: 50%; background: #4f46e5; color: var(--market-text-primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem;">AC</span>
+                        <div>
+                          <div style="font-size: 0.8rem; font-weight: 600; color: var(--text-primary);">Acme Corporation</div>
+                          <div style="font-size: 0.65rem; color: var(--text-secondary);">contact@acme.com</div>
+                        </div>
+                      </div>
+                      <span class="badge badge-done" style="font-size: 0.6rem; padding: 2px 6px;">Enterprise</span>
+                    </div>
+                    <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 0.85rem; border-radius: 8px; display: flex; align-items: center; justify-content: space-between;">
+                      <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="width: 32px; height: 32px; border-radius: 50%; background: #00f2fe; color: #09090e; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem;">ST</span>
+                        <div>
+                          <div style="font-size: 0.8rem; font-weight: 600; color: var(--text-primary);">Stripe Inc.</div>
+                          <div style="font-size: 0.65rem; color: var(--text-secondary);">billing@stripe.com</div>
+                        </div>
+                      </div>
+                      <span class="badge badge-progress" style="font-size: 0.6rem; padding: 2px 6px;">Growth</span>
+                    </div>
+                    <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 0.85rem; border-radius: 8px; display: flex; align-items: center; justify-content: space-between;">
+                      <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="width: 32px; height: 32px; border-radius: 50%; background: #7c3aed; color: var(--market-text-primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem;">FR</span>
+                        <div>
+                          <div style="font-size: 0.8rem; font-weight: 600; color: var(--text-primary);">Framer Web</div>
+                          <div style="font-size: 0.65rem; color: var(--text-secondary);">design@framer.com</div>
+                        </div>
+                      </div>
+                      <span class="badge badge-done" style="font-size: 0.6rem; padding: 2px 6px;">Enterprise</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- VIEW 3: Projects Panel -->
+                <div id="mockup-projects" class="mockup-panel">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h4 style="font-size: 1.05rem; font-weight: 700; color: var(--text-primary); margin: 0;">Projects Hub</h4>
+                    <span style="font-size: 0.65rem; background: rgba(16,185,129,0.1); color: #10b981; padding: 3px 8px; border-radius: 4px; font-weight: 600;">10 In Progress</span>
+                  </div>
+                  <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px;">
+                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <div style="font-size: 0.8rem; font-weight: 600; color: var(--text-primary);">CreateFlowX SaaS Landing Page</div>
+                        <span style="font-size: 0.65rem; color: #10b981; font-weight: 700;">Active</span>
+                      </div>
+                      <div class="progress-container">
+                        <div class="progress-bar"><div class="progress-fill" id="mockup-proj-fill-1" style="width: 0%; background: linear-gradient(90deg, #00f2fe, #3b82f6); transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);"></div></div>
+                        <span class="progress-text" id="mockup-proj-text-1">0%</span>
+                      </div>
+                    </div>
+                    <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px;">
+                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <div style="font-size: 0.8rem; font-weight: 600; color: var(--text-primary);">Figma UI Kit & Brand Design</div>
+                        <span style="font-size: 0.65rem; color: #3b82f6; font-weight: 700;">Review</span>
+                      </div>
+                      <div class="progress-container">
+                        <div class="progress-bar"><div class="progress-fill" id="mockup-proj-fill-2" style="width: 0%; background: linear-gradient(90deg, #7c3aed, #c084fc); transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);"></div></div>
+                        <span class="progress-text" id="mockup-proj-text-2">0%</span>
+                      </div>
+                    </div>
+                    <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px;">
+                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <div style="font-size: 0.8rem; font-weight: 600; color: var(--text-primary);">Stripe Payment Gateway Integration</div>
+                        <span style="font-size: 0.65rem; color: #f59e0b; font-weight: 700;">Pending</span>
+                      </div>
+                      <div class="progress-container">
+                        <div class="progress-bar"><div class="progress-fill" id="mockup-proj-fill-3" style="width: 0%; background: linear-gradient(90deg, #f59e0b, #fbbf24); transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);"></div></div>
+                        <span class="progress-text" id="mockup-proj-text-3">0%</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- VIEW 4: Tasks Panel -->
+                <div id="mockup-tasks" class="mockup-panel">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h4 style="font-size: 1.05rem; font-weight: 700; color: var(--text-primary); margin: 0;">Task Checklist</h4>
+                    <span style="font-size: 0.65rem; background: rgba(124,58,237,0.1); color: #a78bfa; padding: 3px 8px; border-radius: 4px; font-weight: 600;">14 Pending</span>
+                  </div>
+                  <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 0.75rem; border-radius: 8px; display: flex; align-items: center; gap: 10px;">
+                      <i class="ri-checkbox-blank-circle-line" style="color: var(--accent-color);"></i>
+                      <div style="flex:1;">
+                        <div style="font-size: 0.8rem; color: var(--text-primary); font-weight: 500;">Review pull requests and deploy waitlist UI</div>
+                        <div style="font-size: 0.65rem; color: var(--text-secondary); margin-top: 2px;">Due: Tomorrow &bull; Priority: High</div>
+                      </div>
+                    </div>
+                    <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 0.75rem; border-radius: 8px; display: flex; align-items: center; gap: 10px;">
+                      <i class="ri-checkbox-blank-circle-line" style="color: var(--text-muted);"></i>
+                      <div style="flex:1;">
+                        <div style="font-size: 0.8rem; color: var(--text-primary); font-weight: 500;">Set up automated Postgres database backups</div>
+                        <div style="font-size: 0.65rem; color: var(--text-secondary); margin-top: 2px;">Due: In 3 days &bull; Priority: Medium</div>
+                      </div>
+                    </div>
+                    <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 0.75rem; border-radius: 8px; display: flex; align-items: center; gap: 10px;">
+                      <i class="ri-checkbox-blank-circle-line" style="color: var(--text-muted);"></i>
+                      <div style="flex:1;">
+                        <div style="font-size: 0.8rem; color: var(--text-primary); font-weight: 500;">Compose client invoice review specifications document</div>
+                        <div style="font-size: 0.65rem; color: var(--text-secondary); margin-top: 2px;">Due: In 5 days &bull; Priority: Low</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- VIEW 5: Invoices Panel -->
+                <div id="mockup-invoices" class="mockup-panel">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h4 style="font-size: 1.05rem; font-weight: 700; color: var(--text-primary); margin: 0;">Invoices Ledger</h4>
+                    <span style="font-size: 0.65rem; background: rgba(16,185,129,0.1); color: #10b981; padding: 3px 8px; border-radius: 4px; font-weight: 600;">₹1,75,000 Total Billed</span>
+                  </div>
+                  <div class="table-responsive" style="border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; background: var(--bg-secondary);">
+                    <table class="table" style="background: transparent;">
+                      <thead>
+                        <tr>
+                          <th style="font-size: 0.65rem; padding: 8px 12px; background: var(--bg-tertiary); color: var(--text-secondary); border-bottom: 1px solid var(--border-color);">Invoice ID</th>
+                          <th style="font-size: 0.65rem; padding: 8px 12px; background: var(--bg-tertiary); color: var(--text-secondary); border-bottom: 1px solid var(--border-color);">Client</th>
+                          <th style="font-size: 0.65rem; padding: 8px 12px; background: var(--bg-tertiary); color: var(--text-secondary); border-bottom: 1px solid var(--border-color);">Amount</th>
+                          <th style="font-size: 0.65rem; padding: 8px 12px; background: var(--bg-tertiary); color: var(--text-secondary); border-bottom: 1px solid var(--border-color);">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td style="font-size: 0.7rem; padding: 8px 12px; font-weight: 600; color: var(--text-primary); border-bottom: 1px solid var(--border-color);">#CFX-101</td>
+                          <td style="font-size: 0.7rem; padding: 8px 12px; color: var(--text-secondary); border-bottom: 1px solid var(--border-color);">Acme Corp</td>
+                          <td style="font-size: 0.7rem; padding: 8px 12px; color: var(--text-primary); border-bottom: 1px solid var(--border-color);">₹50,000</td>
+                          <td style="font-size: 0.7rem; padding: 8px 12px; border-bottom: 1px solid var(--border-color);"><span class="badge badge-done" style="font-size: 0.6rem; padding: 2px 6px;">Paid</span></td>
+                        </tr>
+                        <tr>
+                          <td style="font-size: 0.7rem; padding: 8px 12px; font-weight: 600; color: var(--text-primary); border-bottom: 1px solid var(--border-color);">#CFX-102</td>
+                          <td style="font-size: 0.7rem; padding: 8px 12px; color: var(--text-secondary); border-bottom: 1px solid var(--border-color);">Framer Inc</td>
+                          <td style="font-size: 0.7rem; padding: 8px 12px; color: var(--text-primary); border-bottom: 1px solid var(--border-color);">₹75,000</td>
+                          <td style="font-size: 0.7rem; padding: 8px 12px; border-bottom: 1px solid var(--border-color);"><span class="badge badge-done" style="font-size: 0.6rem; padding: 2px 6px;">Paid</span></td>
+                        </tr>
+                        <tr>
+                          <td style="font-size: 0.7rem; padding: 8px 12px; font-weight: 600; color: var(--text-primary); border-bottom: none;">#CFX-103</td>
+                          <td style="font-size: 0.7rem; padding: 8px 12px; color: var(--text-secondary); border-bottom: none;">Design Studio</td>
+                          <td style="font-size: 0.7rem; padding: 8px 12px; color: var(--text-primary); border-bottom: none;">₹50,000</td>
+                          <td style="font-size: 0.7rem; padding: 8px 12px; border-bottom: none;"><span class="badge badge-progress" style="font-size: 0.6rem; padding: 2px 6px;">Sent</span></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <!-- VIEW 6: Analytics Panel -->
+                <div id="mockup-analytics" class="mockup-panel">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h4 style="font-size: 1.05rem; font-weight: 700; color: var(--text-primary); margin: 0;">Earnings & Growth</h4>
+                    <span style="font-size: 0.65rem; color: #10b981; font-weight: 700;"><i class="ri-pulse-line"></i> Live Analytics</span>
+                  </div>
+                  <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 1rem;">
+                    <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px; height: 180px; display: flex; flex-direction: column; justify-content: space-between;">
+                      <div style="font-size: 0.7rem; font-weight: 600; color: var(--text-primary);">Income Breakdown</div>
+                      <div style="height: 100px; position: relative;">
+                        <svg viewBox="0 0 100 40" width="100%" height="100%" preserveAspectRatio="none">
+                          <defs>
+                            <linearGradient id="mockupLineGradPurple" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="0%" stop-color="rgba(124, 58, 237, 0.25)" />
+                              <stop offset="100%" stop-color="rgba(124, 58, 237, 0.0)" />
+                            </linearGradient>
+                          </defs>
+                          <path class="chart-path-bg-2" d="M0,40 Q15,35 30,22 T60,18 T85,10 T100,5 L100,40 L0,40 Z" fill="url(#mockupLineGradPurple)" />
+                          <path class="chart-path-2" d="M0,40 Q15,35 30,22 T60,18 T85,10 T100,5" fill="none" stroke="#7c3aed" stroke-width="1.8" />
+                        </svg>
+                      </div>
+                      <div style="display: flex; justify-content: space-between; font-size: 0.55rem; color: var(--text-muted);">
+                        <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span>
+                      </div>
+                    </div>
+                    <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px; height: 180px; display: flex; flex-direction: column; justify-content: space-between;">
+                      <div style="font-size: 0.7rem; font-weight: 600; color: var(--text-primary); margin-bottom: 2px;">Channels</div>
+                      
+                      <!-- Donut Chart + Legend Row -->
+                      <div style="display: flex; align-items: center; gap: 0.85rem; flex: 1; margin: 4px 0;">
+                        <!-- Donut Chart -->
+                        <div style="position: relative; width: 62px; height: 62px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
+                          <svg width="100%" height="100%" viewBox="0 0 36 36" style="transform: rotate(-90deg); filter: drop-shadow(0 2px 6px rgba(0,0,0,0.12));">
+                            <circle cx="18" cy="18" r="15.915" fill="none" stroke="var(--border-color)" stroke-width="4"></circle>
+                            <!-- Segment 1: Retainers (60%) -->
+                            <circle cx="18" cy="18" r="15.915" fill="none" stroke="var(--accent-color)" stroke-width="4" stroke-dasharray="60 40" stroke-dashoffset="0" stroke-linecap="round"></circle>
+                            <!-- Segment 2: Fixed Projects (30%) -->
+                            <circle cx="18" cy="18" r="15.915" fill="none" stroke="#7c3aed" stroke-width="4" stroke-dasharray="30 70" stroke-dashoffset="-60" stroke-linecap="round"></circle>
+                            <!-- Segment 3: Advisory (10%) -->
+                            <circle cx="18" cy="18" r="15.915" fill="none" stroke="#f59e0b" stroke-width="4" stroke-dasharray="10 90" stroke-dashoffset="-90" stroke-linecap="round"></circle>
+                            <circle cx="18" cy="18" r="11" fill="var(--bg-secondary)"></circle>
+                          </svg>
+                          <div style="position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.58rem; font-weight: 800; color: var(--text-primary);">
+                            <span>100%</span>
+                          </div>
+                        </div>
+                        
+                        <!-- Legend List -->
+                        <div style="display: flex; flex-direction: column; gap: 4px; flex: 1; font-size: 0.65rem;">
+                          <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="color: var(--text-secondary); display: flex; align-items: center; gap: 4px;"><i class="ri-checkbox-blank-circle-fill" style="color: var(--accent-color); font-size: 0.45rem;"></i> Retainers</span>
+                            <span style="font-weight: 700; color: var(--text-primary);">60%</span>
+                          </div>
+                          <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="color: var(--text-secondary); display: flex; align-items: center; gap: 4px;"><i class="ri-checkbox-blank-circle-fill" style="color: #7c3aed; font-size: 0.45rem;"></i> Fixed Proj</span>
+                            <span style="font-weight: 700; color: var(--text-primary);">30%</span>
+                          </div>
+                          <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="color: var(--text-secondary); display: flex; align-items: center; gap: 4px;"><i class="ri-checkbox-blank-circle-fill" style="color: #f59e0b; font-size: 0.45rem;"></i> Advisory</span>
+                            <span style="font-weight: 700; color: var(--text-primary);">10%</span>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div style="font-size: 0.62rem; color: var(--text-muted); border-top: 1px solid var(--border-color); padding-top: 6px; text-align: center; flex-shrink: 0;">
+                        Average invoice paid: <strong style="color: var(--text-primary);">1.8 days</strong>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
               </div>
             </div>
-            <div style="flex: 1; background-color: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px;">
-              <div style="width: 60px; height: 10px; background-color: #cbd5e1; border-radius: 2px; margin-bottom: 15px;"></div>
-              <div style="width: 70px; height: 70px; border-radius: 50%; border: 8px solid #f1f5f9; border-top-color: #4f46e5; margin: 0 auto;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trusted Workflow Platform Logos -->
+  <section class="trusted-marquee-container">
+    <p class="trusted-label">Works seamlessly with your favorite tools</p>
+    <div class="trusted-logo-track">
+      <!-- 2 sets for infinite loop -->
+      <div class="trusted-logo-item"><i class="ri-shape-line" style="color: #ec4899;"></i> Figma</div>
+      <div class="trusted-logo-item"><i class="ri-sparkling-fill" style="color: #6366f1;"></i> Framer</div>
+      <div class="trusted-logo-item"><i class="ri-global-line" style="color: #3b82f6;"></i> Webflow</div>
+      <div class="trusted-logo-item"><i class="ri-book-open-line" style="color: var(--market-text-primary);"></i> Notion</div>
+      <div class="trusted-logo-item"><i class="ri-slack-line" style="color: #e11d48;"></i> Slack</div>
+      <div class="trusted-logo-item"><i class="ri-stripe-line" style="color: #635bff;"></i> Stripe</div>
+      
+      <!-- Duplicate set -->
+      <div class="trusted-logo-item"><i class="ri-shape-line" style="color: #ec4899;"></i> Figma</div>
+      <div class="trusted-logo-item"><i class="ri-sparkling-fill" style="color: #6366f1;"></i> Framer</div>
+      <div class="trusted-logo-item"><i class="ri-global-line" style="color: #3b82f6;"></i> Webflow</div>
+      <div class="trusted-logo-item"><i class="ri-book-open-line" style="color: var(--market-text-primary);"></i> Notion</div>
+      <div class="trusted-logo-item"><i class="ri-slack-line" style="color: #e11d48;"></i> Slack</div>
+      <div class="trusted-logo-item"><i class="ri-stripe-line" style="color: #635bff;"></i> Stripe</div>
+    </div>
+  </section>
+
+  <!-- The Problem Section -->
+  <section class="section-padding">
+    <div class="container-wide">
+      <div class="text-center" style="margin-bottom: 2.5rem;">
+        <span style="color: #00f2fe; text-transform: uppercase; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.15em;">The Problem</span>
+        <h2 style="font-size: 2.5rem; font-weight: 800; color: var(--market-text-primary); margin-top: 0.5rem;">Too Many Tools. Too Much Chaos.</h2>
+        <p style="color: var(--market-text-secondary); max-width: 600px; margin: 1rem auto 0 auto; font-size: 1.05rem;">
+          Freelancers lose hours switching between disconnected tabs. When notes are buried and billing is manual, details fall through the cracks.
+        </p>
+      </div>
+
+      <div class="grid-2">
+        <!-- Chaotic Workflow -->
+        <div class="chaos-card-box text-center">
+          <span style="color: #ef4444; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; border: 1px solid rgba(239,68,68,0.2); padding: 4px 10px; border-radius: 20px; background: rgba(239,68,68,0.05);">Disconnected Stack</span>
+          <h3 style="font-size: 1.4rem; color: var(--market-text-primary); margin-top: 1rem; font-weight: 700;">Traditional Messy Workflow</h3>
+          
+          <div class="chaos-item-flow">
+            <span class="chaos-pill"><i class="ri-whatsapp-line"></i> WhatsApp</span>
+            <span class="chaos-arrow"><i class="ri-add-line"></i></span>
+            <span class="chaos-pill"><i class="ri-sticky-note-line"></i> Notes</span>
+            <span class="chaos-arrow"><i class="ri-add-line"></i></span>
+            <span class="chaos-pill"><i class="ri-file-excel-line"></i> Excel Sheets</span>
+            <span class="chaos-arrow"><i class="ri-add-line"></i></span>
+            <span class="chaos-pill"><i class="ri-calendar-line"></i> Calendar</span>
+            <span class="chaos-arrow"><i class="ri-add-line"></i></span>
+            <span class="chaos-pill"><i class="ri-bill-line"></i> Invoices</span>
+          </div>
+
+          <div style="font-size: 1.5rem; color: #ef4444; font-weight: bold; margin-bottom: 0.5rem;"><i class="ri-close-circle-line"></i> High Chaos & Overhead</div>
+          <p style="font-size: 0.85rem; color: var(--market-text-secondary); max-width: 420px; margin: 0 auto;">
+            Leads to missed deadlines, invoice delays, messy client notes, and absolute mental exhaustion trying to track tasks across tabs.
+          </p>
+        </div>
+
+        <!-- CreateFlowX Workflow -->
+        <div class="organized-card-box text-center">
+          <span class="solution-badge">Everything Integrated</span>
+          <h3 style="font-size: 1.4rem; color: var(--market-text-primary); margin-top: 1rem; font-weight: 700;">The CreateFlowX Solution</h3>
+          
+          <div class="chaos-item-flow">
+            <span class="chaos-pill" style="border-color: #00f2fe; color: var(--market-text-primary); background: rgba(0, 242, 254, 0.05); font-weight: 600;"><i class="ri-layout-grid-line" style="color: var(--market-blue);"></i> CreateFlowX Workspace</span>
+          </div>
+
+          <div style="font-size: 3rem; margin: 1.5rem 0 1rem 0; color: #10b981;"><i class="ri-checkbox-circle-fill"></i></div>
+
+          <div style="font-size: 1.5rem; color: #10b981; font-weight: bold; margin-bottom: 0.5rem;"><i class="ri-checkbox-circle-line"></i> Organized & Streamlined</div>
+          <p style="font-size: 0.85rem; color: var(--market-text-secondary); max-width: 420px; margin: 0 auto;">
+            All workflows, customer CRM data, boards, invoice sheets, and growth analytics metrics organized under a single, beautiful dashboard.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Feature Grid Section -->
+  <section id="features" class="section-padding reveal-fade-up" style="background-color: var(--market-bg-secondary);">
+    <div class="container-wide">
+      <div class="text-center" style="margin-bottom: 2.5rem;">
+        <span style="color: #7c3aed; text-transform: uppercase; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.15em;">Core Capabilities</span>
+        <h2 style="font-size: 2.5rem; font-weight: 800; color: var(--market-text-primary); margin-top: 0.5rem;">Everything you need to deliver great work</h2>
+        <p style="color: var(--market-text-secondary); max-width: 600px; margin: 1rem auto 0 auto; font-size: 1.05rem;">
+          Power up your workflow with lightweight features explicitly designed to organize creative and professional execution.
+        </p>
+      </div>
+ 
+      <div class="grid-3 stagger-container reveal-stagger">
+        <!-- Feature 1 -->
+        <div class="market-feature-card reveal-stagger" style="--card-hover-border: rgba(0, 242, 254, 0.3); --card-glow-color: rgba(0, 242, 254, 0.05);">
+          <div class="feature-grid-icon-box cyan"><i class="ri-user-star-line"></i></div>
+          <h3 style="font-size: 1.15rem; color: var(--market-text-primary); font-weight: 700; margin-bottom: 0.75rem;">Client Management</h3>
+          <p style="font-size: 0.9rem; color: var(--market-text-secondary); line-height: 1.5;">
+            Keep all client profiles, contacts, and custom notes organized in a unified folder system.
+          </p>
+        </div>
+ 
+        <!-- Feature 2 -->
+        <div class="market-feature-card reveal-stagger" style="--card-hover-border: rgba(124, 58, 237, 0.3); --card-glow-color: rgba(124, 58, 237, 0.05);">
+          <div class="feature-grid-icon-box purple"><i class="ri-folders-line"></i></div>
+          <h3 style="font-size: 1.15rem; color: var(--market-text-primary); font-weight: 700; margin-bottom: 0.75rem;">Project Tracking</h3>
+          <p style="font-size: 0.9rem; color: var(--market-text-secondary); line-height: 1.5;">
+            Track progress visually with state indicators, from initial brainstorm to final delivery.
+          </p>
+        </div>
+ 
+        <!-- Feature 3 -->
+        <div class="market-feature-card reveal-stagger" style="--card-hover-border: rgba(59, 130, 246, 0.3); --card-glow-color: rgba(59, 130, 246, 0.05);">
+          <div class="feature-grid-icon-box blue"><i class="ri-task-line"></i></div>
+          <h3 style="font-size: 1.15rem; color: var(--market-text-primary); font-weight: 700; margin-bottom: 0.75rem;">Task Management</h3>
+          <p style="font-size: 0.9rem; color: var(--market-text-secondary); line-height: 1.5;">
+            Create nested check-lists, assign priority labels, and stay on top of milestone dates.
+          </p>
+        </div>
+ 
+        <!-- Feature 4 -->
+        <div class="market-feature-card reveal-stagger" style="--card-hover-border: rgba(59, 130, 246, 0.3); --card-glow-color: rgba(59, 130, 246, 0.05);">
+          <div class="feature-grid-icon-box blue"><i class="ri-calendar-event-line"></i></div>
+          <h3 style="font-size: 1.15rem; color: var(--market-text-primary); font-weight: 700; margin-bottom: 0.75rem;">Calendar Planning</h3>
+          <p style="font-size: 0.9rem; color: var(--market-text-secondary); line-height: 1.5;">
+            Visualize upcoming delivery timelines and tasks in a fluid interactive calendar view.
+          </p>
+        </div>
+ 
+        <!-- Feature 5 -->
+        <div class="market-feature-card reveal-stagger" style="--card-hover-border: rgba(124, 58, 237, 0.3); --card-glow-color: rgba(124, 58, 237, 0.05);">
+          <div class="feature-grid-icon-box purple"><i class="ri-bill-line"></i></div>
+          <h3 style="font-size: 1.15rem; color: var(--market-text-primary); font-weight: 700; margin-bottom: 0.75rem;">Invoice Management</h3>
+          <p style="font-size: 0.9rem; color: var(--market-text-secondary); line-height: 1.5;">
+            Generate invoices, track payments, adjust tax rates, and email billing links.
+          </p>
+        </div>
+ 
+        <!-- Feature 6 -->
+        <div class="market-feature-card reveal-stagger" style="--card-hover-border: rgba(0, 242, 254, 0.3); --card-glow-color: rgba(0, 242, 254, 0.05);">
+          <div class="feature-grid-icon-box cyan"><i class="ri-line-chart-line"></i></div>
+          <h3 style="font-size: 1.15rem; color: var(--market-text-primary); font-weight: 700; margin-bottom: 0.75rem;">Revenue Analytics</h3>
+          <p style="font-size: 0.9rem; color: var(--market-text-secondary); line-height: 1.5;">
+            Track invoice summaries, paid aggregates, and cash flows in real-time graphs.
+          </p>
+        </div>
+ 
+        <!-- Feature 7 -->
+        <div class="market-feature-card reveal-stagger" style="--card-hover-border: rgba(124, 58, 237, 0.3); --card-glow-color: rgba(124, 58, 237, 0.05);">
+          <div class="feature-grid-icon-box purple"><i class="ri-time-line"></i></div>
+          <h3 style="font-size: 1.15rem; color: var(--market-text-primary); font-weight: 700; margin-bottom: 0.75rem;">Activity Timeline</h3>
+          <p style="font-size: 0.9rem; color: var(--market-text-secondary); line-height: 1.5;">
+            Audit creation schedules, status edits, and milestones in a linear logging ledger.
+          </p>
+        </div>
+ 
+        <!-- Feature 8 -->
+        <div class="market-feature-card reveal-stagger" style="--card-hover-border: rgba(0, 242, 254, 0.3); --card-glow-color: rgba(0, 242, 254, 0.05);">
+          <div class="feature-grid-icon-box cyan"><i class="ri-notification-3-line"></i></div>
+          <h3 style="font-size: 1.15rem; color: var(--market-text-primary); font-weight: 700; margin-bottom: 0.75rem;">Notifications</h3>
+          <p style="font-size: 0.9rem; color: var(--market-text-secondary); line-height: 1.5;">
+            Get real-time updates and bell warnings on due dates and important business updates.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section id="how-it-works" class="section-padding">
+    <div class="container-wide">
+      <div class="text-center" style="margin-bottom: 2.5rem;">
+        <span style="color: #00f2fe; text-transform: uppercase; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.15em;">Workflow Steps</span>
+        <h2 style="font-size: 2.5rem; font-weight: 800; color: var(--market-text-primary); margin-top: 0.5rem;">Simple Steps to Streamline Work</h2>
+        <p style="color: var(--market-text-secondary); max-width: 600px; margin: 1rem auto 0 auto; font-size: 1.05rem;">
+          Get your entire operations ecosystem set up in under 5 minutes. No complex configs or databases.
+        </p>
+      </div>
+
+      <div class="steps-timeline">
+        <div class="timeline-connector"></div>
+        
+        <!-- Step 1 -->
+        <div class="step-card-item">
+          <div class="step-circle">
+            <i class="ri-user-add-line"></i>
+          </div>
+          <span class="step-num-badge">Step 01</span>
+          <h3 style="font-size: 1.1rem; color: var(--market-text-primary); font-weight: 700; margin-bottom: 0.5rem;">Add Clients</h3>
+          <p style="font-size: 0.85rem; color: var(--market-text-secondary); max-width: 180px;">Import client names, billing addresses, and tags.</p>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step-card-item">
+          <div class="step-circle">
+            <i class="ri-folder-add-line"></i>
+          </div>
+          <span class="step-num-badge" style="color: #00f2fe;">Step 02</span>
+          <h3 style="font-size: 1.1rem; color: var(--market-text-primary); font-weight: 700; margin-bottom: 0.5rem;">Create Projects</h3>
+          <p style="font-size: 0.85rem; color: var(--market-text-secondary); max-width: 180px;">Outline milestones, project budgets, and terms.</p>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="step-card-item">
+          <div class="step-circle">
+            <i class="ri-task-line"></i>
+          </div>
+          <span class="step-num-badge">Step 03</span>
+          <h3 style="font-size: 1.1rem; color: var(--market-text-primary); font-weight: 700; margin-bottom: 0.5rem;">Manage Tasks</h3>
+          <p style="font-size: 0.85rem; color: var(--market-text-secondary); max-width: 180px;">Map out tasks, assign subtasks, and track due dates.</p>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="step-card-item">
+          <div class="step-circle">
+            <i class="ri-bill-line"></i>
+          </div>
+          <span class="step-num-badge" style="color: #00f2fe;">Step 04</span>
+          <h3 style="font-size: 1.1rem; color: var(--market-text-primary); font-weight: 700; margin-bottom: 0.5rem;">Generate Invoices</h3>
+          <p style="font-size: 0.85rem; color: var(--market-text-secondary); max-width: 180px;">Generate billing invoices with integrated tax lines.</p>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="step-card-item">
+          <div class="step-circle">
+            <i class="ri-line-chart-line"></i>
+          </div>
+          <span class="step-num-badge">Step 05</span>
+          <h3 style="font-size: 1.1rem; color: var(--market-text-primary); font-weight: 700; margin-bottom: 0.5rem;">Track Revenue</h3>
+          <p style="font-size: 0.85rem; color: var(--market-text-secondary); max-width: 180px;">Review aggregate cash volumes and monthly business trends.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Who Is It For? Section -->
+  <section class="section-padding" style="background-color: var(--market-bg-secondary);">
+    <div class="container-wide">
+      <div class="text-center" style="margin-bottom: 2.5rem;">
+        <span style="color: #7c3aed; text-transform: uppercase; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.15em;">Target Audience</span>
+        <h2 style="font-size: 2.5rem; font-weight: 800; color: var(--market-text-primary); margin-top: 0.5rem;">Built for the solo creator ecosystem</h2>
+        <p style="color: var(--market-text-secondary); max-width: 600px; margin: 1rem auto 0 auto; font-size: 1.05rem;">
+          Whether you're writing code, delivering design specs, or building content, CreateFlowX organizes your operational day-to-day.
+        </p>
+      </div>
+
+      <div class="grid-4">
+        <!-- Freelancers -->
+        <div class="who-profile-card">
+          <div class="who-icon-wrapper"><i class="ri-user-star-line"></i></div>
+          <h3 style="font-size: 1.2rem; color: var(--market-text-primary); font-weight: 700; margin-bottom: 0.5rem;">Freelancers</h3>
+          <p style="font-size: 0.85rem; color: var(--market-text-secondary);">Manage multiple clients easily. Send professional invoices and outline custom deliverables in seconds.</p>
+        </div>
+
+        <!-- Creators -->
+        <div class="who-profile-card" style="border-color: rgba(0, 242, 254, 0.1);">
+          <div class="who-icon-wrapper" style="color: #00f2fe; background: rgba(0,242,254,0.06); border-color: rgba(0,242,254,0.15);"><i class="ri-movie-line"></i></div>
+          <h3 style="font-size: 1.2rem; color: var(--market-text-primary); font-weight: 700; margin-bottom: 0.5rem;">Content Creators</h3>
+          <p style="font-size: 0.85rem; color: var(--market-text-secondary);">Stay organized across video, writing, and sponsorships. Keep sponsors and deadlines on schedule.</p>
+        </div>
+
+        <!-- Consultants -->
+        <div class="who-profile-card">
+          <div class="who-icon-wrapper"><i class="ri-briefcase-line"></i></div>
+          <h3 style="font-size: 1.2rem; color: var(--market-text-primary); font-weight: 700; margin-bottom: 0.5rem;">Consultants</h3>
+          <p style="font-size: 0.85rem; color: var(--market-text-secondary);">Track project advisory hours, coordinate client notes, and review pending balances instantly.</p>
+        </div>
+
+        <!-- Agencies -->
+        <div class="who-profile-card" style="border-color: rgba(0, 242, 254, 0.1);">
+          <div class="who-icon-wrapper" style="color: #00f2fe; background: rgba(0,242,254,0.06); border-color: rgba(0,242,254,0.15);"><i class="ri-team-line"></i></div>
+          <h3 style="font-size: 1.2rem; color: var(--market-text-primary); font-weight: 700; margin-bottom: 0.5rem;">Small Agencies</h3>
+          <p style="font-size: 0.85rem; color: var(--market-text-secondary);">Coordinate small team tasks, log central account client files, and track aggregate billing histories.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Choose CreateFlowX Section -->
+  <section id="why-choose" class="section-padding reveal-fade-up">
+    <div class="container-wide">
+      <div class="text-center" style="margin-bottom: 2.5rem;">
+        <span style="color: #00f2fe; text-transform: uppercase; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.15em;">Value Proposition</span>
+        <h2 style="font-size: 2.5rem; font-weight: 800; color: var(--market-text-primary); margin-top: 0.5rem;">Why Freelancers Choose CreateFlowX</h2>
+        <p style="color: var(--market-text-secondary); max-width: 600px; margin: 1rem auto 0 auto; font-size: 1.05rem;">
+          Ditch the fragmented tool stack. Run your entire solo business inside a single premium workspace engineered for focus.
+        </p>
+      </div>
+
+      <div class="grid-3 stagger-container">
+        <!-- Benefit 1 -->
+        <div class="market-feature-card reveal-stagger" style="--card-hover-border: rgba(0, 242, 254, 0.3); --card-glow-color: rgba(0, 242, 254, 0.05);">
+          <div class="feature-grid-icon-box cyan"><i class="ri-layout-grid-line"></i></div>
+          <h3 style="font-size: 1.25rem; color: var(--market-text-primary); font-weight: 700; margin-bottom: 0.75rem;">One Workspace</h3>
+          <p style="font-size: 0.9rem; color: var(--market-text-secondary); line-height: 1.6;">
+            Manage clients, project status files, checklists, timelines, and payment receipts from one visual command center.
+          </p>
+        </div>
+
+        <!-- Benefit 2 -->
+        <div class="market-feature-card reveal-stagger" style="--card-hover-border: rgba(124, 58, 237, 0.3); --card-glow-color: rgba(124, 58, 237, 0.05);">
+          <div class="feature-grid-icon-box purple"><i class="ri-node-tree"></i></div>
+          <h3 style="font-size: 1.25rem; color: var(--market-text-primary); font-weight: 700; margin-bottom: 0.75rem;">Better Organization</h3>
+          <p style="font-size: 0.9rem; color: var(--market-text-secondary); line-height: 1.6;">
+            Organize notes, files, contracts, and deadlines per client so you never have to search across email threads again.
+          </p>
+        </div>
+
+        <!-- Benefit 3 -->
+        <div class="market-feature-card reveal-stagger" style="--card-hover-border: rgba(59, 130, 246, 0.3); --card-glow-color: rgba(59, 130, 246, 0.05);">
+          <div class="feature-grid-icon-box blue"><i class="ri-user-follow-line"></i></div>
+          <h3 style="font-size: 1.25rem; color: var(--market-text-primary); font-weight: 700; margin-bottom: 0.75rem;">Faster Client Management</h3>
+          <p style="font-size: 0.9rem; color: var(--market-text-secondary); line-height: 1.6;">
+            Log contact details, track client communication records, and audit timelines without losing context.
+          </p>
+        </div>
+
+        <!-- Benefit 4 -->
+        <div class="market-feature-card reveal-stagger" style="--card-hover-border: rgba(59, 130, 246, 0.3); --card-glow-color: rgba(59, 130, 246, 0.05);">
+          <div class="feature-grid-icon-box blue"><i class="ri-bill-line"></i></div>
+          <h3 style="font-size: 1.25rem; color: var(--market-text-primary); font-weight: 700; margin-bottom: 0.75rem;">Easier Invoicing</h3>
+          <p style="font-size: 0.9rem; color: var(--market-text-secondary); line-height: 1.6;">
+            Convert finished projects into invoices instantly, configure custom tax rates, and download print-ready PDFs.
+          </p>
+        </div>
+
+        <!-- Benefit 5 -->
+        <div class="market-feature-card reveal-stagger" style="--card-hover-border: rgba(124, 58, 237, 0.3); --card-glow-color: rgba(124, 58, 237, 0.05);">
+          <div class="feature-grid-icon-box purple"><i class="ri-eye-line"></i></div>
+          <h3 style="font-size: 1.25rem; color: var(--market-text-primary); font-weight: 700; margin-bottom: 0.75rem;">Revenue Visibility</h3>
+          <p style="font-size: 0.9rem; color: var(--market-text-secondary); line-height: 1.6;">
+            Get a clear, real-time visualization of your paid bills, pending transactions, and monthly business health.
+          </p>
+        </div>
+
+        <!-- Benefit 6 -->
+        <div class="market-feature-card reveal-stagger" style="--card-hover-border: rgba(0, 242, 254, 0.3); --card-glow-color: rgba(0, 242, 254, 0.05);">
+          <div class="feature-grid-icon-box cyan"><i class="ri-exchange-box-line"></i></div>
+          <h3 style="font-size: 1.25rem; color: var(--market-text-primary); font-weight: 700; margin-bottom: 0.75rem;">Reduced Tool Switching</h3>
+          <p style="font-size: 0.9rem; color: var(--market-text-secondary); line-height: 1.6;">
+            Consolidate your stack. Save hundreds of dollars monthly by replacing separate subscriptions with a unified flow.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="section-padding">
+    <div class="container-wide">
+      <div class="text-center" style="margin-bottom: 2.5rem;">
+        <span style="color: #00f2fe; text-transform: uppercase; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.15em;">Reviews</span>
+        <h2 style="font-size: 2.5rem; font-weight: 800; color: var(--market-text-primary); margin-top: 0.5rem;">Loved by freelancers & creators</h2>
+        <p style="color: var(--market-text-secondary); max-width: 600px; margin: 1rem auto 0 auto; font-size: 1.05rem;">
+          See how solo professionals leverage CreateFlowX to coordinate client billing and deliverables.
+        </p>
+      </div>
+
+      <div class="grid-3">
+        <!-- Testimonial 1 -->
+        <div class="testimonial-card">
+          <div class="testimonial-stars">
+            <i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i>
+          </div>
+          <p style="color: var(--market-text-primary); font-size: 0.95rem; font-style: italic; line-height: 1.5;">
+            "Before using CreateFlowX, my invoices were scattered in Excel and client notes were lost in WhatsApp. Now everything resides under one unified, beautiful pane."
+          </p>
+          <div class="testimonial-user">
+            <div class="testimonial-user-avatar">AM</div>
+            <div>
+              <div style="font-weight: bold; color: var(--market-text-primary); font-size: 0.9rem;">Ananya Mishra</div>
+              <div style="font-size: 0.75rem; color: var(--market-text-secondary);">Independent UI Designer</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Testimonial 2 -->
+        <div class="testimonial-card">
+          <div class="testimonial-stars">
+            <i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i>
+          </div>
+          <p style="color: var(--market-text-primary); font-size: 0.95rem; font-style: italic; line-height: 1.5;">
+            "Managing sponsorships and editing schedules for my YouTube channels used to be chaotic. The integrated calendar and tasks widgets are life-savers."
+          </p>
+          <div class="testimonial-user">
+            <div class="testimonial-user-avatar" style="background: linear-gradient(135deg, #00f2fe 0%, #3b82f6 100%);">RK</div>
+            <div>
+              <div style="font-weight: bold; color: var(--market-text-primary); font-size: 0.9rem;">Rohan Kapoor</div>
+              <div style="font-size: 0.75rem; color: var(--market-text-secondary);">Video Content Creator</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Testimonial 3 -->
+        <div class="testimonial-card">
+          <div class="testimonial-stars">
+            <i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i>
+          </div>
+          <p style="color: var(--market-text-primary); font-size: 0.95rem; font-style: italic; line-height: 1.5;">
+            "The revenue aggregate graphs and automated billing statuses give me total insight on invoice completions. Simple, clean, and highly effective."
+          </p>
+          <div class="testimonial-user">
+            <div class="testimonial-user-avatar">SR</div>
+            <div>
+              <div style="font-weight: bold; color: var(--market-text-primary); font-size: 0.9rem;">Sneha Rao</div>
+              <div style="font-size: 0.75rem; color: var(--market-text-secondary);">Consulting Web Developer</div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </main>
-
-  <!-- Trusted Logos -->
-  <section class="trusted-section">
-    <p class="trusted-title">Trusted by Freelancers & Agencies</p>
-    <div class="trusted-logos">
-      <div class="brand-logo"><i class="ri-sparkling-fill" style="color: #6366f1;"></i> Framer</div>
-      <div class="brand-logo"><i class="ri-global-line" style="color: #2563eb;"></i> Webflow</div>
-      <div class="brand-logo"><i class="ri-shape-line" style="color: #ec4899;"></i> Figma</div>
-      <div class="brand-logo"><i class="ri-slack-line" style="color: #e11d48;"></i> Slack</div>
-      <div class="brand-logo"><i class="ri-bookmark-fill" style="color: #0f172a;"></i> Notion</div>
-    </div>
   </section>
 
-  <!-- Features Block -->
-  <section id="features" class="features-section">
-    <span class="features-badge">Features</span>
-    <h2 class="features-title">Everything you need to manage your work in <span>one place</span></h2>
-    
-    <div class="features-grid">
-      <!-- Feature 1 -->
-      <div class="feature-card card-hover">
-        <div class="feature-icon-box purple">
-          <i class="ri-folders-line"></i>
-        </div>
-        <h3 style="font-size: 1.1rem; margin-bottom: var(--space-sm); font-weight: 700;">Project Management</h3>
-        <p style="font-size: 0.85rem;">Organize client projects, assign priorities, outline parameters, and track progress visual indicators.</p>
+  <!-- Pricing Section -->
+  <section id="pricing" class="section-padding" style="background-color: var(--market-bg-secondary);">
+    <div class="container-wide">
+      <div class="text-center" style="margin-bottom: 2.5rem;">
+        <span style="color: #00f2fe; text-transform: uppercase; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.15em;">Pricing Plans</span>
+        <h2 style="font-size: 2.5rem; font-weight: 800; color: var(--market-text-primary); margin-top: 0.5rem;">Transparent pricing built for creators</h2>
+        <p style="color: var(--market-text-secondary); max-width: 600px; margin: 1rem auto 0 auto; font-size: 1.05rem;">
+          Start completely free. Upgrade only when you need unlimited analytics metrics and client profile logs.
+        </p>
       </div>
 
-      <!-- Feature 2 -->
-      <div class="feature-card card-hover">
-        <div class="feature-icon-box blue">
-          <i class="ri-task-line"></i>
-        </div>
-        <h3 style="font-size: 1.1rem; margin-bottom: var(--space-sm); font-weight: 700;">Task Management</h3>
-        <p style="font-size: 0.85rem;">Create specific checklists, set task priorities, specify parameters, and check off columns easily.</p>
-      </div>
+      <div class="grid-2" style="max-width: 840px; margin: 0 auto;">
+        <!-- Starter Card -->
+        <div class="market-feature-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <span style="font-size: 0.75rem; font-weight: 700; color: var(--market-text-secondary); background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 4px; text-transform: uppercase;">Starter Plan</span>
+            <div style="margin-top: 1.5rem; display: flex; align-items: baseline; gap: 4px;">
+              <span style="font-size: 2.5rem; font-weight: 800; color: var(--market-text-primary);">₹0</span>
+              <span style="font-size: 0.85rem; color: var(--market-text-secondary);">/ Free Forever</span>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--market-text-secondary); margin-top: 0.5rem; margin-bottom: 1.5rem;">Perfect for starting freelancers and creators launching business operations.</p>
+            
+            <hr style="border: none; border-top: 1px solid var(--market-border); margin-bottom: 1.5rem;"/>
 
-      <!-- Feature 3 -->
-      <div class="feature-card card-hover">
-        <div class="feature-icon-box cyan">
-          <i class="ri-notification-badge-line"></i>
+            <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 0.88rem; color: var(--market-text-primary); padding-left: 0;">
+              <li><i class="ri-check-line" style="color: #00f2fe; margin-right: 8px;"></i> Up to 5 Active Clients</li>
+              <li><i class="ri-check-line" style="color: #00f2fe; margin-right: 8px;"></i> Up to 5 Active Projects</li>
+              <li><i class="ri-check-line" style="color: #00f2fe; margin-right: 8px;"></i> Complete Task Checklists</li>
+              <li><i class="ri-check-line" style="color: #00f2fe; margin-right: 8px;"></i> 5 Client Invoices/month</li>
+              <li><i class="ri-check-line" style="color: #00f2fe; margin-right: 8px;"></i> Basic Revenue Charts</li>
+            </ul>
+          </div>
+          <div style="margin-top: 2rem;">
+            <a href="register.html" class="btn btn-outline" style="width: 100%; text-align: center; display: block; font-weight: 600;">Get Started Free</a>
+          </div>
         </div>
-        <h3 style="font-size: 1.1rem; margin-bottom: var(--space-sm); font-weight: 700;">Deadline Reminders</h3>
-        <p style="font-size: 0.85rem;">Never miss a milestone deadline with visual alerts, overdue warnings, and integrated timelines.</p>
-      </div>
 
-      <!-- Feature 4 -->
-      <div class="feature-card card-hover">
-        <div class="feature-icon-box blue">
-          <i class="ri-attachment-line"></i>
-        </div>
-        <h3 style="font-size: 1.1rem; margin-bottom: var(--space-sm); font-weight: 700;">File Management</h3>
-        <p style="font-size: 0.85rem;">Upload files, coordinate documents, connect attachments to tasks, and fetch workspace links easily.</p>
-      </div>
+        <!-- Pro Plan Card -->
+        <div class="market-feature-card" style="border-color: rgba(124,58,237,0.3); display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 0 30px rgba(124,58,237,0.1);">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 0.75rem; font-weight: 700; color: #a78bfa; background: rgba(124,58,237,0.1); padding: 4px 10px; border-radius: 4px; text-transform: uppercase;">Pro Agency</span>
+              <span style="font-size: 0.65rem; color: var(--market-text-primary); background: linear-gradient(135deg, #00f2fe, #7c3aed); padding: 2px 8px; border-radius: var(--radius-full); font-weight: 700; text-transform: uppercase;">Most Popular</span>
+            </div>
+            <div style="margin-top: 1.5rem; display: flex; align-items: baseline; gap: 4px;">
+              <span style="font-size: 2.5rem; font-weight: 800; color: var(--market-text-primary);">₹999</span>
+              <span style="font-size: 0.85rem; color: var(--market-text-secondary);">/ month</span>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--market-text-secondary); margin-top: 0.5rem; margin-bottom: 1.5rem;">For expanding creators, agencies, and consultants who need absolute limits.</p>
+            
+            <hr style="border: none; border-top: 1px solid var(--market-border); margin-bottom: 1.5rem;"/>
 
-      <!-- Feature 5 -->
-      <div class="feature-card card-hover">
-        <div class="feature-icon-box purple">
-          <i class="ri-bill-line"></i>
+            <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 0.88rem; color: var(--market-text-primary); padding-left: 0;">
+              <li><i class="ri-check-line" style="color: #7c3aed; margin-right: 8px;"></i> <strong>Unlimited</strong> Clients & Contacts</li>
+              <li><i class="ri-check-line" style="color: #7c3aed; margin-right: 8px;"></i> <strong>Unlimited</strong> Active Projects</li>
+              <li><i class="ri-check-line" style="color: #7c3aed; margin-right: 8px;"></i> Infinite Tasks & Calendars</li>
+              <li><i class="ri-check-line" style="color: #7c3aed; margin-right: 8px;"></i> <strong>Unlimited</strong> Billing Invoices</li>
+              <li><i class="ri-check-line" style="color: #7c3aed; margin-right: 8px;"></i> Advanced Analytics & Exporting</li>
+            </ul>
+          </div>
+          <div style="margin-top: 2rem;">
+            <a href="register.html" class="btn btn-primary" style="width: 100%; text-align: center; display: block; font-weight: 600;">Upgrade to Pro</a>
+          </div>
         </div>
-        <h3 style="font-size: 1.1rem; margin-bottom: var(--space-sm); font-weight: 700;">Invoice Tracking</h3>
-        <p style="font-size: 0.85rem;">Generate invoices, assign billing clients, record tax, updates paid statuses, and review histories.</p>
-      </div>
-
-      <!-- Feature 6 -->
-      <div class="feature-card card-hover">
-        <div class="feature-icon-box cyan">
-          <i class="ri-bar-chart-box-line"></i>
-        </div>
-        <h3 style="font-size: 1.1rem; margin-bottom: var(--space-sm); font-weight: 700;">Analytics Dashboard</h3>
-        <p style="font-size: 0.85rem;">View active timelines, aggregate billing volumes, task statistics, and review productivity charts.</p>
       </div>
     </div>
   </section>
 
-  <!-- How It Works Section (Navy Dark block matching mockup bottom-left) -->
-  <section id="how-it-works" class="steps-section">
-    <div class="steps-connector-line"></div>
-    <h2 class="steps-title">Simple Steps to Get Started</h2>
-    
-    <div class="steps-grid">
-      <!-- Step 1 -->
-      <div class="step-item">
-        <div class="step-icon-circle">
-          <i class="ri-user-add-line"></i>
-        </div>
-        <h3 class="step-title" style="font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; color: #ffffff;">01. Sign Up</h3>
-        <p class="step-desc">Create your account in seconds.</p>
+  <!-- FAQ Section -->
+  <section id="faqs" class="section-padding">
+    <div class="container-wide" style="max-width: 800px;">
+      <div class="text-center" style="margin-bottom: 2.5rem;">
+        <span style="color: #00f2fe; text-transform: uppercase; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.15em;">Support</span>
+        <h2 style="font-size: 2.5rem; font-weight: 800; color: var(--market-text-primary); margin-top: 0.5rem;">Frequently Asked Questions</h2>
+        <p style="color: var(--market-text-secondary); max-width: 600px; margin: 1rem auto 0 auto; font-size: 1.05rem;">
+          Get answers to common developer, freelancer, and billing questions about the platform.
+        </p>
       </div>
 
-      <!-- Step 2 -->
-      <div class="step-item">
-        <div class="step-icon-circle">
-          <i class="ri-contacts-line"></i>
-        </div>
-        <h3 class="step-title" style="font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; color: #ffffff;">02. Add Clients</h3>
-        <p class="step-desc">Add your clients and their details.</p>
-      </div>
+      <div class="faq-accordion-list">
+        <details class="faq-accordion-item">
+          <summary>Is there really a free forever plan?</summary>
+          <div class="faq-accordion-answer">
+            Yes! Our Starter Plan is 100% free forever and lets you manage up to 5 clients and 5 projects. No credit card is required to sign up.
+          </div>
+        </details>
 
-      <!-- Step 3 -->
-      <div class="step-item">
-        <div class="step-icon-circle">
-          <i class="ri-folder-add-line"></i>
-        </div>
-        <h3 class="step-title" style="font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; color: #ffffff;">03. Create Projects</h3>
-        <p class="step-desc">Create projects and assign tasks.</p>
-      </div>
+        <details class="faq-accordion-item">
+          <summary>Can I download or print PDF invoices?</summary>
+          <div class="faq-accordion-answer">
+            Yes, you can generate invoices directly, assign custom tax rules, and click download to fetch high-quality billing PDFs to share with clients.
+          </div>
+        </details>
 
-      <!-- Step 4 -->
-      <div class="step-item">
-        <div class="step-icon-circle">
-          <i class="ri-trophy-line"></i>
-        </div>
-        <h3 class="step-title" style="font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; color: #ffffff;">04. Track & Deliver</h3>
-        <p class="step-desc">Track progress and deliver on time.</p>
+        <details class="faq-accordion-item">
+          <summary>How does the data backup and security work?</summary>
+          <div class="faq-accordion-answer">
+            CreateFlowX utilizes robust, industry-standard SQL databases and token authentication. Your credentials and client ledgers are encrypted and securely locked.
+          </div>
+        </details>
+
+        <details class="faq-accordion-item">
+          <summary>Can I upgrade or downgrade my plan at any time?</summary>
+          <div class="faq-accordion-answer">
+            Absolutely. You can choose to upgrade to our Pro plan from your Settings menu, or downgrade back to the Starter plan without losing your existing datasets.
+          </div>
+        </details>
       </div>
     </div>
   </section>
+
+  <!-- Coming Soon / Waitlist Section -->
+  <section class="section-padding">
+    <div class="container-wide">
+      <div class="early-access-banner">
+        <span style="color: #00f2fe; text-transform: uppercase; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.15em;">Early Access Launch</span>
+        <h2 style="font-size: 2.5rem; font-weight: 800; color: var(--market-text-primary); margin-top: 0.5rem; margin-bottom: 1rem;">Be Among The First To Try CreateFlowX</h2>
+        <p style="color: var(--market-text-secondary); max-width: 600px; margin: 0 auto; font-size: 1.05rem;">
+          We are launching waitlist access slots. Register your professional email below to reserve your free slot today.
+        </p>
+        
+        <form class="early-access-form" id="waitlist-form" onsubmit="handleWaitlistSubmit(event)">
+          <input type="email" class="form-control" placeholder="Enter your business email" id="waitlist-email" required>
+          <button type="submit" class="btn btn-primary">Join Early Access</button>
+        </form>
+        <div class="waitlist-success-msg" id="waitlist-success">
+          <i class="ri-checkbox-circle-fill"></i> Success! You've been added to the waitlist slot queue.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Premium Footer -->
+  <footer class="market-footer">
+    <div class="market-footer-grid">
+      <!-- Brand column -->
+      <div class="market-footer-brand">
+        <div class="brand-title">
+          <svg width="48" height="24" viewBox="0 0 220 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M70 15 C35 15, 15 35, 15 50 C15 65, 35 85, 70 85 L90 85 L90 73 L70 73 C45 73, 30 63, 30 50 C30 37, 45 27, 70 27 L90 27 L90 15 Z" fill="url(#logoBlueGrad)" />
+            <path d="M85 35 L120 35 L120 47 L97 47 L97 55 L115 55 L115 65 L97 65 L97 85 L85 85 Z" fill="url(#logoBlueGrad)" />
+            <path d="M125 15 L140 15 L168 52 L195 15 L210 15 L175 62 L175 85 L162 85 L162 62 Z" fill="url(#logoPurpleGrad)" />
+          </svg>
+          <span>Create<span style="color: var(--market-blue);">Flow</span><span style="color:#7c3aed;">X</span></span>
+        </div>
+        <p style="font-size: 0.88rem; color: var(--market-text-secondary); max-width: 250px;">
+          The all-in-one unified workspace for creators, consultants, developers, and solo agencies.
+        </p>
+      </div>
+
+      <!-- Quick links -->
+      <div class="market-footer-links-col">
+        <h4>Product</h4>
+        <a href="#features">Features</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#why-choose">Why Choose Us</a>
+      </div>
+
+      <!-- Auth links -->
+      <div class="market-footer-links-col">
+        <h4>Account</h4>
+        <a href="login.html">Log In</a>
+        <a href="register.html">Get Started Free</a>
+        <a href="settings.html">Workspace settings</a>
+      </div>
+
+      <!-- Contact / Tagline -->
+      <div class="market-footer-links-col">
+        <h4>Corporate</h4>
+        <div style="font-size: 0.9rem; color: var(--market-text-primary); font-weight: 600;">Create. Collaborate. Flow.</div>
+        <p style="font-size: 0.8rem; color: var(--market-text-muted); margin-top: 6px;">Designed to simplify your daily work structure.</p>
+      </div>
+    </div>
+
+    <!-- Bottom copyrights -->
+    <div class="market-footer-bottom">
+      <div>&copy; 2026 CreateFlowX. All rights reserved. Built for freelance ecosystems.</div>
+      <div style="display: flex; gap: var(--space-md);">
+        <a href="#" style="color: var(--market-text-muted);">Privacy Policy</a>
+        <a href="#" style="color: var(--market-text-muted);">Terms of Service</a>
+      </div>
+    </div>
+  </footer>
 
   <!-- Script Imports -->
   <script src="js/api.js"></script>
   <script src="js/auth.js"></script>
+  <script src="js/marketing.js"></script>
   <script>
     // Modify navbar controls based on login state
     window.addEventListener("DOMContentLoaded", () => {
+      // Ensure landing page default is dark if no theme choice is saved yet
+      if (!localStorage.getItem("cfx_theme")) {
+        localStorage.setItem("cfx_theme", "dark");
+      }
+      auth.initTheme();
+      
       const authLinks = document.getElementById("auth-nav-links");
-      if (auth.isAuthenticated()) {
+      if (authLinks && auth.isAuthenticated()) {
         const user = auth.getCurrentUser();
         const userName = user ? user.full_name.split(" ")[0] : "Account";
-        authLinks.innerHTML = `
-          <a href="dashboard.html" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
-            <i class="ri-layout-grid-line"></i> Dashboard (${userName})
+        
+        const loginLink = authLinks.querySelector('a[href="login.html"]');
+        const registerLink = authLinks.querySelector('a[href="register.html"]');
+        if (loginLink) loginLink.remove();
+        if (registerLink) registerLink.remove();
+        
+        authLinks.insertAdjacentHTML('beforeend', `
+          <a href="dashboard.html" class="btn btn-outline" style="padding: 0.5rem 1.25rem; font-size: 0.9rem; border-color: rgba(255,255,255,0.1); color: var(--market-text-primary); margin-left: 0.5rem;">
+            <i class="ri-layout-grid-line" style="color: var(--market-blue);"></i> Dashboard (${userName})
           </a>
-          <button onclick="auth.logout()" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+          <button onclick="auth.logout()" class="btn btn-secondary" style="padding: 0.5rem 1.25rem; font-size: 0.9rem; background: rgba(255,255,255,0.05); color: var(--market-text-primary); border: 1px solid rgba(255,255,255,0.08);">
             Logout
           </button>
-        `;
+        `);
       }
     });
+
+    /**
+     * Toggles different showcase dashboard views with smooth animations
+     */
+    function switchShowcaseTab(paneId, buttonElement) {
+      // Deactivate all buttons
+      document.querySelectorAll(".showcase-btn").forEach(btn => {
+        btn.classList.remove("active");
+      });
+      // Activate clicked button
+      buttonElement.classList.add("active");
+
+      // Hide all panes
+      document.querySelectorAll(".showcase-panel").forEach(pane => {
+        pane.classList.remove("active");
+      });
+      // Show clicked pane
+      const targetPane = document.getElementById(paneId);
+      if (targetPane) {
+        targetPane.classList.add("active");
+      }
+    }
+
+    /**
+     * Waitlist validation submission
+     */
+    function handleWaitlistSubmit(event) {
+      event.preventDefault();
+      const emailVal = document.getElementById("waitlist-email").value.trim();
+      if (!emailVal) return;
+
+      // Simulate API submit request and cache in local storage
+      const waitlist = JSON.parse(localStorage.getItem("cfx_waitlist") || "[]");
+      if (!waitlist.includes(emailVal)) {
+        waitlist.push(emailVal);
+        localStorage.setItem("cfx_waitlist", JSON.stringify(waitlist));
+      }
+
+      // Display response notification alert
+      document.getElementById("waitlist-success").style.display = "block";
+      document.getElementById("waitlist-email").value = "";
+
+      // Hide success notification after 5 seconds
+      setTimeout(() => {
+        const successMsg = document.getElementById("waitlist-success");
+        if (successMsg) successMsg.style.display = "none";
+      }, 5000);
+    }
   </script>
 </body>
 </html>

@@ -129,12 +129,23 @@ const auth = {
 
   updateThemeToggleIcon(theme) {
     const toggleBtn = document.querySelector(".theme-toggle i");
-    if (!toggleBtn) return;
-    
-    if (theme === "dark") {
-      toggleBtn.className = "ri-sun-line"; 
-    } else {
-      toggleBtn.className = "ri-moon-line";
+    if (toggleBtn) {
+      if (theme === "dark") {
+        toggleBtn.className = "ri-sun-line"; 
+      } else {
+        toggleBtn.className = "ri-moon-line";
+      }
+    }
+
+    const premiumToggle = document.querySelector(".theme-toggle-premium");
+    if (premiumToggle) {
+      if (theme === "dark") {
+        premiumToggle.classList.add("dark");
+        premiumToggle.classList.remove("light");
+      } else {
+        premiumToggle.classList.add("light");
+        premiumToggle.classList.remove("dark");
+      }
     }
   },
 
