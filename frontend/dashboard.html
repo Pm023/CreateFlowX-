@@ -292,28 +292,17 @@
             <div style="display: flex; align-items: center; gap: var(--space-md); justify-content: center; height: 140px;">
               <!-- Pure CSS/SVG Doughnut Chart -->
               <div style="position: relative; width: 100px; height: 100px; flex-shrink: 0;">
-                <svg width="100%" height="100%" viewBox="0 0 42 42" class="donut">
+                <svg width="100%" height="100%" viewBox="0 0 42 42" class="donut" id="dashboard-projects-donut">
                   <circle class="donut-ring" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="var(--border-color)" stroke-width="4"></circle>
-                  <!-- Active: 10/24 (41.6%) -->
-                  <circle class="donut-segment" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#3b82f6" stroke-width="5" stroke-dasharray="41.6 58.4" stroke-dashoffset="25"></circle>
-                  <!-- Completed: 8/24 (33.3%) -->
-                  <circle class="donut-segment" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#10b981" stroke-width="5" stroke-dasharray="33.3 66.7" stroke-dashoffset="83.4"></circle>
-                  <!-- On Hold: 4/24 (16.6%) -->
-                  <circle class="donut-segment" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#f59e0b" stroke-width="5" stroke-dasharray="16.6 83.4" stroke-dashoffset="50.1"></circle>
-                  <!-- Not Started: 2/24 (8.3%) -->
-                  <circle class="donut-segment" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#94a3b8" stroke-width="5" stroke-dasharray="8.3 91.7" stroke-dashoffset="33.5"></circle>
                 </svg>
                 <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
-                  <div style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary);">24</div>
+                  <div style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary);" id="dashboard-projects-total-count">0</div>
                   <div style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600;">Total</div>
                 </div>
               </div>
               
-              <div class="chart-legend">
-                <div class="legend-item"><span class="legend-dot" style="background-color: #3b82f6;"></span> <span>10 Active</span></div>
-                <div class="legend-item"><span class="legend-dot" style="background-color: #10b981;"></span> <span>8 Completed</span></div>
-                <div class="legend-item"><span class="legend-dot" style="background-color: #f59e0b;"></span> <span>4 On Hold</span></div>
-                <div class="legend-item"><span class="legend-dot" style="background-color: #94a3b8;"></span> <span>2 Not Started</span></div>
+              <div class="chart-legend" id="dashboard-projects-legend">
+                <!-- Populated dynamically -->
               </div>
             </div>
           </div>
@@ -791,6 +780,9 @@
         const taskStats = await api.get("/tasks/stats");
         const calDash = await api.get("/calendar/dashboard");
         
+        // Render Projects Donut Chart dynamically
+        renderProjectsOverviewChart(stats);
+
         // Populate metric counts
         const totalProj = document.getElementById("dashboard-total-projects");
         if (totalProj) totalProj.textContent = stats.total_projects;
@@ -1305,6 +1297,64 @@
             <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600; white-space: nowrap;">${item.month}</span>
           </div>
         `;
+      });
+    }
+
+    function renderProjectsOverviewChart(stats) {
+      const svg = document.getElementById("dashboard-projects-donut");
+      const legend = document.getElementById("dashboard-projects-legend");
+      const totalDisplay = document.getElementById("dashboard-projects-total-count");
+      
+      if (!svg || !legend || !totalDisplay) return;
+      
+      const totalCount = stats.total_projects;
+      totalDisplay.textContent = totalCount;
+      legend.innerHTML = "";
+      
+      // Reset SVG - keep only the backring
+      svg.innerHTML = `<circle cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="var(--border-color)" stroke-width="4"></circle>`;
+
+      if (totalCount === 0) {
+        legend.innerHTML = `<div style="font-size:0.72rem; color:var(--text-muted); text-align:center;">No project data</div>`;
+        return;
+      }
+
+      const items = [
+        { label: "Active", count: stats.active_projects, color: "#3b82f6" },
+        { label: "Completed", count: stats.completed_projects, color: "#10b981" },
+        { label: "On Hold", count: stats.on_hold_projects, color: "#f59e0b" },
+        { label: "Not Started", count: stats.not_started_projects, color: "#94a3b8" }
+      ];
+
+      let currentOffset = 25;
+
+      items.forEach(item => {
+        // Add legend item
+        legend.innerHTML += `
+          <div class="legend-item">
+            <span class="legend-dot" style="background-color: ${item.color};"></span>
+            <span><strong>${item.count}</strong> ${item.label}</span>
+          </div>
+        `;
+
+        if (item.count === 0) return;
+        
+        const percentage = (item.count / totalCount) * 100;
+
+        // Add circle segment
+        const segment = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        segment.setAttribute("cx", "21");
+        segment.setAttribute("cy", "21");
+        segment.setAttribute("r", "15.91549430918954");
+        segment.setAttribute("fill", "transparent");
+        segment.setAttribute("stroke", item.color);
+        segment.setAttribute("stroke-width", "5");
+        segment.setAttribute("stroke-dasharray", `${percentage} ${100 - percentage}`);
+        segment.setAttribute("stroke-dashoffset", `${currentOffset}`);
+        svg.appendChild(segment);
+
+        currentOffset = (currentOffset - percentage);
+        if (currentOffset < 0) currentOffset += 100;
       });
     }
 

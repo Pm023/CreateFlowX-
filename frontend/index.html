@@ -1000,26 +1000,7 @@
     </div>
   </section>
 
-  <!-- Coming Soon / Waitlist Section -->
-  <section class="section-padding">
-    <div class="container-wide">
-      <div class="early-access-banner">
-        <span style="color: #00f2fe; text-transform: uppercase; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.15em;">Early Access Launch</span>
-        <h2 style="font-size: 2.5rem; font-weight: 800; color: var(--market-text-primary); margin-top: 0.5rem; margin-bottom: 1rem;">Be Among The First To Try CreateFlowX</h2>
-        <p style="color: var(--market-text-secondary); max-width: 600px; margin: 0 auto; font-size: 1.05rem;">
-          We are launching waitlist access slots. Register your professional email below to reserve your free slot today.
-        </p>
-        
-        <form class="early-access-form" id="waitlist-form" onsubmit="handleWaitlistSubmit(event)">
-          <input type="email" class="form-control" placeholder="Enter your business email" id="waitlist-email" required>
-          <button type="submit" class="btn btn-primary">Join Early Access</button>
-        </form>
-        <div class="waitlist-success-msg" id="waitlist-success">
-          <i class="ri-checkbox-circle-fill"></i> Success! You've been added to the waitlist slot queue.
-        </div>
-      </div>
-    </div>
-  </section>
+
 
   <!-- Premium Footer -->
   <footer class="market-footer">
@@ -1129,31 +1110,7 @@
       }
     }
 
-    /**
-     * Waitlist validation submission
-     */
-    function handleWaitlistSubmit(event) {
-      event.preventDefault();
-      const emailVal = document.getElementById("waitlist-email").value.trim();
-      if (!emailVal) return;
 
-      // Simulate API submit request and cache in local storage
-      const waitlist = JSON.parse(localStorage.getItem("cfx_waitlist") || "[]");
-      if (!waitlist.includes(emailVal)) {
-        waitlist.push(emailVal);
-        localStorage.setItem("cfx_waitlist", JSON.stringify(waitlist));
-      }
-
-      // Display response notification alert
-      document.getElementById("waitlist-success").style.display = "block";
-      document.getElementById("waitlist-email").value = "";
-
-      // Hide success notification after 5 seconds
-      setTimeout(() => {
-        const successMsg = document.getElementById("waitlist-success");
-        if (successMsg) successMsg.style.display = "none";
-      }, 5000);
-    }
   </script>
 </body>
 </html>

@@ -70,6 +70,16 @@ def read_project_stats(
         Project.status == "Completed"
     ).count()
 
+    on_hold_projects = db.query(Project).filter(
+        Project.user_id == current_user.id,
+        Project.status == "On Hold"
+    ).count()
+
+    not_started_projects = db.query(Project).filter(
+        Project.user_id == current_user.id,
+        Project.status == "Not Started"
+    ).count()
+
     # Query upcoming deadlines: not completed, has deadline, sorted by deadline asc
     upcoming = db.query(Project).options(joinedload(Project.client)).filter(
         Project.user_id == current_user.id,
@@ -93,6 +103,8 @@ def read_project_stats(
         "total_projects": total_projects,
         "active_projects": active_projects,
         "completed_projects": completed_projects,
+        "on_hold_projects": on_hold_projects,
+        "not_started_projects": not_started_projects,
         "upcoming_deadlines": upcoming_list
     }
 
