@@ -2,7 +2,7 @@
 
 const API_BASE_URL = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
   ? "http://127.0.0.1:8000/api/v1"
-  : "https://createflowx-production.up.railway.app/api/v1";
+  : "https://createflowx.onrender.com/api/v1";
 
 
 const api = {
