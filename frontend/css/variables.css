@@ -8,6 +8,12 @@
   --grad-purple: linear-gradient(135deg, #7c3aed 0%, #c084fc 100%);
   --grad-dark-footer: linear-gradient(180deg, #0f172a 0%, #020617 100%);
 
+  /* SVG Logo Colors (Light Theme Default) */
+  --logo-blue-start: #0284c7;
+  --logo-blue-end: #0082ff;
+  --logo-purple-start: #7b2cbf;
+  --logo-purple-end: #6a00f4;
+
   /* Typography Fonts */
   --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -94,4 +100,10 @@
 
   --sidebar-active-bg: rgba(0, 242, 254, 0.08);
   --sidebar-active-color: #00f2fe;
+
+  /* SVG Logo Colors (Dark Theme Override) */
+  --logo-blue-start: #00f2fe;
+  --logo-blue-end: #0082ff;
+  --logo-purple-start: #7b2cbf;
+  --logo-purple-end: #c77dff;
 }

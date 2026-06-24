@@ -118,3 +118,21 @@ a:hover {
 .hidden {
   display: none !important;
 }
+
+/* Theme-aware SVG Logo styles */
+#logoBlueGrad stop:first-child,
+#dbLogoBlue stop:first-child {
+  stop-color: var(--logo-blue-start) !important;
+}
+#logoBlueGrad stop:last-child,
+#dbLogoBlue stop:last-child {
+  stop-color: var(--logo-blue-end) !important;
+}
+#logoPurpleGrad stop:first-child,
+#dbLogoPurple stop:first-child {
+  stop-color: var(--logo-purple-start) !important;
+}
+#logoPurpleGrad stop:last-child,
+#dbLogoPurple stop:last-child {
+  stop-color: var(--logo-purple-end) !important;
+}

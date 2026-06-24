@@ -15,6 +15,12 @@
   --market-glow-blue: rgba(0, 242, 254, 0.15);
   --market-glow-purple: rgba(124, 58, 237, 0.15);
   --market-navbar-bg: rgba(3, 3, 3, 0.7);
+
+  /* SVG Logo Colors (Default Dark Theme for landing page) */
+  --logo-blue-start: #00f2fe;
+  --logo-blue-end: #0082ff;
+  --logo-purple-start: #7b2cbf;
+  --logo-purple-end: #c77dff;
 }
 
 [data-theme="light"] {
@@ -31,6 +37,12 @@
   --market-glow-blue: rgba(2, 132, 199, 0.06);
   --market-glow-purple: rgba(124, 58, 237, 0.06);
   --market-navbar-bg: rgba(248, 250, 252, 0.7);
+
+  /* SVG Logo Colors (Light Theme overrides) */
+  --logo-blue-start: #0284c7;
+  --logo-blue-end: #0082ff;
+  --logo-purple-start: #7b2cbf;
+  --logo-purple-end: #6a00f4;
 }
 
 /* Force dark theme global styles specifically for index.html */
@@ -821,7 +833,7 @@ header.marketing-navbar .navbar-link:hover {
   display: flex;
   align-items: center;
   gap: 6px;
-  color: white;
+  color: var(--market-text-primary);
 }
 
 .market-footer-links-col {

@@ -181,7 +181,7 @@
           <!-- Search input matching layout -->
           <div class="search-wrapper">
             <i class="ri-search-line"></i>
-            <input type="text" class="form-control" placeholder="Search anything...          Ctrl + /">
+            <input type="text" class="form-control" id="sidebar-search" placeholder="Search anything...          Ctrl + /" autocomplete="off">
           </div>
         </div>
         
@@ -849,8 +849,8 @@
 
               deadlineList.innerHTML += `
                 <div class="deadline-item" style="cursor: pointer;" onclick="location.href='tasks.html'">
-                  <span class="deadline-title" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 170px;" title="${escapeHTML(t.task_name)}">
-                    <i class="ri-checkbox-blank-circle-fill" style="font-size: 6px; color: ${badgeColor}; margin-right: 6px;"></i> ${escapeHTML(t.task_name)}
+                  <span class="deadline-title" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 170px;" title="${escapeHTML(t.title)}">
+                    <i class="ri-checkbox-blank-circle-fill" style="font-size: 6px; color: ${badgeColor}; margin-right: 6px;"></i> ${escapeHTML(t.title)}
                   </span>
                   <span class="deadline-days" style="background-color: ${badgeBg}; color: ${badgeColor}; flex-shrink:0;">${daysLabel}</span>
                 </div>

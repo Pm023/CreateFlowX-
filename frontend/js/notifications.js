@@ -171,5 +171,179 @@ document.addEventListener("DOMContentLoaded", () => {
   // Wait shortly to make sure api.js and auth.js are ready
   setTimeout(() => {
     notificationsManager.init();
+    globalSearch.init();
   }, 100);
 });
+
+// Global Search Module
+const globalSearch = {
+  init() {
+    this.searchInput = document.getElementById("sidebar-search");
+    if (!this.searchInput) return;
+
+    // Create search results container
+    this.resultsContainer = document.createElement("div");
+    this.resultsContainer.id = "global-search-results";
+    this.resultsContainer.className = "global-search-results hidden";
+    this.searchInput.parentNode.appendChild(this.resultsContainer);
+
+    // Setup input listener with debounce
+    let debounceTimer = null;
+    this.searchInput.addEventListener("input", () => {
+      clearTimeout(debounceTimer);
+      const query = this.searchInput.value.trim();
+      if (query.length < 2) {
+        this.resultsContainer.innerHTML = "";
+        this.resultsContainer.classList.add("hidden");
+        return;
+      }
+
+      debounceTimer = setTimeout(() => {
+        this.performSearch(query);
+      }, 300);
+    });
+
+    // Close dropdown on click outside
+    document.addEventListener("click", (e) => {
+      if (!this.searchInput.contains(e.target) && !this.resultsContainer.contains(e.target)) {
+        this.resultsContainer.classList.add("hidden");
+      }
+    });
+
+    // Show dropdown on focus if input has value
+    this.searchInput.addEventListener("focus", () => {
+      if (this.searchInput.value.trim().length >= 2) {
+        this.resultsContainer.classList.remove("hidden");
+      }
+    });
+
+    // Setup global hotkey (Ctrl + /)
+    document.addEventListener("keydown", (e) => {
+      if (e.ctrlKey && e.key === "/") {
+        e.preventDefault();
+        this.searchInput.focus();
+      }
+    });
+  },
+
+  async performSearch(query) {
+    try {
+      this.resultsContainer.innerHTML = `
+        <div style="padding: 12px; text-align: center; color: var(--text-muted); font-size: 0.8rem;">
+          <div class="spinner" style="border-top-color: var(--accent-color); width: 1rem; height: 1rem; margin-right: 6px; display: inline-block;"></div> Searching...
+        </div>
+      `;
+      this.resultsContainer.classList.remove("hidden");
+
+      // Fire searches in parallel
+      const [projects, tasks, clients, invoices] = await Promise.all([
+        api.get("/projects/?search=" + encodeURIComponent(query)).catch(() => []),
+        api.get("/tasks/?search=" + encodeURIComponent(query)).catch(() => []),
+        api.get("/clients/?search=" + encodeURIComponent(query)).catch(() => []),
+        api.get("/invoices/?search=" + encodeURIComponent(query)).catch(() => [])
+      ]);
+
+      let html = "";
+      let totalResults = 0;
+
+      // Render Clients
+      if (clients && clients.length > 0) {
+        html += `<div class="global-search-category">Clients</div>`;
+        clients.forEach(c => {
+          totalResults++;
+          html += `
+            <a href="clients.html" class="global-search-item">
+              <i class="ri-user-star-line" style="color: var(--accent-color);"></i>
+              <div style="flex:1;">
+                <div style="font-weight: 600;">${this.escape(c.client_name)}</div>
+                <div style="font-size: 0.72rem; color: var(--text-muted);">${this.escape(c.email || c.company_name || '')}</div>
+              </div>
+            </a>
+          `;
+        });
+      }
+
+      // Render Projects
+      if (projects && projects.length > 0) {
+        html += `<div class="global-search-category">Projects</div>`;
+        projects.forEach(p => {
+          totalResults++;
+          html += `
+            <a href="projects.html" class="global-search-item">
+              <i class="ri-folders-line" style="color: #3b82f6;"></i>
+              <div style="flex:1;">
+                <div style="font-weight: 600;">${this.escape(p.project_name)}</div>
+                <div style="font-size: 0.72rem; color: var(--text-muted);">${this.escape(p.client_name || '')} &bull; ${p.status}</div>
+              </div>
+            </a>
+          `;
+        });
+      }
+
+      // Render Tasks
+      if (tasks && tasks.length > 0) {
+        html += `<div class="global-search-category">Tasks</div>`;
+        tasks.forEach(t => {
+          totalResults++;
+          html += `
+            <a href="tasks.html" class="global-search-item">
+              <i class="ri-task-line" style="color: #7c3aed;"></i>
+              <div style="flex:1;">
+                <div style="font-weight: 600;">${this.escape(t.task_name)}</div>
+                <div style="font-size: 0.72rem; color: var(--text-muted);">${this.escape(t.project_name || '')} &bull; ${t.status}</div>
+              </div>
+            </a>
+          `;
+        });
+      }
+
+      // Render Invoices
+      if (invoices && invoices.length > 0) {
+        html += `<div class="global-search-category">Invoices</div>`;
+        invoices.forEach(inv => {
+          totalResults++;
+          html += `
+            <a href="invoices.html" class="global-search-item">
+              <i class="ri-bill-line" style="color: #10b981;"></i>
+              <div style="flex:1;">
+                <div style="font-weight: 600;">Invoice #${this.escape(inv.invoice_number)}</div>
+                <div style="font-size: 0.72rem; color: var(--text-muted);">${this.escape(inv.client_name || '')} &bull; ₹${inv.amount.toLocaleString('en-IN')} &bull; ${inv.status}</div>
+              </div>
+            </a>
+          `;
+        });
+      }
+
+      if (totalResults === 0) {
+        this.resultsContainer.innerHTML = `
+          <div style="padding: 12px; text-align: center; color: var(--text-muted); font-size: 0.8rem;">
+            No results found for "${this.escape(query)}"
+          </div>
+        `;
+      } else {
+        this.resultsContainer.innerHTML = html;
+      }
+
+    } catch (err) {
+      console.error("Global search failed:", err);
+      this.resultsContainer.innerHTML = `
+        <div style="padding: 12px; text-align: center; color: #ef4444; font-size: 0.8rem;">
+          Error executing search
+        </div>
+      `;
+    }
+  },
+
+  escape(str) {
+    if (!str) return "";
+    return str.toString().replace(/[&<>'"]/g, 
+      tag => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        "'": '&#39;',
+        '"': '&quot;'
+      }[tag] || tag)
+    );
+  }
+};
