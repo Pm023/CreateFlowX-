@@ -25,6 +25,7 @@ class UserBase(BaseModel):
     email: Optional[str] = None
     full_name: Optional[str] = None
     username: Optional[str] = None
+    profession: Optional[str] = "Freelancer"
     status: Optional[str] = "active"
     is_active: Optional[bool] = True
     is_deleted: Optional[bool] = False
@@ -41,6 +42,7 @@ class UserUpdate(UserBase):
 class UserProfileUpdate(BaseModel):
     full_name: str
     username: str
+    profession: Optional[str] = None
 
 class UserStatusUpdate(BaseModel):
     status: str

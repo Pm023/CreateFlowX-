@@ -669,11 +669,12 @@
       const user = auth.getCurrentUser();
       if (user) {
         const fallbackName = user.full_name || "Workspace Creator";
-        const roleStr = user.role === "admin" ? "Platform Admin" : "Freelancer";
+        const roleStr = user.profession || (user.role === "admin" ? "Platform Admin" : "Freelancer");
         
         document.getElementById("user-display-name").textContent = fallbackName;
         document.getElementById("header-user-name").textContent = fallbackName;
         document.getElementById("user-display-role").textContent = roleStr;
+        document.getElementById("header-user-role").textContent = roleStr;
         
         const letter = fallbackName.charAt(0).toUpperCase();
         document.getElementById("avatar-char").textContent = letter;

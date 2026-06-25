@@ -347,7 +347,7 @@
       const user = auth.getCurrentUser();
       if (user) {
         const fallbackName = user.full_name || "Creator Workspace";
-        const roleStr = user.role === "admin" ? "Platform Admin" : "Freelancer";
+        const roleStr = user.profession || (user.role === "admin" ? "Platform Admin" : "Freelancer");
         
         const userDispName = document.getElementById("user-display-name");
         if (userDispName) userDispName.textContent = fallbackName;

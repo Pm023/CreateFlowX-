@@ -52,11 +52,20 @@ def update_profile(
     current_user.full_name = full_name_val
     current_user.username = username_val
     
+    profession_val = ""
+    if profile_in.profession is not None:
+        profession_val = profile_in.profession.strip()
+        current_user.profession = profession_val
+    
     db.commit()
     db.refresh(current_user)
 
     # Activity Log
     from app.crud.activity_log import create_activity_log
+    desc = f"Profile name changed to '{full_name_val}' and username to '@{username_val}'."
+    if profession_val:
+        desc += f" Profession set to '{profession_val}'."
+        
     create_activity_log(
         db=db,
         user_id=current_user.id,
@@ -64,7 +73,7 @@ def update_profile(
         entity_type="user",
         entity_id=current_user.id,
         title="Profile Updated",
-        description=f"Profile name changed to '{full_name_val}' and username to '@{username_val}'."
+        description=desc
     )
 
     return current_user

@@ -19,6 +19,15 @@ from app.models.system_settings import SystemSettings
 # For production PostgreSQL, we would transition to Alembic migrations.
 Base.metadata.create_all(bind=engine)
 
+# Safely add the 'profession' column to 'users' table if it doesn't exist (e.g. on existing databases)
+try:
+    from sqlalchemy import text
+    with engine.begin() as conn:
+        conn.execute(text("ALTER TABLE users ADD COLUMN profession VARCHAR(100) DEFAULT 'Freelancer';"))
+except Exception as e:
+    # Already exists or other SQLite error (e.g. metadata lock, which create_all takes care of)
+    pass
+
 def seed_initial_data():
     from app.core.database import SessionLocal
     from app.models.user import User

@@ -305,6 +305,12 @@
                   </div>
                   <span id="username-validation-note" style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px; display: block;">Username must be unique across all system creators.</span>
                 </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="profile-profession">Profession / Title</label>
+                  <input type="text" id="profile-profession" class="form-control" placeholder="E.g. Creator, Developer, Designer, Freelancer">
+                  <span style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px; display: block;">This will display below your profile name.</span>
+                </div>
                 
                 <div style="margin-top: var(--space-lg);">
                   <button type="submit" id="profile-save-btn" class="btn btn-primary" style="padding: 10px 24px;">
@@ -471,7 +477,7 @@
       const user = auth.getCurrentUser();
       if (user) {
         const fallbackName = user.full_name || "Creator Settings";
-        const roleStr = user.role === "admin" ? "Platform Admin" : "Freelancer";
+        const roleStr = user.profession || (user.role === "admin" ? "Platform Admin" : "Freelancer");
         
         document.getElementById("user-display-name").textContent = fallbackName;
         document.getElementById("header-user-name").textContent = fallbackName;
@@ -486,6 +492,7 @@
         document.getElementById("profile-email").value = user.email;
         document.getElementById("profile-fullname").value = user.full_name || "";
         document.getElementById("profile-username").value = user.username || "";
+        document.getElementById("profile-profession").value = user.profession || "";
         
         // Security Change Password Timestamp
         const securityLabel = document.getElementById("password-timestamp-label");
@@ -597,6 +604,7 @@
       
       const fullname = document.getElementById("profile-fullname").value.trim();
       const username = document.getElementById("profile-username").value.trim().toLowerCase();
+      const profession = document.getElementById("profile-profession").value.trim();
       const spinner = document.getElementById("profile-spinner");
       const saveBtn = document.getElementById("profile-save-btn");
       const alertBox = document.getElementById("profile-alert");
@@ -617,7 +625,8 @@
       try {
         const updatedUser = await api.put("/users/me", {
           full_name: fullname,
-          username: username
+          username: username,
+          profession: profession
         });
 
         // Cache updated user profile
@@ -626,6 +635,11 @@
         // Refresh sidebar and welcome greetings
         document.getElementById("user-display-name").textContent = updatedUser.full_name;
         document.getElementById("header-user-name").textContent = updatedUser.full_name;
+        
+        const newRoleStr = updatedUser.profession || (updatedUser.role === "admin" ? "Platform Admin" : "Freelancer");
+        document.getElementById("user-display-role").textContent = newRoleStr;
+        document.getElementById("header-user-role").textContent = newRoleStr;
+        
         document.getElementById("avatar-char").textContent = updatedUser.full_name.charAt(0).toUpperCase();
         document.getElementById("header-avatar-char").textContent = updatedUser.full_name.charAt(0).toUpperCase();
 
