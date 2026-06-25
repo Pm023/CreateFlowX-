@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Financial Analytics Workspace - CreateFlowX</title>
+  <title>Business Growth Analytics - CreateFlowX</title>
   
   <!-- Remix Icons -->
   <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet"/>
@@ -15,15 +15,11 @@
   <link rel="stylesheet" href="css/layouts.css">
   
   <style>
-    /* Premium Scoped Styling for Analytics Module */
+    /* Premium Scoped Styling for Growth Analytics Module */
     .analytics-grid-row {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: var(--space-md);
-    }
-    
-    .client-contribution-card {
-      padding: var(--space-lg);
     }
     
     .table-container {
@@ -45,9 +41,372 @@
       stroke-width: 6;
       cursor: pointer;
     }
-    
-    /* Responsive adjustment */
+
+    /* Executive Glassmorphic Layout Grid */
+    .growth-layout-grid {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: var(--space-lg);
+    }
+
+    .health-score-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: var(--space-lg);
+      background: var(--bg-secondary);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-md);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .health-score-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--grad-primary);
+    }
+
+    .gauge-container {
+      position: relative;
+      width: 140px;
+      height: 140px;
+      margin: var(--space-md) 0;
+    }
+
+    .gauge-value {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2.2rem;
+      font-weight: 800;
+      font-family: var(--font-heading);
+      color: var(--text-primary);
+    }
+
+    .health-level-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      border-radius: var(--radius-full);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .health-level-badge.green {
+      background: rgba(16, 185, 129, 0.1);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .health-level-badge.blue {
+      background: rgba(59, 130, 246, 0.1);
+      color: #3b82f6;
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+
+    .health-level-badge.yellow {
+      background: rgba(245, 158, 11, 0.1);
+      color: #f59e0b;
+      border: 1px solid rgba(245, 158, 11, 0.2);
+    }
+
+    .health-level-badge.red {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .health-reasoning-list {
+      width: 100%;
+      text-align: left;
+      margin-top: var(--space-md);
+      border-top: 1px solid var(--border-color);
+      padding-top: var(--space-md);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+
+    .health-reason-item {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-xs);
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    .health-reason-item i {
+      font-size: 0.9rem;
+      margin-top: 1px;
+    }
+
+    /* Growth Coach Priorities */
+    .coach-card {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-md);
+      padding: var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+
+    .coach-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: var(--space-xs);
+    }
+
+    .coach-pill {
+      font-size: 0.65rem;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .coach-pill.ai {
+      background: var(--grad-purple);
+      color: white;
+    }
+
+    .coach-pill.rules {
+      background: var(--bg-tertiary);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-color);
+    }
+
+    .coach-narrative-box {
+      background: rgba(79, 70, 229, 0.03);
+      border: 1px dashed rgba(79, 70, 229, 0.2);
+      padding: var(--space-md);
+      border-radius: var(--radius-md);
+      font-size: 0.8rem;
+      line-height: 1.5;
+      color: var(--text-secondary);
+      display: flex;
+      gap: var(--space-sm);
+    }
+
+    .coach-narrative-box.ai-active {
+      background: rgba(124, 58, 237, 0.04);
+      border: 1px dashed rgba(124, 58, 237, 0.2);
+    }
+
+    .coach-narrative-box i {
+      font-size: 1.1rem;
+      color: var(--accent-color);
+      flex-shrink: 0;
+    }
+
+    .coach-narrative-box.ai-active i {
+      color: #7c3aed;
+    }
+
+    .priority-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+
+    .priority-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-sm) var(--space-md);
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      transition: all var(--transition-fast);
+    }
+
+    .priority-item:hover {
+      transform: translateY(-1px);
+      border-color: var(--border-hover);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .priority-item-left {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+    }
+
+    .priority-icon-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(79, 70, 229, 0.08);
+      color: var(--accent-color);
+      font-size: 1rem;
+    }
+
+    .priority-item:nth-child(even) .priority-icon-circle {
+      background: rgba(124, 58, 237, 0.08);
+      color: #7c3aed;
+    }
+
+    .priority-text {
+      text-align: left;
+    }
+
+    .priority-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .priority-desc {
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      margin-top: 1px;
+    }
+
+    /* Smart Insights Grid */
+    .insights-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: var(--space-md);
+    }
+
+    .insight-card {
+      padding: var(--space-md);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      background: var(--bg-secondary);
+      display: flex;
+      gap: var(--space-sm);
+      position: relative;
+      transition: transform var(--transition-fast);
+      text-align: left;
+    }
+
+    .insight-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .insight-card.success { border-left: 4px solid #10b981; }
+    .insight-card.warning { border-left: 4px solid #f59e0b; }
+    .insight-card.danger { border-left: 4px solid #ef4444; }
+    .insight-card.info { border-left: 4px solid #3b82f6; }
+
+    .insight-icon {
+      font-size: 1.2rem;
+      line-height: 1;
+    }
+
+    .insight-content h5 {
+      font-size: 0.78rem;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .insight-content p {
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    /* Opportunities & Risks Grid */
+    .opps-risks-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-lg);
+    }
+
+    .detector-column-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: var(--space-md);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-primary);
+    }
+
+    .detector-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+
+    .detector-card {
+      padding: var(--space-md);
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      display: flex;
+      gap: var(--space-sm);
+      align-items: flex-start;
+      text-align: left;
+      transition: all var(--transition-fast);
+    }
+
+    .detector-card:hover {
+      transform: translateY(-1px);
+    }
+
+    .detector-card.opportunity { border-left: 4px solid #10b981; }
+    .detector-card.risk { border-left: 4px solid #ef4444; }
+
+    .detector-icon {
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .detector-details h6 {
+      font-size: 0.78rem;
+      font-weight: 700;
+      margin-bottom: 2px;
+      color: var(--text-primary);
+    }
+
+    .detector-details p {
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    /* Client Health Score Badges */
+    .health-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 700;
+      font-size: 0.7rem;
+    }
+
+    .health-status-badge.green { color: #10b981; }
+    .health-status-badge.yellow { color: #f59e0b; }
+    .health-status-badge.red { color: #ef4444; }
+
+    /* Responsive adjustments */
     @media (max-width: 1024px) {
+      .growth-layout-grid {
+        grid-template-columns: 1fr;
+      }
+      .opps-risks-grid {
+        grid-template-columns: 1fr;
+      }
       .analytics-grid-row {
         grid-template-columns: repeat(2, 1fr);
       }
@@ -73,7 +432,6 @@
     <!-- Left Sidebar Navigation -->
     <aside class="sidebar">
       <div class="sidebar-brand">
-        <!-- SVG Logo -->
         <svg width="24" height="24" viewBox="0 0 200 100" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M70 15 C35 15, 15 35, 15 50 C15 65, 35 85, 70 85 L90 85 L90 73 L70 73 C45 73, 30 63, 30 50 C30 37, 45 27, 70 27 L90 27 L90 15 Z" fill="url(#dbLogoBlue)" />
           <path d="M85 35 L120 35 L120 47 L97 47 L97 55 L115 55 L115 65 L97 65 L97 85 L85 85 Z" fill="url(#dbLogoBlue)" />
@@ -106,7 +464,6 @@
         <a href="settings.html" class="sidebar-link"><i class="ri-settings-4-line"></i> <span>Settings</span></a>
       </nav>
 
-      <!-- Sidebar User Footer -->
       <div class="sidebar-footer">
         <a onclick="auth.logout()" class="sidebar-link" style="color: var(--text-muted); margin-bottom: var(--space-sm);">
           <i class="ri-logout-box-r-line"></i> <span>Log out</span>
@@ -137,7 +494,6 @@
             <i class="ri-sun-line"></i>
           </button>
           
-          <!-- Notifications Bell & Dropdown Wrapper -->
           <div class="notifications-wrapper" id="notifications-topbar-wrapper">
             <button class="notifications-bell-btn" id="notifications-bell-btn" aria-label="Notifications">
               <i class="ri-notification-2-line"></i>
@@ -148,9 +504,7 @@
                 <h4>Notifications</h4>
                 <a href="#" id="mark-all-read-btn" onclick="notificationsManager.markAllRead(event)">Mark all as read</a>
               </div>
-              <ul class="notifications-dropdown-list" id="notifications-dropdown-list">
-                <!-- Dynamically populated -->
-              </ul>
+              <ul class="notifications-dropdown-list" id="notifications-dropdown-list"></ul>
               <div class="notifications-dropdown-footer">
                 <a href="notifications.html">View all notifications</a>
               </div>
@@ -168,15 +522,18 @@
       </header>
 
       <!-- Dashboard Contents -->
-      <div class="dashboard-body">
+      <div class="dashboard-body" style="display: flex; flex-direction: column; gap: var(--space-xl);">
         
         <!-- Welcome Greetings -->
         <div style="display: flex; justify-content: space-between; align-items: center;">
           <div>
-            <h1 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 2px;">Financial Analytics Workspace</h1>
-            <p style="font-size: 0.85rem; color: var(--text-secondary);">Real-time tracking of revenue generation, client payments, and invoice status metrics.</p>
+            <h1 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 2px;">Business Growth Workspace</h1>
+            <p style="font-size: 0.85rem; color: var(--text-secondary);">Rule-based performance insights, growth priorities, client health, and opportunities.</p>
           </div>
-          <button class="btn btn-primary" onclick="location.href='invoices.html'"><i class="ri-bill-line"></i> Invoices Workspace</button>
+          <div style="display: flex; gap: var(--space-sm);">
+            <button class="btn btn-secondary" onclick="location.href='clients.html'"><i class="ri-user-star-line"></i> Clients Workspace</button>
+            <button class="btn btn-primary" onclick="location.href='invoices.html'"><i class="ri-bill-line"></i> Invoices Workspace</button>
+          </div>
         </div>
 
         <!-- Loader Spinner -->
@@ -187,57 +544,146 @@
         <!-- Main Content (Hidden until loaded) -->
         <div id="analytics-main-content" class="hidden" style="display: flex; flex-direction: column; gap: var(--space-xl);">
           
+          <!-- Executive Layout Grid (Score & Coach) -->
+          <div class="growth-layout-grid">
+            <!-- Business Health Scorecard -->
+            <div class="health-score-card">
+              <h3 style="font-size: 0.95rem; font-weight: 800; color: var(--text-primary); margin-bottom: var(--space-xs);">Business Health Score</h3>
+              <p style="font-size: 0.72rem; color: var(--text-muted);">Weighted health check index</p>
+              
+              <div class="gauge-container">
+                <svg viewBox="0 0 36 36" style="width: 100%; height: 100%;">
+                  <!-- Background Track -->
+                  <path style="stroke: var(--border-color); stroke-width: 3.5; fill: none;"
+                    d="M18 2.0845
+                      a 15.9155 15.9155 0 0 1 0 31.831
+                      a 15.9155 15.9155 0 0 1 0 -31.831" />
+                  <!-- Progress Bar Arc -->
+                  <path id="health-gauge-arc" style="stroke-width: 3.5; stroke-linecap: round; fill: none; transition: stroke-dasharray 0.8s ease;"
+                    stroke-dasharray="0, 100"
+                    d="M18 2.0845
+                      a 15.9155 15.9155 0 0 1 0 31.831
+                      a 15.9155 15.9155 0 0 1 0 -31.831" />
+                </svg>
+                <div class="gauge-value" id="health-score-num">0</div>
+              </div>
+              
+              <div class="health-level-badge" id="health-level-badge">Calculating...</div>
+              
+              <div class="health-reasoning-list" id="health-reasoning-container">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+
+            <!-- Weekly Growth Coach Panel -->
+            <div class="coach-card">
+              <div class="coach-title-row">
+                <h3 style="font-size: 0.95rem; font-weight: 800; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+                  <i class="ri-compass-3-line" style="color: var(--accent-color);"></i> Weekly Growth Coach
+                </h3>
+                <div id="coach-pill-container">
+                  <span class="coach-pill rules"><i class="ri-shield-check-line"></i> Rule Engine</span>
+                </div>
+              </div>
+
+              <!-- Future AI Coaching Box -->
+              <div class="coach-narrative-box" id="coach-narrative-box">
+                <i class="ri-magic-line"></i>
+                <p id="coach-narrative-text">Loading insights coaching paragraph...</p>
+              </div>
+
+              <!-- Priorities checklist -->
+              <div>
+                <h4 style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted); text-align: left; margin-bottom: var(--space-xs);">
+                  🎯 Actionable Priorities
+                </h4>
+                <div class="priority-list" id="priority-list-container">
+                  <!-- Populated dynamically -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Smart Insights Feed Section -->
+          <div>
+            <h3 style="font-size: 0.95rem; font-weight: 800; color: var(--text-primary); text-align: left; margin-bottom: var(--space-md);">
+              <i class="ri-lightbulb-line" style="color: #f59e0b; margin-right: 4px;"></i> Intelligent Smart Insights
+            </h3>
+            <div class="insights-grid" id="smart-insights-container">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+
+          <!-- Opportunities & Risks Section -->
+          <div class="opps-risks-grid">
+            <!-- Opportunities -->
+            <div>
+              <h4 class="detector-column-title">
+                <i class="ri-line-chart-line" style="color: #10b981;"></i> Growth Opportunities
+              </h4>
+              <div class="detector-list" id="opportunities-list-container">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+            <!-- Risks -->
+            <div>
+              <h4 class="detector-column-title">
+                <i class="ri-alert-line" style="color: #ef4444;"></i> Operations Risk Matrix
+              </h4>
+              <div class="detector-list" id="risks-list-container">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+          </div>
+
           <!-- Revenue Metric Cards Row -->
           <div>
-            <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin-bottom: var(--space-md);">Revenue Metrics Overview</h3>
+            <h3 style="font-size: 0.95rem; font-weight: 800; color: var(--text-primary); margin-bottom: var(--space-md); text-align: left;">Revenue & Billings Performance</h3>
             <div class="analytics-grid-row">
-              <div class="card card-hover" style="border-left: 4px solid var(--accent-color);">
-                <span class="text-muted" style="font-size: 0.78rem; font-weight: 600;">Total Revenue</span>
+              <div class="card card-hover" style="border-left: 4px solid var(--accent-color); text-align: left;">
+                <span class="text-muted" style="font-size: 0.72rem; font-weight: 600;">Total Revenue</span>
                 <div class="metric-value" id="rev-total-value">₹0</div>
-                <div class="text-secondary" style="font-size: 0.72rem; margin-top: 4px;">Accrual billed revenue</div>
+                <div class="text-secondary" style="font-size: 0.68rem; margin-top: 4px;">Accrual billed revenue</div>
               </div>
-              <div class="card card-hover" style="border-left: 4px solid #10b981;">
-                <span class="text-muted" style="font-size: 0.78rem; font-weight: 600;">Paid Revenue</span>
+              <div class="card card-hover" style="border-left: 4px solid #10b981; text-align: left;">
+                <span class="text-muted" style="font-size: 0.72rem; font-weight: 600;">Paid Revenue</span>
                 <div class="metric-value" style="color: #10b981;" id="rev-paid-value">₹0</div>
-                <div class="text-secondary" style="font-size: 0.72rem; margin-top: 4px;">Completed payments</div>
+                <div class="text-secondary" style="font-size: 0.68rem; margin-top: 4px;">Completed payments</div>
               </div>
-              <div class="card card-hover" style="border-left: 4px solid #3b82f6;">
-                <span class="text-muted" style="font-size: 0.78rem; font-weight: 600;">Pending Revenue</span>
+              <div class="card card-hover" style="border-left: 4px solid #3b82f6; text-align: left;">
+                <span class="text-muted" style="font-size: 0.72rem; font-weight: 600;">Pending Revenue</span>
                 <div class="metric-value" style="color: #3b82f6;" id="rev-pending-value">₹0</div>
-                <div class="text-secondary" style="font-size: 0.72rem; margin-top: 4px;">Draft, Sent, or Pending</div>
+                <div class="text-secondary" style="font-size: 0.68rem; margin-top: 4px;">Active collections pipeline</div>
               </div>
-              <div class="card card-hover" style="border-left: 4px solid #ef4444;">
-                <span class="text-muted" style="font-size: 0.78rem; font-weight: 600;">Overdue Revenue</span>
+              <div class="card card-hover" style="border-left: 4px solid #ef4444; text-align: left;">
+                <span class="text-muted" style="font-size: 0.72rem; font-weight: 600;">Overdue Revenue</span>
                 <div class="metric-value" style="color: #ef4444;" id="rev-overdue-value">₹0</div>
-                <div class="text-secondary" style="font-size: 0.72rem; margin-top: 4px;">Unpaid past due invoices</div>
+                <div class="text-secondary" style="font-size: 0.68rem; margin-top: 4px;">Unpaid past due invoices</div>
               </div>
             </div>
           </div>
 
           <!-- Invoices Metric Cards Row -->
-          <div>
-            <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin-bottom: var(--space-md);">Invoices Metrics Overview</h3>
-            <div class="analytics-grid-row">
-              <div class="card card-hover" style="border-left: 4px solid var(--accent-color);">
-                <span class="text-muted" style="font-size: 0.78rem; font-weight: 600;">Total Invoices</span>
-                <div class="metric-value" id="inv-total-value">0</div>
-                <div class="text-secondary" style="font-size: 0.72rem; margin-top: 4px;">Across all accounts</div>
-              </div>
-              <div class="card card-hover" style="border-left: 4px solid #10b981;">
-                <span class="text-muted" style="font-size: 0.78rem; font-weight: 600;">Paid Invoices</span>
-                <div class="metric-value" style="color: #10b981;" id="inv-paid-value">0</div>
-                <div class="text-secondary" style="font-size: 0.72rem; margin-top: 4px;">Settled billings</div>
-              </div>
-              <div class="card card-hover" style="border-left: 4px solid #3b82f6;">
-                <span class="text-muted" style="font-size: 0.78rem; font-weight: 600;">Pending Invoices</span>
-                <div class="metric-value" style="color: #3b82f6;" id="inv-pending-value">0</div>
-                <div class="text-secondary" style="font-size: 0.72rem; margin-top: 4px;">Unsettled active billings</div>
-              </div>
-              <div class="card card-hover" style="border-left: 4px solid #ef4444;">
-                <span class="text-muted" style="font-size: 0.78rem; font-weight: 600;">Overdue Invoices</span>
-                <div class="metric-value" style="color: #ef4444;" id="inv-overdue-value">0</div>
-                <div class="text-secondary" style="font-size: 0.72rem; margin-top: 4px;">Critical overdue count</div>
-              </div>
+          <div class="analytics-grid-row">
+            <div class="card card-hover" style="border-left: 4px solid var(--accent-color); text-align: left;">
+              <span class="text-muted" style="font-size: 0.72rem; font-weight: 600;">Total Invoices</span>
+              <div class="metric-value" id="inv-total-value">0</div>
+              <div class="text-secondary" style="font-size: 0.68rem; margin-top: 4px;">Accrual billings raised</div>
+            </div>
+            <div class="card card-hover" style="border-left: 4px solid #10b981; text-align: left;">
+              <span class="text-muted" style="font-size: 0.72rem; font-weight: 600;">Paid Invoices</span>
+              <div class="metric-value" style="color: #10b981;" id="inv-paid-value">0</div>
+              <div class="text-secondary" style="font-size: 0.68rem; margin-top: 4px;">Settled accounts</div>
+            </div>
+            <div class="card card-hover" style="border-left: 4px solid #3b82f6; text-align: left;">
+              <span class="text-muted" style="font-size: 0.72rem; font-weight: 600;">Pending Invoices</span>
+              <div class="metric-value" style="color: #3b82f6;" id="inv-pending-value">0</div>
+              <div class="text-secondary" style="font-size: 0.68rem; margin-top: 4px;">Active collections raised</div>
+            </div>
+            <div class="card card-hover" style="border-left: 4px solid #ef4444; text-align: left;">
+              <span class="text-muted" style="font-size: 0.72rem; font-weight: 600;">Overdue Invoices</span>
+              <div class="metric-value" style="color: #ef4444;" id="inv-overdue-value">0</div>
+              <div class="text-secondary" style="font-size: 0.68rem; margin-top: 4px;">Past payment deadline</div>
             </div>
           </div>
 
@@ -245,7 +691,7 @@
           <div class="grid-three">
             <!-- Monthly Revenue Bar Chart -->
             <div class="card">
-              <h3 class="section-title" style="margin-bottom: var(--space-md);">Monthly Revenue (Accrual)</h3>
+              <h3 class="section-title" style="margin-bottom: var(--space-md); text-align: left;">Monthly Revenue (Accrual)</h3>
               <div id="chart-monthly-revenue-container" style="height: 150px; display: flex; align-items: flex-end; justify-content: space-between; padding-top: var(--space-md);">
                 <!-- Populated dynamically -->
               </div>
@@ -253,7 +699,7 @@
 
             <!-- Status Distribution Donut Chart -->
             <div class="card">
-              <h3 class="section-title" style="margin-bottom: var(--space-md);">Status Distribution</h3>
+              <h3 class="section-title" style="margin-bottom: var(--space-md); text-align: left;">Status Distribution</h3>
               <div style="display: flex; align-items: center; gap: var(--space-md); justify-content: center; height: 150px;">
                 <div style="position: relative; width: 100px; height: 100px; flex-shrink: 0;">
                   <svg width="100%" height="100%" viewBox="0 0 42 42" class="donut" id="chart-status-donut-svg">
@@ -265,7 +711,7 @@
                   </div>
                 </div>
                 
-                <div class="chart-legend" id="donut-legend-container" style="gap: 4px;">
+                <div class="chart-legend" id="donut-legend-container" style="display: flex; flex-direction: column; gap: 4px; text-align: left;">
                   <!-- Injected dynamically -->
                 </div>
               </div>
@@ -273,7 +719,7 @@
 
             <!-- Revenue Trend Line Chart -->
             <div class="card">
-              <h3 class="section-title" style="margin-bottom: var(--space-md);">Revenue Trend (Current Month)</h3>
+              <h3 class="section-title" style="margin-bottom: var(--space-md); text-align: left;">Revenue Trend (Current Month)</h3>
               <div style="height: 110px; width: 100%; position: relative; margin-top: var(--space-md);">
                 <div style="position: absolute; top: -15px; left: 0; font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Cumulative Revenue Trend</div>
                 <div style="position: absolute; top: -15px; right: 0; font-size: 0.82rem; font-weight: 700; color: var(--accent-color);" id="trend-peak-value">₹0</div>
@@ -290,23 +736,25 @@
             </div>
           </div>
 
-          <!-- Client Contributions Analysis -->
-          <div class="card client-contribution-card">
-            <h3 class="section-title" style="margin-bottom: var(--space-xs);">Client Contributions Breakdown</h3>
-            <p class="text-secondary" style="font-size: 0.82rem; margin-bottom: var(--space-md);">Percentage shares calculated based on settled/paid invoice revenue figures.</p>
+          <!-- Client Health Scoring Breakdown -->
+          <div class="card">
+            <h3 class="section-title" style="margin-bottom: var(--space-xs); text-align: left;">Client Health Scoreboard</h3>
+            <p class="text-secondary" style="font-size: 0.82rem; margin-bottom: var(--space-md); text-align: left;">Tracking activity, invoice status, project momentum, and churn risks across all accounts.</p>
             
             <div class="table-container">
               <table class="table">
                 <thead>
                   <tr>
                     <th>Client Name</th>
-                    <th>Total Billed</th>
-                    <th>Paid Amount</th>
-                    <th>Share Percentage</th>
-                    <th style="width: 200px;">Progress Bar</th>
+                    <th>Health score</th>
+                    <th>Status</th>
+                    <th>Active Projects</th>
+                    <th>Overdue Invoices</th>
+                    <th>Last Interaction</th>
+                    <th style="width: 140px; text-align: right;">Growth Actions</th>
                   </tr>
                 </thead>
-                <tbody id="client-contributions-tbody">
+                <tbody id="client-health-tbody">
                   <!-- Injected dynamically -->
                 </tbody>
               </table>
@@ -336,46 +784,266 @@
         document.getElementById("header-avatar-char").textContent = firstLetter;
       }
       
-      loadAnalyticsData();
+      loadGrowthAnalyticsData();
     });
 
-    async function loadAnalyticsData() {
+    async function loadGrowthAnalyticsData() {
       const loader = document.getElementById("analytics-loader");
       const mainContent = document.getElementById("analytics-main-content");
       
       try {
-        const stats = await api.get("/invoices/stats");
+        const data = await api.get("/analytics/growth-summary");
         
-        // Populate Revenue Metrics Overview values
-        document.getElementById("rev-total-value").textContent = formatINR(stats.revenue.total);
-        document.getElementById("rev-paid-value").textContent = formatINR(stats.revenue.paid);
-        document.getElementById("rev-pending-value").textContent = formatINR(stats.revenue.pending);
-        document.getElementById("rev-overdue-value").textContent = formatINR(stats.revenue.overdue);
+        // 1. Populate Revenue Metrics Overview values
+        document.getElementById("rev-total-value").textContent = formatINR(data.revenue.total);
+        document.getElementById("rev-paid-value").textContent = formatINR(data.revenue.paid);
+        document.getElementById("rev-pending-value").textContent = formatINR(data.revenue.pending);
+        document.getElementById("rev-overdue-value").textContent = formatINR(data.revenue.overdue);
 
         // Populate Invoices Metrics Overview values
-        document.getElementById("inv-total-value").textContent = stats.invoices.total;
-        document.getElementById("inv-paid-value").textContent = stats.invoices.paid;
-        document.getElementById("inv-pending-value").textContent = stats.invoices.pending;
-        document.getElementById("inv-overdue-value").textContent = stats.invoices.overdue;
+        document.getElementById("inv-total-value").textContent = data.invoices.total;
+        document.getElementById("inv-paid-value").textContent = data.invoices.paid;
+        document.getElementById("inv-pending-value").textContent = data.invoices.pending;
+        document.getElementById("inv-overdue-value").textContent = data.invoices.overdue;
 
-        // Render charts
-        renderMonthlyRevenueChart(stats.charts.monthly_revenue);
-        renderStatusDistributionChart(stats.charts.status_distribution, stats.invoices.total);
-        renderRevenueTrendChart(stats.charts.revenue_trend);
+        // 2. Render Business Health Score
+        renderBusinessHealthScore(data.business_health);
 
-        // Render client contributions
-        renderClientContributions(stats.analytics.client_contribution);
+        // 3. Render Weekly Priorities & Coaching Summary
+        renderWeeklyPriorities(data.priorities, data.ai_coaching_summary, data.ai_enriched);
+
+        // 4. Render Smart Insights
+        renderSmartInsights(data.insights);
+
+        // 5. Render Opportunities and Risks
+        renderOpportunitiesAndRisks(data.opportunities, data.risks);
+
+        // 6. Render charts
+        renderMonthlyRevenueChart(data.charts.monthly_revenue);
+        renderStatusDistributionChart(data.charts.status_distribution, data.invoices.total);
+        renderRevenueTrendChart(data.charts.revenue_trend);
+
+        // 7. Render client health table
+        renderClientHealthTable(data.client_health);
 
         loader.classList.add("hidden");
         mainContent.classList.remove("hidden");
 
       } catch (err) {
-        console.error("Failed to load analytics data:", err);
+        console.error("Failed to load growth analytics data:", err);
       }
     }
 
     function formatINR(val) {
       return auth.formatCurrency(val);
+    }
+
+    function renderBusinessHealthScore(bh) {
+      const scoreNum = document.getElementById("health-score-num");
+      const gaugeArc = document.getElementById("health-gauge-arc");
+      const badge = document.getElementById("health-level-badge");
+      const reasoningContainer = document.getElementById("health-reasoning-container");
+
+      if (!scoreNum || !gaugeArc || !badge || !reasoningContainer) return;
+
+      scoreNum.textContent = bh.score;
+      
+      // Update SVG arc length
+      gaugeArc.setAttribute("stroke-dasharray", `${bh.score}, 100`);
+
+      // Determine colors
+      let statusColor = "green";
+      let hexColor = "#10b981";
+      if (bh.score < 50) {
+        statusColor = "red";
+        hexColor = "#ef4444";
+      } else if (bh.score < 70) {
+        statusColor = "yellow";
+        hexColor = "#f59e0b";
+      } else if (bh.score < 80) {
+        statusColor = "blue";
+        hexColor = "#3b82f6";
+      }
+
+      gaugeArc.style.stroke = hexColor;
+      
+      badge.textContent = bh.level;
+      badge.className = `health-level-badge ${statusColor}`;
+
+      // Reasoning
+      reasoningContainer.innerHTML = "";
+      bh.reasoning.forEach(reason => {
+        const isNegative = reason.includes("decline") || reason.includes("Low") || reason.includes("overdue") || reason.includes("Critical");
+        const icon = isNegative ? "ri-close-circle-line" : "ri-checkbox-circle-line";
+        const itemClass = isNegative ? "health-reason-item negative" : "health-reason-item";
+        const iconColor = isNegative ? "#ef4444" : "#10b981";
+        
+        reasoningContainer.innerHTML += `
+          <div class="${itemClass}">
+            <i class="${icon}" style="color: ${iconColor};"></i>
+            <span>${reason}</span>
+          </div>
+        `;
+      });
+    }
+
+    function renderWeeklyPriorities(priorities, narrative, aiEnriched) {
+      const narrativeBox = document.getElementById("coach-narrative-box");
+      const narrativeText = document.getElementById("coach-narrative-text");
+      const pillContainer = document.getElementById("coach-pill-container");
+      const prioritiesList = document.getElementById("priority-list-container");
+
+      if (!narrativeText || !pillContainer || !prioritiesList) return;
+
+      // Narrative text
+      narrativeText.textContent = narrative;
+      
+      if (aiEnriched) {
+        narrativeBox.className = "coach-narrative-box ai-active";
+        pillContainer.innerHTML = `<span class="coach-pill ai"><i class="ri-magic-line"></i> AI Coach Active</span>`;
+      } else {
+        narrativeBox.className = "coach-narrative-box";
+        pillContainer.innerHTML = `<span class="coach-pill rules"><i class="ri-shield-check-line"></i> Rule Engine</span>`;
+      }
+
+      // Priorities
+      prioritiesList.innerHTML = "";
+      priorities.forEach(priority => {
+        prioritiesList.innerHTML += `
+          <div class="priority-item">
+            <div class="priority-item-left">
+              <div class="priority-icon-circle">
+                <i class="${priority.icon}"></i>
+              </div>
+              <div class="priority-text">
+                <div class="priority-title">${priority.title}</div>
+                <div class="priority-desc">${priority.description}</div>
+              </div>
+            </div>
+            <button class="btn btn-secondary btn-sm" style="font-size:0.7rem; padding:4px 8px;" onclick="location.href='${priority.action_link}'">
+              ${priority.action_text}
+            </button>
+          </div>
+        `;
+      });
+    }
+
+    function renderSmartInsights(insights) {
+      const container = document.getElementById("smart-insights-container");
+      if (!container) return;
+      
+      container.innerHTML = "";
+      insights.forEach(insight => {
+        container.innerHTML += `
+          <div class="insight-card ${insight.type}">
+            <div class="insight-icon">${insight.icon}</div>
+            <div class="insight-content">
+              <div class="insight-badge">${insight.category}</div>
+              <h5>${insight.title}</h5>
+              <p>${insight.message}</p>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function renderOpportunitiesAndRisks(opportunities, risks) {
+      const oppsContainer = document.getElementById("opportunities-list-container");
+      const risksContainer = document.getElementById("risks-list-container");
+
+      if (oppsContainer) {
+        oppsContainer.innerHTML = "";
+        opportunities.forEach(opp => {
+          oppsContainer.innerHTML += `
+            <div class="detector-card opportunity">
+              <div class="detector-icon">${opp.icon}</div>
+              <div class="detector-details">
+                <h6>${opp.title}</h6>
+                <p>${opp.message}</p>
+              </div>
+            </div>
+          `;
+        });
+      }
+
+      if (risksContainer) {
+        risksContainer.innerHTML = "";
+        risks.forEach(risk => {
+          risksContainer.innerHTML += `
+            <div class="detector-card risk">
+              <div class="detector-icon">${risk.icon}</div>
+              <div class="detector-details">
+                <h6>${risk.title}</h6>
+                <p>${risk.message}</p>
+              </div>
+            </div>
+          `;
+        });
+      }
+    }
+
+    function renderClientHealthTable(clients) {
+      const tbody = document.getElementById("client-health-tbody");
+      if (!tbody) return;
+
+      tbody.innerHTML = "";
+      if (clients.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-muted); font-size:0.82rem; padding:var(--space-md);">No clients registered. Create a client to track health scores.</td></tr>`;
+        return;
+      }
+
+      clients.forEach(c => {
+        let statusDot = "🟢";
+        let statusClass = "green";
+        if (c.score < 50) {
+          statusDot = "🔴";
+          statusClass = "red";
+        } else if (c.score < 80) {
+          statusDot = "🟡";
+          statusClass = "yellow";
+        }
+
+        let actionBtnText = "Re-engage";
+        let actionBtnClass = "btn-secondary";
+        if (c.score >= 80) {
+          actionBtnText = "Pitch Upsell";
+          actionBtnClass = "btn-primary";
+        } else if (c.score < 50) {
+          actionBtnText = "Alert Action";
+          actionBtnClass = "btn-primary";
+        }
+
+        tbody.innerHTML += `
+          <tr>
+            <td>
+              <strong>${escapeHTML(c.client_name)}</strong>
+              ${c.company_name ? `<div style="font-size:0.7rem; color:var(--text-muted);">${escapeHTML(c.company_name)}</div>` : ''}
+            </td>
+            <td>
+              <strong style="font-size: 0.85rem;">${c.score}/100</strong>
+            </td>
+            <td>
+              <span class="health-status-badge ${statusClass}">
+                ${statusDot} ${c.status}
+              </span>
+            </td>
+            <td><strong>${c.active_projects}</strong></td>
+            <td>
+              <strong style="color: ${c.overdue_invoices_count > 0 ? '#ef4444' : 'inherit'};">
+                ${c.overdue_invoices_count}
+              </strong>
+            </td>
+            <td>
+              <span>${c.days_inactive === 0 ? 'Today' : `${c.days_inactive} days ago`}</span>
+            </td>
+            <td style="text-align: right;">
+              <button class="btn ${actionBtnClass} btn-sm" style="font-size:0.68rem; padding:4px 8px;" onclick="location.href='clients.html'">
+                ${actionBtnText}
+              </button>
+            </td>
+          </tr>
+        `;
+      });
     }
 
     function renderMonthlyRevenueChart(data) {
@@ -493,44 +1161,6 @@
         <circle cx="${points[2].x}" cy="${points[2].y}" r="1.5" fill="var(--accent-color)" />
         <circle cx="${points[3].x}" cy="${points[3].y}" r="1.5" fill="var(--accent-color)" />
       `;
-    }
-
-    function renderClientContributions(contributions) {
-      const tbody = document.getElementById("client-contributions-tbody");
-      if (!tbody) return;
-      tbody.innerHTML = "";
-
-      if (!contributions || contributions.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted); font-size:0.82rem; padding:var(--space-md);">No client contribution data calculated yet.</td></tr>`;
-        return;
-      }
-
-      contributions.forEach(c => {
-        let progressColor = "#ef4444";
-        if (c.contribution_percentage >= 50) {
-          progressColor = "#10b981";
-        } else if (c.contribution_percentage >= 20) {
-          progressColor = "#3b82f6";
-        } else if (c.contribution_percentage > 0) {
-          progressColor = "#f59e0b";
-        }
-
-        tbody.innerHTML += `
-          <tr>
-            <td><strong>${escapeHTML(c.client_name)}</strong></td>
-            <td><strong>${formatINR(c.total_amount)}</strong></td>
-            <td style="color: #10b981;"><strong>${formatINR(c.paid_amount)}</strong></td>
-            <td><strong>${c.contribution_percentage}%</strong></td>
-            <td>
-              <div class="progress-container" style="margin-top: 0;">
-                <div class="progress-bar" style="height: 6px; width: 100%;">
-                  <div class="progress-fill" style="width: ${c.contribution_percentage}%; background-color: ${progressColor};"></div>
-                </div>
-              </div>
-            </td>
-          </tr>
-        `;
-      });
     }
 
     function escapeHTML(str) {
