@@ -478,38 +478,24 @@
               <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-sm); text-align: center; margin-bottom: var(--space-md);">
                 <div>
                   <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">Tasks</div>
-                  <strong style="font-size: 1rem;">68</strong>
+                  <strong id="mini-stats-tasks" style="font-size: 1rem;">0</strong>
                 </div>
                 <div>
                   <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">Completed</div>
-                  <strong style="font-size: 1rem; color: #10b981;">32</strong>
+                  <strong id="mini-stats-completed" style="font-size: 1rem; color: #10b981;">0</strong>
                 </div>
                 <div>
                   <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">Overdue</div>
-                  <strong style="font-size: 1rem; color: #ef4444;">6</strong>
+                  <strong id="mini-stats-overdue" style="font-size: 1rem; color: #ef4444;">0</strong>
                 </div>
               </div>
 
               <!-- Line Graph Revenue Overview (SVG path matching visual) -->
               <div style="height: 100px; width: 100%; position: relative; margin-top: var(--space-md);">
                 <div style="position: absolute; top: 0; left: 0; font-size: 0.7rem; color: var(--text-muted); font-weight: 600;">Revenue Overview</div>
-                <div style="position: absolute; top: 0; right: 0; font-size: 0.78rem; font-weight: 700; color: #4f46e5;">₹1,25,000</div>
-                <svg viewBox="0 0 100 30" width="100%" height="80%" preserveAspectRatio="none" style="margin-top: 15px;">
-                  <defs>
-                    <linearGradient id="lineGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stop-color="rgba(79, 70, 229, 0.2)" />
-                      <stop offset="100%" stop-color="rgba(79, 70, 229, 0.0)" />
-                    </linearGradient>
-                  </defs>
-                  <!-- Filled Area -->
-                  <path d="M0,25 Q15,22 30,18 T60,10 T85,5 T100,2 L100,30 L0,30 Z" fill="url(#lineGrad)" />
-                  <!-- Trending Line -->
-                  <path d="M0,25 Q15,22 30,18 T60,10 T85,5 T100,2" fill="none" stroke="#4f46e5" stroke-width="1.5" />
-                  <!-- Dots -->
-                  <circle cx="30" cy="18" r="1.2" fill="#4f46e5" />
-                  <circle cx="60" cy="10" r="1.2" fill="#4f46e5" />
-                  <circle cx="85" cy="5" r="1.2" fill="#4f46e5" />
-                  <circle cx="100" cy="2" r="1.2" fill="#4f46e5" />
+                <div id="mini-trend-peak" style="position: absolute; top: 0; right: 0; font-size: 0.78rem; font-weight: 700; color: #4f46e5;">₹0</div>
+                <svg id="mini-trend-svg" viewBox="0 0 100 30" width="100%" height="80%" preserveAspectRatio="none" style="margin-top: 15px;">
+                  <!-- Injected dynamically -->
                 </svg>
                 <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--text-muted); margin-top: 2px;">
                   <span>Week 1</span>
@@ -806,6 +792,15 @@
 
         const overdueTasks = document.getElementById("dashboard-overdue-tasks");
         if (overdueTasks) overdueTasks.textContent = taskStats.overdue_tasks;
+
+        const miniTasks = document.getElementById("mini-stats-tasks");
+        if (miniTasks) miniTasks.textContent = taskStats.total_tasks;
+
+        const miniCompleted = document.getElementById("mini-stats-completed");
+        if (miniCompleted) miniCompleted.textContent = taskStats.completed_tasks;
+
+        const miniOverdue = document.getElementById("mini-stats-overdue");
+        if (miniOverdue) miniOverdue.textContent = taskStats.overdue_tasks;
 
         const countDeadlines = document.getElementById("dashboard-upcoming-deadlines-count");
         if (countDeadlines) countDeadlines.textContent = calDash.upcoming_deadlines.length;
@@ -1269,6 +1264,7 @@
         renderMonthlyRevenueChart(stats.charts.monthly_revenue);
         renderStatusDistributionChart(stats.charts.status_distribution, stats.invoices.total);
         renderRevenueTrendChart(stats.charts.revenue_trend);
+        renderMiniRevenueTrendChart(stats.charts.revenue_trend);
 
       } catch (err) {
         console.error("Failed to load dashboard invoices data:", err);
@@ -1460,6 +1456,46 @@
         <circle cx="${points[1].x}" cy="${points[1].y}" r="1.5" fill="var(--accent-color)" />
         <circle cx="${points[2].x}" cy="${points[2].y}" r="1.5" fill="var(--accent-color)" />
         <circle cx="${points[3].x}" cy="${points[3].y}" r="1.5" fill="var(--accent-color)" />
+      `;
+    }
+
+    function renderMiniRevenueTrendChart(trendData) {
+      const svg = document.getElementById("mini-trend-svg");
+      const peakDisplay = document.getElementById("mini-trend-peak");
+      if (!svg || !peakDisplay) return;
+
+      const maxVal = Math.max(...trendData.map(d => d.amount), 1000);
+      peakDisplay.textContent = formatINR(trendData[3] ? trendData[3].amount : 0);
+
+      const points = [];
+      const xCoords = [0, 33.3, 66.6, 100];
+
+      for (let i = 0; i < 4; i++) {
+        const amt = trendData[i] ? trendData[i].amount : 0;
+        const x = xCoords[i];
+        const y = 28 - (amt / maxVal) * 24; // Height is 30, leave padding
+        points.push({x, y});
+      }
+
+      const lineD = `M ${points[0].x},${points[0].y} L ${points[1].x},${points[1].y} L ${points[2].x},${points[2].y} L ${points[3].x},${points[3].y}`;
+      const areaD = `${lineD} L 100,30 L 0,30 Z`;
+
+      svg.innerHTML = `
+        <defs>
+          <linearGradient id="miniLineGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="rgba(79, 70, 229, 0.2)" />
+            <stop offset="100%" stop-color="rgba(79, 70, 229, 0.0)" />
+          </linearGradient>
+        </defs>
+        <!-- Filled Area -->
+        <path d="${areaD}" fill="url(#miniLineGrad)" />
+        <!-- Trending Line -->
+        <path d="${lineD}" fill="none" stroke="#4f46e5" stroke-width="1.5" />
+        <!-- Dots -->
+        <circle cx="${points[0].x}" cy="${points[0].y}" r="1.2" fill="#4f46e5" />
+        <circle cx="${points[1].x}" cy="${points[1].y}" r="1.2" fill="#4f46e5" />
+        <circle cx="${points[2].x}" cy="${points[2].y}" r="1.2" fill="#4f46e5" />
+        <circle cx="${points[3].x}" cy="${points[3].y}" r="1.2" fill="#4f46e5" />
       `;
     }
   </script>

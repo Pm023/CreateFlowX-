@@ -120,3 +120,37 @@ def read_current_user(current_user: User = Depends(get_current_user)):
     Returns the authenticated user's profile details.
     """
     return current_user
+
+class ForgotPasswordRequest(BaseModel):
+    email: str
+    new_password: str
+
+@router.post("/forgot-password", status_code=status.HTTP_200_OK)
+def forgot_password(req_in: ForgotPasswordRequest, db: Session = Depends(get_db)):
+    """
+    Resets the password for a registered email address.
+    """
+    user = get_user_by_email(db, email=req_in.email.lower().strip())
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="A user with this email address was not found."
+        )
+    
+    from app.core.security import get_password_hash
+    user.hashed_password = get_password_hash(req_in.new_password)
+    db.commit()
+    
+    # Activity Log
+    from app.crud.activity_log import create_activity_log
+    create_activity_log(
+        db=db,
+        user_id=user.id,
+        action_type="update",
+        entity_type="user",
+        entity_id=user.id,
+        title="Password Reset",
+        description=f"Password was successfully reset for user {user.email}."
+    )
+    
+    return {"message": "Password successfully reset."}

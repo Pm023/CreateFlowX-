@@ -24,6 +24,52 @@
       gap: var(--space-sm);
       z-index: 100;
     }
+    /* Modal Styles */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .modal-backdrop.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .modal-content {
+      width: 100%;
+      max-width: 480px;
+      transform: translateY(20px);
+      transition: transform 0.25s ease;
+    }
+    .modal-backdrop.active .modal-content {
+      transform: translateY(0);
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-md);
+    }
+    .modal-close-btn {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 1.25rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
   </style>
 </head>
 <body>
@@ -91,7 +137,7 @@
           <div class="form-group">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm);">
               <label for="password" class="form-label" style="margin-bottom: 0;">Password</label>
-              <a href="#" style="font-size: 0.8rem;" class="text-muted">Forgot password?</a>
+              <a href="#" onclick="openForgotModal(event)" style="font-size: 0.8rem;" class="text-muted">Forgot password?</a>
             </div>
             <input 
               type="password" 
@@ -114,6 +160,64 @@
       <div class="auth-footer">
         Don't have an account? <a href="register.html">Sign up for free</a>
       </div>
+    </div>
+  </div>
+
+  <!-- Forgot Password Overlay Modal -->
+  <div class="modal-backdrop" id="forgot-modal">
+    <div class="card glass-panel modal-content" style="padding: var(--space-lg); border-top: 4px solid var(--accent-color); margin: var(--space-md);">
+      <div class="modal-header">
+        <h3 style="font-size: 1.15rem; font-weight: 700; margin: 0; color: var(--text-primary);">Reset Password</h3>
+        <button class="modal-close-btn" onclick="closeForgotModal()"><i class="ri-close-line"></i></button>
+      </div>
+      
+      <div id="modal-alert-box" class="alert alert-danger hidden" style="margin-bottom: var(--space-md);">
+        <i class="ri-error-warning-line"></i>
+        <span id="modal-alert-message"></span>
+      </div>
+
+      <form id="forgot-form">
+        <div class="form-group">
+          <label for="forgot-email" class="form-label">Registered Email</label>
+          <input 
+            type="email" 
+            id="forgot-email" 
+            class="form-control" 
+            placeholder="you@example.com" 
+            required
+          >
+        </div>
+        <div class="form-group">
+          <label for="forgot-new-password" class="form-label">New Password</label>
+          <input 
+            type="password" 
+            id="forgot-new-password" 
+            class="form-control" 
+            placeholder="Min 6 characters" 
+            required
+            minlength="6"
+          >
+        </div>
+        <div class="form-group">
+          <label for="forgot-confirm-password" class="form-label">Confirm New Password</label>
+          <input 
+            type="password" 
+            id="forgot-confirm-password" 
+            class="form-control" 
+            placeholder="Confirm new password" 
+            required
+            minlength="6"
+          >
+        </div>
+
+        <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: var(--space-sm); margin-top: var(--space-md); padding: 0;">
+          <button type="button" class="btn btn-outline" onclick="closeForgotModal()">Cancel</button>
+          <button type="submit" id="forgot-submit-btn" class="btn btn-primary" style="display: flex; align-items: center; gap: 8px;">
+            <span>Reset Password</span>
+            <div id="forgot-spinner" class="spinner hidden"></div>
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -172,6 +276,70 @@
         // Stop loading state
         submitBtn.disabled = false;
         btnSpinner.classList.add("hidden");
+      }
+    });
+
+    // Forgot Password Modal functions
+    function openForgotModal(e) {
+      if (e) e.preventDefault();
+      document.getElementById("forgot-email").value = document.getElementById("email").value || "";
+      document.getElementById("forgot-new-password").value = "";
+      document.getElementById("forgot-confirm-password").value = "";
+      document.getElementById("modal-alert-box").classList.add("hidden");
+      document.getElementById("forgot-modal").classList.add("active");
+    }
+
+    function closeForgotModal() {
+      document.getElementById("forgot-modal").classList.remove("active");
+    }
+
+    const forgotForm = document.getElementById("forgot-form");
+    const forgotSubmitBtn = document.getElementById("forgot-submit-btn");
+    const forgotSpinner = document.getElementById("forgot-spinner");
+    const modalAlertBox = document.getElementById("modal-alert-box");
+    const modalAlertMessage = document.getElementById("modal-alert-message");
+
+    forgotForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      modalAlertBox.classList.add("hidden");
+
+      const email = document.getElementById("forgot-email").value;
+      const newPassword = document.getElementById("forgot-new-password").value;
+      const confirmPassword = document.getElementById("forgot-confirm-password").value;
+
+      if (newPassword !== confirmPassword) {
+        modalAlertBox.className = "alert alert-danger";
+        modalAlertMessage.textContent = "Passwords do not match.";
+        modalAlertBox.classList.remove("hidden");
+        return;
+      }
+
+      forgotSubmitBtn.disabled = true;
+      forgotSpinner.classList.remove("hidden");
+
+      try {
+        const response = await api.post("/auth/forgot-password", {
+          email: email,
+          new_password: newPassword
+        });
+        
+        // On success, show success message on the main login screen and close modal
+        closeForgotModal();
+        alertBox.className = "alert alert-success";
+        alertMessage.textContent = response.message || "Password successfully reset. You can now log in.";
+        alertBox.classList.remove("hidden");
+        
+        // Fill the email and focus password
+        document.getElementById("email").value = email;
+        document.getElementById("password").value = "";
+        document.getElementById("password").focus();
+      } catch (error) {
+        modalAlertBox.className = "alert alert-danger";
+        modalAlertMessage.textContent = error.message || "Failed to reset password. Please check the email address.";
+        modalAlertBox.classList.remove("hidden");
+      } finally {
+        forgotSubmitBtn.disabled = false;
+        forgotSpinner.classList.add("hidden");
       }
     });
   </script>
