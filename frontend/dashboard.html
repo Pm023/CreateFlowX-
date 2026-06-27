@@ -125,23 +125,8 @@
     <!-- Left Sidebar Navigation -->
     <aside class="sidebar">
       <div class="sidebar-brand">
-        <!-- SVG Logo -->
-        <svg width="24" height="24" viewBox="0 0 200 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M70 15 C35 15, 15 35, 15 50 C15 65, 35 85, 70 85 L90 85 L90 73 L70 73 C45 73, 30 63, 30 50 C30 37, 45 27, 70 27 L90 27 L90 15 Z" fill="url(#dbLogoBlue)" />
-          <path d="M85 35 L120 35 L120 47 L97 47 L97 55 L115 55 L115 65 L97 65 L97 85 L85 85 Z" fill="url(#dbLogoBlue)" />
-          <path d="M125 15 L140 15 L168 52 L195 15 L210 15 L175 62 L175 85 L162 85 L162 62 Z" fill="url(#dbLogoPurple)" />
-          <defs>
-            <linearGradient id="dbLogoBlue" x1="15" y1="15" x2="120" y2="85" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stop-color="#00f2fe" />
-              <stop offset="100%" stop-color="#0082ff" />
-            </linearGradient>
-            <linearGradient id="dbLogoPurple" x1="125" y1="15" x2="210" y2="85" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stop-color="#7b2cbf" />
-              <stop offset="100%" stop-color="#c77dff" />
-            </linearGradient>
-          </defs>
-        </svg>
-        <span style="font-weight: 800;">Create<span class="text-gradient-blue">Flow</span><span class="text-gradient-purple">X</span></span>
+        <img src="logo.png" alt="CreateFlowX Logo" class="sidebar-logo-img" style="border-radius: 50% !important; object-fit: cover !important;">
+        <span style="font-weight: 800;">Create<span class="brand-flowx-gradient">FlowX</span></span>
       </div>
 
       <nav class="sidebar-menu">
@@ -225,7 +210,7 @@
       <div class="dashboard-body">
         <!-- Welcome Greeting -->
         <div>
-          <h1 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 2px;">Good Morning, <span id="welcome-name">Alexa</span>! 👋</h1>
+          <h1 id="dashboard-welcome-heading" style="font-size: 1.5rem; font-weight: 700; margin-bottom: 2px;">Good Morning, <span id="welcome-name" class="premium-greeting-name">piku</span>! 👋</h1>
           <p style="font-size: 0.85rem; color: var(--text-secondary);">Here's what's happening with your projects today.</p>
         </div>
 
@@ -677,7 +662,27 @@
         // Update name strings
         document.getElementById("user-display-name").textContent = fallbackName;
         document.getElementById("header-user-name").textContent = fallbackName;
-        document.getElementById("welcome-name").textContent = fallbackName.split(" ")[0];
+        
+        // Time-based premium greeting logic
+        const hours = new Date().getHours();
+        let greetingWord = "Good Evening";
+        if (hours >= 5 && hours < 12) {
+          greetingWord = "Good Morning";
+        } else if (hours >= 12 && hours < 17) {
+          greetingWord = "Good Afternoon";
+        }
+        
+        let firstName = fallbackName.split(" ")[0];
+        if (firstName.toLowerCase() === "alexa") {
+          firstName = "piku"; // Override default Alexa profile name to piku
+        }
+        
+        const welcomeHeading = document.getElementById("dashboard-welcome-heading");
+        if (welcomeHeading) {
+          welcomeHeading.innerHTML = `${greetingWord}, <span id="welcome-name" class="premium-greeting-name">${firstName}</span>! 👋`;
+        } else {
+          document.getElementById("welcome-name").textContent = firstName;
+        }
         
         // Update roles
         document.getElementById("user-display-role").textContent = roleStr;

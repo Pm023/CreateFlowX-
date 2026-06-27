@@ -150,23 +150,43 @@ def run_local_analytics_tests():
         insights = get_smart_insights(db, user.id)
         print(f"Insights Generated: {len(insights)}")
         for insight in insights:
-            print(f"  [{insight['category']}] {insight['icon']} {insight['title']}: {insight['message']}")
+            text = f"  [{insight['category']}] {insight['icon']} {insight['title']}: {insight['message']}"
+            try:
+                print(text)
+            except UnicodeEncodeError:
+                encoding = sys.stdout.encoding or 'ascii'
+                print(text.encode(encoding, errors='replace').decode(encoding))
         
         # Test weekly priorities
         priorities = get_weekly_priorities(db, user.id)
         print(f"Coaching Priorities: {len(priorities)}")
         for pr in priorities:
-            print(f"  {pr['priority']}. {pr['title']} - {pr['description']}")
+            text = f"  {pr['priority']}. {pr['title']} - {pr['description']}"
+            try:
+                print(text)
+            except UnicodeEncodeError:
+                encoding = sys.stdout.encoding or 'ascii'
+                print(text.encode(encoding, errors='replace').decode(encoding))
         assert len(priorities) > 0
         
         # Test opportunities and risks
         opps_risks = get_opportunities_and_risks(db, user.id)
         print(f"Opportunities: {len(opps_risks['opportunities'])}")
         for op in opps_risks['opportunities']:
-            print(f"  [OPP] {op['title']}: {op['message']}")
+            text = f"  [OPP] {op['title']}: {op['message']}"
+            try:
+                print(text)
+            except UnicodeEncodeError:
+                encoding = sys.stdout.encoding or 'ascii'
+                print(text.encode(encoding, errors='replace').decode(encoding))
         print(f"Risks: {len(opps_risks['risks'])}")
         for rk in opps_risks['risks']:
-            print(f"  [RISK] {rk['title']}: {rk['message']}")
+            text = f"  [RISK] {rk['title']}: {rk['message']}"
+            try:
+                print(text)
+            except UnicodeEncodeError:
+                encoding = sys.stdout.encoding or 'ascii'
+                print(text.encode(encoding, errors='replace').decode(encoding))
 
         # Test client health scoreboard
         client_health = get_client_health_overview(db, user.id)

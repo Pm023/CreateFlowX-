@@ -1,6 +1,7 @@
 import urllib.request
 import json
 import sys
+import time
 
 BASE_URL = "http://127.0.0.1:8000/api/v1"
 
@@ -27,10 +28,12 @@ def make_request(url, method="GET", data=None, token=None):
         return e.code, json.loads(e.read().decode())
 
 def test_settings_flow():
-    email = "settings_tester@example.com"
+    ts = int(time.time())
+    email = f"settings_tester_{ts}@example.com"
     password = "testerPassword123!"
     new_password = "newTesterPassword123!"
     name = "Settings Tester"
+    username = f"tester_{ts}"
     
     print("---------------------------------------------")
     print("  Starting CreateFlowX Settings & Security Test")
@@ -77,7 +80,7 @@ def test_settings_flow():
     print("\n[STEP 4] Updating profile details (Full Name and Username)...")
     status, profile = make_request(f"{BASE_URL}/users/me", method="PUT", token=token, data={
         "full_name": "Settings Tester Updated",
-        "username": "tester_settings_user"
+        "username": username
     })
     if status == 200:
         print(f"  [OK] Profile updated: name={profile.get('full_name')}, username={profile.get('username')}")
@@ -89,7 +92,7 @@ def test_settings_flow():
     print("\n[STEP 5] Testing profile validation constraints...")
     status, err = make_request(f"{BASE_URL}/users/me", method="PUT", token=token, data={
         "full_name": "",
-        "username": "tester_settings_user"
+        "username": username
     })
     if status == 400:
         print(f"  [OK] Invalid name correctly rejected: {err.get('detail')}")

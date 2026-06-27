@@ -47,6 +47,29 @@ def test_analytics_module():
     headers = {"Authorization": f"Bearer {token}"}
     print("  [OK] Mock user configured and JWT token issued.\n")
 
+    # Cleanup previous tasks, projects, clients, and invoices for this user to ensure clean state
+    print("[CLEANUP] Cleaning up existing data for test user...")
+    existing_invoices, _ = make_request(f"{BASE_URL}/invoices/", None, headers, "GET")
+    if isinstance(existing_invoices, list):
+        for inv in existing_invoices:
+            make_request(f"{BASE_URL}/invoices/{inv['id']}", None, headers, "DELETE")
+
+    existing_tasks, _ = make_request(f"{BASE_URL}/tasks/", None, headers, "GET")
+    if isinstance(existing_tasks, list):
+        for task in existing_tasks:
+            make_request(f"{BASE_URL}/tasks/{task['id']}", None, headers, "DELETE")
+
+    existing_projects, _ = make_request(f"{BASE_URL}/projects/", None, headers, "GET")
+    if isinstance(existing_projects, list):
+        for proj in existing_projects:
+            make_request(f"{BASE_URL}/projects/{proj['id']}", None, headers, "DELETE")
+
+    existing_clients, _ = make_request(f"{BASE_URL}/clients/", None, headers, "GET")
+    if isinstance(existing_clients, list):
+        for client in existing_clients:
+            make_request(f"{BASE_URL}/clients/{client['id']}", None, headers, "DELETE")
+    print("  [OK] Cleanup complete.\n")
+
     # 2. Add client
     print("[STEP 2] Creating client...")
     c_res, status = make_request(f"{BASE_URL}/clients/", {
