@@ -925,3 +925,72 @@
   font-weight: 750 !important;
   display: inline-block;
 }
+
+/* Premium Responsive Layout Overrides */
+body .projects-grid,
+body .tasks-grid,
+body .clients-grid {
+  grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr)) !important;
+  gap: var(--space-md) !important;
+}
+
+/* Donut Chart Responsive Wrapper */
+.donut-chart-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  justify-content: center;
+  height: 150px;
+}
+
+@media (max-width: 480px) {
+  .donut-chart-wrapper {
+    flex-direction: column !important;
+    height: auto !important;
+    gap: var(--space-sm) !important;
+    padding: var(--space-sm) 0 !important;
+  }
+}
+
+/* Modal Content Scaling on Mobile */
+@media (max-width: 480px) {
+  body .modal-content {
+    width: 92% !important;
+    padding: var(--space-lg) !important;
+    margin: var(--space-md) auto !important;
+  }
+  body .form-group {
+    margin-bottom: var(--space-sm) !important;
+  }
+}
+
+/* Mobile Profile Text Protection */
+@media (max-width: 480px) {
+  .user-profile-header div:last-child {
+    display: none !important;
+  }
+  .user-profile-header {
+    border-left: none !important;
+    padding-left: 0 !important;
+    margin-left: 0 !important;
+  }
+}
+
+/* Calendar Month & Week View Responsiveness */
+@media (max-width: 768px) {
+  body #month-view-container {
+    overflow-x: auto !important;
+  }
+  body .month-grid {
+    min-width: 640px !important;
+  }
+  body .week-columns {
+    grid-template-columns: 1fr !important;
+    gap: var(--space-md) !important;
+    min-height: auto !important;
+  }
+  body .week-column {
+    min-height: 200px !important;
+  }
+}
+

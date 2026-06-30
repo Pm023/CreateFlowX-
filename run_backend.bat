@@ -14,5 +14,5 @@ if not exist .venv (
 
 :: Start Uvicorn
 echo [INFO] Running FastAPI with Uvicorn...
-.venv\Scripts\python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
+.venv\Scripts\python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 pause

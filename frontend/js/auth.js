@@ -233,12 +233,54 @@ const auth = {
     } else {
       return `${dd}/${mm}/${yyyy}`;
     }
+  },
+
+  /**
+   * Initializes mobile slide-in drawer navigation sidebar and backdrop
+   */
+  initMobileSidebar() {
+    const header = document.querySelector(".dashboard-header");
+    const sidebar = document.querySelector(".sidebar");
+    if (!header || !sidebar) return;
+
+    // Create toggle button
+    const toggleBtn = document.createElement("button");
+    toggleBtn.className = "sidebar-toggle-btn";
+    toggleBtn.setAttribute("aria-label", "Toggle sidebar menu");
+    toggleBtn.innerHTML = '<i class="ri-menu-line"></i>';
+    header.insertBefore(toggleBtn, header.firstChild);
+
+    // Create backdrop
+    const backdrop = document.createElement("div");
+    backdrop.className = "sidebar-backdrop";
+    document.body.appendChild(backdrop);
+
+    // Click handler for toggle button
+    toggleBtn.addEventListener("click", () => {
+      sidebar.classList.toggle("active");
+      backdrop.classList.toggle("active");
+    });
+
+    // Click handler for backdrop
+    backdrop.addEventListener("click", () => {
+      sidebar.classList.remove("active");
+      backdrop.classList.remove("active");
+    });
+
+    // Click handler for sidebar links (close drawer on navigate)
+    sidebar.querySelectorAll(".sidebar-link").forEach(link => {
+      link.addEventListener("click", () => {
+        sidebar.classList.remove("active");
+        backdrop.classList.remove("active");
+      });
+    });
   }
 };
 
 // Initialize theme immediately on script import
 document.addEventListener("DOMContentLoaded", () => {
   auth.initTheme();
+  auth.initMobileSidebar();
 
   // Show admin link if user is admin
   const user = auth.getCurrentUser();
