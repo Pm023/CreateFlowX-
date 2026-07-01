@@ -435,54 +435,6 @@ header.marketing-navbar .navbar-link:hover {
   stroke-dashoffset: 1000;
 }
 
-/* Trusted Marquee Slider Bar (Infinite Horizontal Loop) */
-.trusted-marquee-container {
-  padding: 2.5rem 0;
-  border-top: 1px solid var(--market-border);
-  border-bottom: 1px solid var(--market-border);
-  text-align: center;
-  background-color: var(--market-bg-secondary);
-  overflow: hidden;
-  position: relative;
-  width: 100%;
-}
-
-.trusted-label {
-  font-size: 0.725rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--market-text-muted);
-  font-weight: 600;
-  margin-bottom: 1.5rem;
-}
-
-.trusted-logo-track {
-  display: flex;
-  width: max-content;
-  align-items: center;
-  gap: 4.5rem;
-  animation: scrollMarquee 28s linear infinite;
-}
-
-@keyframes scrollMarquee {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
-
-.trusted-logo-item {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--market-text-secondary);
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  opacity: 0.8;
-  white-space: nowrap;
-}
 
 /* Grid Layouts */
 .grid-2 {
